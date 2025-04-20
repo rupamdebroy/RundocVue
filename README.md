@@ -74,12 +74,12 @@ bun run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
-Nuxt
-Vue
-npm
-Tailwind
-Font Awesome
-axios
-piana - npm install pinia @pinia/nuxt
-npm install js-cookie
-used - Location-Based Doctor List API, Doctor Schedule API, OTP Authentication API
+- Nuxt
+- Vue
+- npm
+- Tailwind
+- Font Awesome
+- axios
+- piana - npm install pinia @pinia/nuxt
+- npm install js-cookie
+- used - Location-Based Doctor List API, Doctor Schedule API, OTP Authentication API
