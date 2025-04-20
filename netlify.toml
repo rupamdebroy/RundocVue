@@ -1,0 +1,8 @@
+[build]
+  command = "npm run build"
+  publish = ".output/public"  # This is where your static files will be built
+
+[[redirects]]
+  from = "/service-worker.js"
+  to = "/.netlify/functions/nuxt-service-worker.js"
+  status = 200
