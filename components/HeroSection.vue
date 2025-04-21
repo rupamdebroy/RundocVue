@@ -63,7 +63,7 @@ import { useDoctorsStore } from "@/stores/doctors";
 const router = useRouter();
 const doctorsStore = useDoctorsStore();
 
-const locations = ["Dharmanagar", "Kanchanpur", "Kumarghat", "Kailashahar"];
+const locations = ["Dharmanagar", "Kanchanpur", "Kumarghat", "Kailashahar", "Kadamtala"];
 const selectedLocation = ref("");
 const selectedDoctor = ref("");
 
