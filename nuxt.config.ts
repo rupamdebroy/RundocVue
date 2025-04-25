@@ -1,8 +1,6 @@
 export default defineNuxtConfig({
   ssr: true, // Enable SSR (this is usually true by default)
-  nitro: {
-    preset: "netlify", // Set the Nitro preset for Netlify deployment
-  },
+ 
   build: {
     transpile: ["@tailwindcss"],
   },
