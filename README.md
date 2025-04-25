@@ -83,3 +83,7 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 - piana - npm install pinia @pinia/nuxt
 - npm install js-cookie
 - used - Location-Based Doctor List API, Doctor Schedule API, OTP Authentication API
+
+Lazy Loading
+Shimmer UI
+Infinite Scroll
