@@ -10,9 +10,31 @@ export const useDoctorsStore = defineStore("doctors", {
   }),
 
   actions: {
+    // async fetchDoctors(location) {
+    //   console.log("fetchDoctors called with location:", location);
+    //   // Normalize location to lowercase for comparison
+    //   const normalizedLocation = location.toLowerCase();
+    //   if (
+    //     this.selectedLocation.toLowerCase() === normalizedLocation &&
+    //     this.doctors.length > 0
+    //   ) {
+    //     console.log(
+    //       "Skipping API call: Doctors already fetched for",
+    //       normalizedLocation
+    //     );
+    //     this.info = `${this.doctors.length} doctor(s) found in ${location}.`;
+    //     return;
+    //   }
+
     async fetchDoctors(location) {
       console.log("fetchDoctors called with location:", location);
-      // Normalize location to lowercase for comparison
+
+      if (!location) {
+        this.error = "Location is not defined. Please select a location.";
+        console.warn("fetchDoctors aborted: No location provided");
+        return;
+      }
+
       const normalizedLocation = location.toLowerCase();
       if (
         this.selectedLocation.toLowerCase() === normalizedLocation &&
@@ -25,6 +47,8 @@ export const useDoctorsStore = defineStore("doctors", {
         this.info = `${this.doctors.length} doctor(s) found in ${location}.`;
         return;
       }
+
+      // rest of the API logic...
 
       console.log("Making API call for location:", location);
       this.selectedLocation = location; // Keep original case for display

@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   ssr: true, // Enable SSR (this is usually true by default)
- 
+
   build: {
     transpile: ["@tailwindcss"],
   },
