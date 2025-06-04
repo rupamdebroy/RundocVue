@@ -63,7 +63,13 @@ import { useDoctorsStore } from "@/stores/doctors";
 const router = useRouter();
 const doctorsStore = useDoctorsStore();
 
-const locations = ["Dharmanagar", "Kanchanpur", "Kumarghat", "Kailashahar", "Kadamtala"];
+const locations = [
+  "Dharmanagar",
+  "Kanchanpur",
+  "Kumarghat",
+  "Kailashahar",
+  "Kadamtala",
+];
 const selectedLocation = ref("");
 const selectedDoctor = ref("");
 
@@ -111,8 +117,6 @@ const handleSearch = () => {
   doctorsStore.error = "";
   console.log("Navigating to doctor page");
   // Normalize location to lowercase for routing
-  router.push(
-    `/doctors/${selectedLocation.value.toLowerCase()}/${selectedDoctor.value}`
-  );
+  router.push(`/doctor/${selectedDoctor.value}`);
 };
 </script>

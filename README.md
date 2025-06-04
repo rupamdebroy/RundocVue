@@ -6,9 +6,6 @@ Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduct
 
 Make sure to install dependencies:
 
-
-
-
 ```bash
 # npm
 npm install
@@ -86,6 +83,7 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 - piana - npm install pinia @pinia/nuxt
 - npm install js-cookie
 - used - Location-Based Doctor List API, Doctor Schedule API, OTP Authentication API
+- npm install @heroicons/vue
 
 Lazy Loading
 Shimmer UI

@@ -1,4 +1,5 @@
 <template>
+  <Header />
   <div
     class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4"
   >
@@ -38,12 +39,15 @@
       </div>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script setup>
 definePageMeta({
   middleware: ["auth"],
 });
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();
