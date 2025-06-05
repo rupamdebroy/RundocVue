@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "HealthPlus Pharmacy",
+    "address": "789 Health Lane, Dharmanagar, Tripura",
+    "discount": 10,
+    "dp": "https://example.com/pharmacy/healthplus.jpg"
+  },
+  {
+    "id": 2,
+    "name": "MediCare Pharmacy",
+    "address": "101 Healing Road, Dharmanagar, Tripura",
+    "discount": 15,
+    "dp": "https://example.com/pharmacy/medicare.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Wellness Pharmacy",
+    "address": "202 Wellness Avenue, Dharmanagar, Tripura",
+    "discount": 12,
+    "dp": "https://example.com/pharmacy/wellness.jpg"
+  }
+]

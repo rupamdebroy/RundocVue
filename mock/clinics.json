@@ -1,0 +1,119 @@
+[
+  {
+    "id": 1,
+    "name": "City Health Clinic",
+    "address": "123 Main Street, Dharmanagar, Tripura",
+    "details": "City Health Clinic is a multi-specialty healthcare center offering comprehensive medical services with state-of-the-art facilities.",
+    "doctors": [
+      {
+        "id": 1,
+        "name": "Dr. Nilima Sarkar",
+        "specialty": "General Practitioner",
+        "experience": 3,
+        "docSlug": "dr-nilima-sarkar",
+        "schedules": [
+          {
+            "date": "2025-06-05",
+            "slots": [
+              { "time": "10:00 AM", "available": true },
+              { "time": "11:00 AM", "available": true },
+              { "time": "02:00 PM", "available": false }
+            ]
+          },
+          {
+            "date": "2025-06-06",
+            "slots": [
+              { "time": "09:00 AM", "available": true },
+              { "time": "01:00 PM", "available": true }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Dr. Arindam Das",
+        "specialty": "Medicine Specialist",
+        "experience": 5,
+        "docSlug": "dr-arindam-das-md",
+        "schedules": [
+          {
+            "date": "2025-06-05",
+            "slots": [
+              { "time": "11:00 AM", "available": true },
+              { "time": "03:00 PM", "available": true }
+            ]
+          },
+          {
+            "date": "2025-06-07",
+            "slots": [
+              { "time": "10:00 AM", "available": true },
+              { "time": "12:00 PM", "available": false }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Sunrise Medical Center",
+    "address": "45 Park Avenue, Kadamtala, Tripura",
+    "details": "Sunrise Medical Center provides excellent healthcare services with a focus on patient care and advanced diagnostics.",
+    "doctors": [
+      {
+        "id": 3,
+        "name": "Dr. Priya Sharma",
+        "specialty": "Pediatrician",
+        "experience": 7,
+        "docSlug": "dr-priya-sharma",
+        "schedules": [
+          {
+            "date": "2025-06-05",
+            "slots": [
+              { "time": "09:00 AM", "available": true },
+              { "time": "01:00 PM", "available": true }
+            ]
+          },
+          {
+            "date": "2025-06-06",
+            "slots": [
+              { "time": "10:00 AM", "available": true },
+              { "time": "02:00 PM", "available": false }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Hope Wellness Clinic",
+    "address": "78 Green Road, Silchar, Assam",
+    "details": "Hope Wellness Clinic is dedicated to providing holistic healthcare with a team of experienced professionals.",
+    "doctors": [
+      {
+        "id": 4,
+        "name": "Dr. Rajesh Kumar",
+        "specialty": "Orthopedic",
+        "experience": 10,
+        "docSlug": "dr-rajesh-kumar",
+        "schedules": [
+          {
+            "date": "2025-06-05",
+            "slots": [
+              { "time": "11:00 AM", "available": true },
+              { "time": "03:00 PM", "available": true }
+            ]
+          },
+          {
+            "date": "2025-06-07",
+            "slots": [
+              { "time": "09:00 AM", "available": true },
+              { "time": "01:00 PM", "available": false }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

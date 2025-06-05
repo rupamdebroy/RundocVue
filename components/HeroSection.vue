@@ -10,113 +10,96 @@
       Discover the best doctors & clinics in the city nearest you
     </p>
 
-    <div
-      class="mt-6 flex flex-col md:flex-row justify-center items-center gap-4"
-    >
-      <select
-        v-model="selectedLocation"
-        class="border px-4 py-2 w-full md:w-64 rounded"
-      >
-        <option value="">Select Location</option>
-        <option v-for="location in locations" :key="location" :value="location">
-          {{ location }}
-        </option>
-      </select>
+    <!-- Animated Search Bar -->
+    <div class="relative mt-6 mx-auto max-w-2xl">
+      <input
+        type="text"
+        :placeholder="currentPlaceholder"
+        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-700"
+        @input="handleSearch"
+      />
+      <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+        <MagnifyingGlassIcon class="w-5 h-5 text-gray-500" />
+      </div>
 
-      <select
-        v-model="selectedDoctor"
-        class="border px-4 py-2 w-full md:w-64 rounded"
-        :disabled="doctorsStore.doctors.length === 0"
+      <!-- Dropdown for search results -->
+      <div
+        v-if="searchResults.length > 0"
+        class="absolute w-full mt-1 bg-white border rounded-lg shadow-lg max-h-64 overflow-y-auto z-10"
       >
-        <option value="">Select Doctor</option>
-        <option
-          v-for="doctor in doctorsStore.doctors"
-          :key="doctor.id"
-          :value="doctor.doc"
+        <NuxtLink
+          v-for="result in searchResults"
+          :key="result.id"
+          :to="
+            result.type === 'doctor'
+              ? `/find-doctor?location=${locationStore.currentLocation}`
+              : `/clinics`
+          "
+          class="block px-4 py-2 text-gray-700 hover:bg-gray-100"
         >
-          {{ doctor.name }}
-        </option>
-      </select>
-
-      <button
-        @click="handleSearch"
-        class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
-      >
-        Book
-      </button>
+          {{ result.name }} ({{
+            result.type === "doctor" ? "Doctor" : "Clinic"
+          }})
+        </NuxtLink>
+      </div>
     </div>
-
-    <p class="text-red-500 mt-4" v-if="doctorsStore.error">
-      {{ doctorsStore.error }}
-    </p>
-    <p class="text-gray-500 mt-4" v-if="doctorsStore.info">
-      {{ doctorsStore.info }}
-    </p>
   </section>
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
-import { useDoctorsStore } from "@/stores/doctors";
+import { ref, onMounted, onUnmounted } from "vue";
+import { MagnifyingGlassIcon } from "@heroicons/vue/24/solid";
+import { useLocationStore } from "@/stores/location";
 
-const router = useRouter();
-const doctorsStore = useDoctorsStore();
+const locationStore = useLocationStore();
+const currentPlaceholder = ref("Search Doctor");
+const searchResults = ref([]);
 
-const locations = [
-  "Dharmanagar",
-  "Kanchanpur",
-  "Kumarghat",
-  "Kailashahar",
-  "Kadamtala",
+// Animated placeholder text
+const placeholders = [
+  "Search Doctor",
+  "Search Clinic",
+  "Search Hospital",
+  "Lab Tests & Diagnostics",
+  "Medicines",
+  "Ambulance",
+  "Home Care Service",
+  "Blood Donor",
 ];
-const selectedLocation = ref("");
-const selectedDoctor = ref("");
+let currentIndex = 0;
 
-watch(selectedLocation, async (newLocation, oldLocation) => {
-  console.log(
-    "Watcher triggered - New Location:",
-    newLocation,
-    "Old Location:",
-    oldLocation
-  );
-  if (!newLocation) {
-    console.log("Clearing doctors due to no location selected");
-    doctorsStore.clearDoctors();
-    selectedDoctor.value = "";
-    return;
-  }
+const animatePlaceholder = () => {
+  currentIndex = (currentIndex + 1) % placeholders.length;
+  currentPlaceholder.value = placeholders[currentIndex];
+};
 
-  if (newLocation !== oldLocation) {
-    console.log("Fetching doctors for location:", newLocation);
-    await doctorsStore.fetchDoctors(newLocation);
-    selectedDoctor.value = ""; // Reset doctor selection when location changes
-  } else {
-    console.log("Location unchanged, skipping fetch");
-  }
+let animationInterval = null;
+
+onMounted(() => {
+  animationInterval = setInterval(animatePlaceholder, 2000); // Change every 2 seconds
 });
 
-const handleSearch = () => {
-  console.log(
-    "handleSearch called - Location:",
-    selectedLocation.value,
-    "Doctor:",
-    selectedDoctor.value
-  );
-  console.log("Current store state:", {
-    location: doctorsStore.selectedLocation,
-    doctorsCount: doctorsStore.doctors.length,
-  });
+onUnmounted(() => {
+  clearInterval(animationInterval);
+});
 
-  if (!selectedLocation.value || !selectedDoctor.value) {
-    console.log("Validation failed: Missing location or doctor");
-    doctorsStore.error = "Please select both location and doctor.";
+// Mock search data (since no API is available)
+const mockData = [
+  { id: 1, name: "Dr. John Doe", type: "doctor" },
+  { id: 2, name: "Dr. Jane Smith", type: "doctor" },
+  { id: 3, name: "City Clinic", type: "clinic" },
+  { id: 4, name: "HealthFirst Clinic", type: "clinic" },
+];
+
+const handleSearch = (event) => {
+  const query = event.target.value.toLowerCase();
+  if (query.length < 2) {
+    searchResults.value = [];
     return;
   }
 
-  doctorsStore.error = "";
-  console.log("Navigating to doctor page");
-  // Normalize location to lowercase for routing
-  router.push(`/doctor/${selectedDoctor.value}`);
+  searchResults.value = mockData.filter((item) =>
+    item.name.toLowerCase().includes(query)
+  );
 };
 </script>

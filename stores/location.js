@@ -3,13 +3,12 @@ import axios from "axios";
 
 export const useLocationStore = defineStore("location", {
   state: () => ({
-    selectedLocation: "", // Currently selected location
-    availableLocations: [], // List of locations from API
+    selectedLocation: "",
+    availableLocations: [],
     error: "",
   }),
 
   actions: {
-    // Fetch available cities/locations from the API
     async fetchLocations() {
       try {
         const response = await axios.get(
@@ -22,8 +21,7 @@ export const useLocationStore = defineStore("location", {
         );
 
         if (response.data.status === "success") {
-          this.availableLocations = response.data.data; // Store the list of locations
-          // If there's a previously selected location in localStorage, restore it
+          this.availableLocations = response.data.data;
           const savedLocation = localStorage.getItem("selectedLocation");
           if (
             savedLocation &&
@@ -40,16 +38,22 @@ export const useLocationStore = defineStore("location", {
       }
     },
 
-    // Set the selected location and persist it
     setLocation(location) {
       this.selectedLocation = location;
-      localStorage.setItem("selectedLocation", location); // Persist in localStorage
+      localStorage.setItem("selectedLocation", location);
     },
 
-    // Clear the selected location
     clearLocation() {
       this.selectedLocation = "";
       localStorage.removeItem("selectedLocation");
+    },
+
+    // New method to restore location from localStorage
+    restoreLocation() {
+      const savedLocation = localStorage.getItem("selectedLocation");
+      if (savedLocation) {
+        this.selectedLocation = savedLocation;
+      }
     },
   },
 

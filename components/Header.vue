@@ -5,16 +5,23 @@
     <!-- Logo -->
     <div class="text-2xl font-bold lowercase text-gray-900">rundoc</div>
 
-    <!-- Navigation Links -->
-    <nav class="hidden md:flex space-x-6 text-sm font-medium text-gray-700">
-      <NuxtLink to="/" class="hover:text-blue-600 transition">home</NuxtLink>
-      <NuxtLink to="/doctors" class="hover:text-blue-600 transition"
-        >doctors</NuxtLink
+    <!-- Location Dropdown -->
+    <div class="flex items-center space-x-2">
+      <MapPinIcon class="w-5 h-5 text-gray-700" />
+      <select
+        v-model="selectedLocation"
+        class="border px-2 py-1 rounded text-sm text-gray-700 focus:outline-none"
       >
-      <NuxtLink to="/clinics" class="hover:text-blue-600 transition"
-        >clinics</NuxtLink
-      >
-    </nav>
+        <option value="" disabled>Select Location</option>
+        <option
+          v-for="location in locationStore.availableLocations"
+          :key="location.id"
+          :value="location.name"
+        >
+          {{ location.name }}
+        </option>
+      </select>
+    </div>
 
     <!-- Right Icons & Auth Section -->
     <div class="flex items-center space-x-4">
@@ -70,18 +77,36 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import { MagnifyingGlassIcon, ShoppingCartIcon } from "@heroicons/vue/24/solid";
+import { useLocationStore } from "@/stores/location";
+import {
+  MagnifyingGlassIcon,
+  ShoppingCartIcon,
+  MapPinIcon,
+} from "@heroicons/vue/24/solid";
 
 const router = useRouter();
 const authStore = useAuthStore();
+const locationStore = useLocationStore();
 const showDropdown = ref(false);
+
+// Bind selectedLocation to the store
+const selectedLocation = computed({
+  get: () => locationStore.selectedLocation,
+  set: (value) => locationStore.setLocation(value),
+});
 
 const profileRoute = computed(() => {
   const fullName = authStore.userInfo.fullName || "Unknown";
   return `/profile/${encodeURIComponent(fullName)}`;
+});
+
+// Fetch locations on component mount
+onMounted(() => {
+  locationStore.fetchLocations();
+  authStore.restoreSession();
 });
 
 const toggleDropdown = () => {
@@ -101,8 +126,7 @@ const logout = () => {
 </script>
 
 <style scoped>
-/* Optional: Avoid content hiding behind sticky header */
 body {
-  scroll-padding-top: 80px; /* Adjust based on header height */
+  scroll-padding-top: 80px;
 }
 </style>
