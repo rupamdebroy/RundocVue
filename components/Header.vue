@@ -25,12 +25,7 @@
 
     <!-- Right Icons & Auth Section -->
     <div class="flex items-center space-x-4">
-      <button class="text-black hover:text-blue-600 transition">
-        <MagnifyingGlassIcon class="w-6 h-6" />
-      </button>
-      <button class="text-black hover:text-blue-600 transition">
-        <ShoppingCartIcon class="w-6 h-6" />
-      </button>
+      
 
       <!-- User Dropdown -->
       <div v-if="authStore.isAuthenticated" class="relative">
