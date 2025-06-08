@@ -18,7 +18,10 @@
             </template>
           </ServiceCard>
         </NuxtLink>
-        <div>
+        <NuxtLink
+          :to="`/labtest?location=${locationStore.currentLocation}`"
+          class="block"
+        >
           <ServiceCard
             title="Lab Tests"
             description="At home"
@@ -29,7 +32,7 @@
               <i class="fas fa-vial text-pink-800 text-4xl"></i>
             </template>
           </ServiceCard>
-        </div>
+        </NuxtLink>
       </div>
     </section>
 
@@ -55,12 +58,12 @@
       </div>
     </section>
 
-    <!-- Medicine, Home Care, Ambulance -->
+    <!-- Medicine, Home Care, Ambulance, Blood Donor -->
     <section class="py-10 px-4">
       <h2 class="text-center text-2xl font-bold text-gray-800 mb-8">
         Other Services
       </h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
         <div>
           <NuxtLink
             :to="`/pharmacy?location=${locationStore.currentLocation}`"
@@ -91,16 +94,35 @@
           </ServiceCard>
         </div>
         <div>
-          <ServiceCard
-            title="Ambulance"
-            description="Emergency service"
-            bgColor="bg-red-100"
-            descColor="text-red-800"
+          <NuxtLink
+            :to="`/find-ambulance?location=${locationStore.currentLocation}`"
+            class="block"
           >
-            <template #icon>
-              <i class="fas fa-ambulance text-red-800 text-4xl"></i>
-            </template>
-          </ServiceCard>
+            <ServiceCard
+              title="Ambulance"
+              description="Emergency service"
+              bgColor="bg-red-100"
+              descColor="text-red-800"
+            >
+              <template #icon>
+                <i class="fas fa-ambulance text-red-800 text-4xl"></i>
+              </template>
+            </ServiceCard>
+          </NuxtLink>
+        </div>
+        <div>
+          <NuxtLink :to="`/blood-doner`" class="block">
+            <ServiceCard
+              title="Blood Donor"
+              description="Find or donate"
+              bgColor="bg-red-100"
+              descColor="text-red-800"
+            >
+              <template #icon>
+                <i class="fas fa-tint text-red-800 text-4xl"></i>
+              </template>
+            </ServiceCard>
+          </NuxtLink>
         </div>
       </div>
     </section>

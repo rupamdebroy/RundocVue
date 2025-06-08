@@ -1,0 +1,12 @@
+{
+  "tests": [
+    { "id": 1, "name": "Blood Test", "price": 500 },
+    { "id": 2, "name": "Urine Test", "price": 300 },
+    { "id": 3, "name": "Cholesterol Test", "price": 700 }
+  ],
+  "diagnostics": [
+    { "id": 4, "name": "X-Ray", "price": 800 },
+    { "id": 5, "name": "MRI Scan", "price": 2500 },
+    { "id": 6, "name": "Ultrasound", "price": 1200 }
+  ]
+}

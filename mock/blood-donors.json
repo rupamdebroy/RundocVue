@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "bloodGroup": "A+",
+    "mobile": "9876543210",
+    "address": "123 Main St, Dharmanagar, Tripura",
+    "country": "India",
+    "state": "Tripura",
+    "district": "North Tripura",
+    "city": "Dharmanagar"
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "bloodGroup": "B+",
+    "mobile": "8765432109",
+    "address": "456 Side St, Silchar, Assam",
+    "country": "India",
+    "state": "Assam",
+    "district": "Cachar",
+    "city": "Silchar"
+  },
+  {
+    "id": 3,
+    "name": "Ravi Kumar",
+    "bloodGroup": "O+",
+    "mobile": "7654321098",
+    "address": "789 Park Rd, Kadamtala, Tripura",
+    "country": "India",
+    "state": "Tripura",
+    "district": "North Tripura",
+    "city": "Kadamtala"
+  },
+  {
+    "id": 4,
+    "name": "Priya Sharma",
+    "bloodGroup": "AB-",
+    "mobile": "6543210987",
+    "address": "101 Hill St, Kailashahar, Tripura",
+    "country": "India",
+    "state": "Tripura",
+    "district": "Unakoti",
+    "city": "Kailashahar"
+  },
+  {
+    "id": 5,
+    "name": "Amit Patel",
+    "bloodGroup": "A-",
+    "mobile": "5432109876",
+    "address": "202 Valley Rd, Kail, Tripura",
+    "country": "India",
+    "state": "Tripura",
+    "district": "Unakoti",
+    "city": "Kail"
+  }
+]

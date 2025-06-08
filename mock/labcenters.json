@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Dharmanagar Diagnostic Center",
+    "address": "321 Diagnostic Lane, Dharmanagar, Tripura",
+    "discount": 20,
+    "dp": "https://example.com/lab/dharmanagar-diagnostic.jpg"
+  },
+  {
+    "id": 2,
+    "name": "HealthScan Labs",
+    "address": "456 Scan Road, Dharmanagar, Tripura",
+    "discount": 15,
+    "dp": "https://example.com/lab/healthscan.jpg"
+  },
+  {
+    "id": 3,
+    "name": "LifeCare Diagnostics",
+    "address": "789 LifeCare Street, Dharmanagar, Tripura",
+    "discount": 18,
+    "dp": "https://example.com/lab/lifecare.jpg"
+  }
+]

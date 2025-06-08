@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Dharmanagar Emergency Services",
+    "address": "101 Emergency Road, Dharmanagar, Tripura",
+    "types": ["Basic", "ICU", "Oxygen"],
+    "contact": "123-456-7890",
+    "dp": "https://example.com/ambulance/dharmanagar-emergency.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Kadamtala LifeLine Ambulance",
+    "address": "202 LifeLine Lane, Kadamtala, Tripura",
+    "types": ["Basic", "Oxygen"],
+    "contact": "987-654-3210",
+    "dp": "https://example.com/ambulance/kadamtala-lifeline.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Silchar MediSwift Ambulance",
+    "address": "303 Swift Street, Silchar, Assam",
+    "types": ["ICU", "Oxygen"],
+    "contact": "555-123-4567",
+    "dp": "https://example.com/ambulance/silchar-mediswift.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Kailashahar Emergency Services",
+    "address": "404 Emergency Road, Kailashahar, Tripura",
+    "types": ["Basic", "ICU"],
+    "contact": "111-222-3333",
+    "dp": "https://example.com/ambulance/kailashahar-emergency.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Kail Rapid Response",
+    "address": "505 Rapid Road, Kail, Tripura",
+    "types": ["Oxygen"],
+    "contact": "444-555-6666",
+    "dp": "https://example.com/ambulance/kail-rapid.jpg"
+  }
+]
