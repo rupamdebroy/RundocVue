@@ -1,0 +1,37 @@
+[
+  {
+    "bookingId": "BOOK-001",
+    "bookingType": "Doctor Appointments",
+    "dateTime": "2025-06-10T10:00:00Z",
+    "status": "Upcoming",
+    "remark": "Appointment with Dr. Smith"
+  },
+  {
+    "bookingId": "BOOK-002",
+    "bookingType": "Medicine",
+    "dateTime": "2025-06-09T14:30:00Z",
+    "status": "Successful",
+    "remark": "Medicine delivered"
+  },
+  {
+    "bookingId": "BOOK-003",
+    "bookingType": "Lab Test & Diagnostics",
+    "dateTime": "2025-06-08T09:15:00Z",
+    "status": "Failed",
+    "remark": "Sample collection issue"
+  },
+  {
+    "bookingId": "BOOK-004",
+    "bookingType": "Ambulance",
+    "dateTime": "2025-06-07T16:45:00Z",
+    "status": "Canceled",
+    "remark": "User canceled request"
+  },
+  {
+    "bookingId": "BOOK-005",
+    "bookingType": "Home Care",
+    "dateTime": "2025-06-11T11:00:00Z",
+    "status": "Upcoming",
+    "remark": "Scheduled visit"
+  }
+]

@@ -126,25 +126,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Blood Donor -->
-    <section class="py-10 px-4 bg-white">
-      <h2 class="text-center text-2xl font-bold text-gray-800 mb-8">
-        Blood Donor
-      </h2>
-      <div class="max-w-5xl mx-auto">
-        <ServiceCard
-          title="Find Blood Donor"
-          description="Help someone in need"
-          bgColor="bg-red-100"
-          descColor="text-red-800"
-        >
-          <template #icon>
-            <i class="fas fa-tint text-red-800 text-4xl"></i>
-          </template>
-        </ServiceCard>
-      </div>
-    </section>
   </div>
 </template>
 
