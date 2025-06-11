@@ -345,12 +345,14 @@
       </div>
     </section>
     <Footer />
+    <BottomNav />
   </div>
 </template>
 
 <script setup>
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
+import BottomNav from "~/components/BottomNav.vue";
 import { onMounted, ref, computed, watch } from "vue";
 import { useDoctorsStore } from "@/stores/doctors";
 import { useClinicsStore } from "@/stores/clinics";

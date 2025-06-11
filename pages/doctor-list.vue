@@ -1,4 +1,5 @@
 <template>
+  <Header />
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4">Doctors in {{ location }}</h1>
 
@@ -86,10 +87,15 @@
       </div>
     </div>
   </div>
+  <Footer />
+  <BottomNav />
 </template>
 
 <script>
 import { useDoctorsStore } from "~/stores/doctors";
+import Header from "~/components/Header.vue";
+import Footer from "~/components/Footer.vue";
+import BottomNav from "~/components/BottomNav.vue";
 
 export default {
   name: "DoctorListPage",

@@ -2,7 +2,9 @@
   <header
     class="bg-white shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-50 backdrop-blur-sm"
   >
-    <div class="text-2xl font-bold lowercase text-gray-900">rundoc</div>
+    <div class="text-2xl font-bold lowercase text-gray-900">
+      <img class="w-28" src="../assets/rundoclogolarge.png" alt="Logo" />
+    </div>
 
     <div class="flex items-center space-x-2">
       <MapPinIcon class="w-5 h-5 text-gray-700" />
@@ -22,13 +24,6 @@
     </div>
 
     <div class="flex items-center space-x-4">
-      <button class="text-black hover:text-blue-600 transition">
-        <MagnifyingGlassIcon class="w-6 h-6" />
-      </button>
-      <button class="text-black hover:text-blue-600 transition">
-        <ShoppingCartIcon class="w-6 h-6" />
-      </button>
-
       <div v-if="authStore.isAuthenticated" class="relative">
         <button
           @click="toggleDropdown"
@@ -76,17 +71,39 @@
       </button>
     </div>
 
+    <!-- Single Popup for Login/Register Flow -->
     <div
       v-if="authStore.showLoginPopup"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center min-h-screen justify-center z-50"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center h-screen justify-center z-50"
     >
-      <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 v-if="!authStore.otpSent" class="text-xl font-bold mb-4">
-          Sign In
-        </h2>
-        <h2 v-else class="text-xl font-bold mb-4">Enter OTP</h2>
-        <form @submit.prevent="handleLoginSubmit" class="space-y-4">
-          <div v-if="!authStore.otpSent">
+      <div
+        class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-4 relative"
+      >
+        <!-- Close Icon -->
+        <button
+          @click="closePopup"
+          class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+
+        <!-- Phone Number Step -->
+        <div v-if="!authStore.otpSent">
+          <h2 class="text-xl font-bold mb-4">Sign In</h2>
+          <form @submit.prevent="handleLoginSubmit" class="space-y-4">
             <label class="block text-sm font-medium text-gray-700"
               >Phone Number</label
             >
@@ -135,8 +152,13 @@
             >
               {{ authStore.isLoading ? "Sending..." : "Continue" }}
             </button>
-          </div>
-          <div v-else>
+          </form>
+        </div>
+
+        <!-- OTP Step -->
+        <div v-else-if="authStore.otpSent && !authStore.showRegisterPopup">
+          <h2 class="text-xl font-bold mb-4">Enter OTP</h2>
+          <form @submit.prevent="handleLoginSubmit" class="space-y-4">
             <label class="block text-sm font-medium text-gray-700"
               >Enter OTP</label
             >
@@ -155,148 +177,125 @@
             >
               {{ authStore.isLoading ? "Verifying..." : "Submit" }}
             </button>
-          </div>
-        </form>
-        <button
-          @click="
-            authStore.showLoginPopup = false;
-            authStore.otpSent = false;
-            authStore.error = null;
-          "
-          class="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-        >
-          Close
-        </button>
-        <p v-if="authStore.error" class="mt-2 text-red-500 text-sm">
-          {{ authStore.error }}
-        </p>
-      </div>
-    </div>
+          </form>
+        </div>
 
-    <div
-      v-if="authStore.showRegisterPopup"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center min-h-screen justify-center z-50"
-    >
-      <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 class="text-xl font-bold mb-4">Register</h2>
-        <form @submit.prevent="handleRegisterSubmit" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700"
-              >First Name *</label
-            >
-            <input
-              v-model="firstName"
-              type="text"
-              class="w-full border rounded-md p-2 focus:outline-none"
-              required
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700"
-              >Last Name *</label
-            >
-            <input
-              v-model="lastName"
-              type="text"
-              class="w-full border rounded-md p-2 focus:outline-none"
-              required
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700"
-              >Gender *</label
-            >
-            <select
-              v-model="gender"
-              class="w-full border rounded-md p-2 focus:outline-none"
-              required
-            >
-              <option value="" disabled>Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700"
-              >Flat, House no., Building, Company, Apartment</label
-            >
-            <input
-              v-model="address.flat"
-              type="text"
-              class="w-full border rounded-md p-2 focus:outline-none"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700"
-              >Area, Street, Sector, Village</label
-            >
-            <input
-              v-model="address.area"
-              type="text"
-              class="w-full border rounded-md p-2 focus:outline-none"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700"
-              >Landmark</label
-            >
-            <input
-              v-model="address.landmark"
-              type="text"
-              class="w-full border rounded-md p-2 focus:outline-none"
-            />
-          </div>
-          <div class="flex space-x-2">
-            <div class="w-1/2">
+        <!-- Register Step -->
+        <div v-if="authStore.showRegisterPopup">
+          <h2 class="text-xl font-bold mb-4">Register</h2>
+          <form @submit.prevent="handleRegisterSubmit" class="space-y-4">
+            <div>
               <label class="block text-sm font-medium text-gray-700"
-                >Pincode</label
+                >First Name *</label
               >
               <input
-                v-model="address.pincode"
+                v-model="firstName"
                 type="text"
                 class="w-full border rounded-md p-2 focus:outline-none"
-                pattern="[0-9]{6}"
+                required
               />
             </div>
-            <div class="w-1/2">
+            <div>
               <label class="block text-sm font-medium text-gray-700"
-                >Town/City</label
+                >Last Name *</label
               >
               <input
-                v-model="address.town"
+                v-model="lastName"
+                type="text"
+                class="w-full border rounded-md p-2 focus:outline-none"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Gender *</label
+              >
+              <select
+                v-model="gender"
+                class="w-full border rounded-md p-2 focus:outline-none"
+                required
+              >
+                <option value="" disabled>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Flat, House no., Building, Company, Apartment</label
+              >
+              <input
+                v-model="address.flat"
                 type="text"
                 class="w-full border rounded-md p-2 focus:outline-none"
               />
             </div>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">State</label>
-            <select
-              v-model="address.state"
-              class="w-full border rounded-md p-2 focus:outline-none"
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Area, Street, Sector, Village</label
+              >
+              <input
+                v-model="address.area"
+                type="text"
+                class="w-full border rounded-md p-2 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Landmark</label
+              >
+              <input
+                v-model="address.landmark"
+                type="text"
+                class="w-full border rounded-md p-2 focus:outline-none"
+              />
+            </div>
+            <div class="flex space-x-2">
+              <div class="w-1/2">
+                <label class="block text-sm font-medium text-gray-700"
+                  >Pincode</label
+                >
+                <input
+                  v-model="address.pincode"
+                  type="text"
+                  class="w-full border rounded-md p-2 focus:outline-none"
+                  pattern="[0-9]{6}"
+                />
+              </div>
+              <div class="w-1/2">
+                <label class="block text-sm font-medium text-gray-700"
+                  >Town/City</label
+                >
+                <input
+                  v-model="address.town"
+                  type="text"
+                  class="w-full border rounded-md p-2 focus:outline-none"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >State</label
+              >
+              <select
+                v-model="address.state"
+                class="w-full border rounded-md p-2 focus:outline-none"
+              >
+                <option value="" disabled>Select State</option>
+                <option value="Tripura">Tripura</option>
+                <option value="Assam">Assam</option>
+              </select>
+            </div>
+            <button
+              type="submit"
+              :disabled="authStore.isLoading"
+              class="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             >
-              <option value="" disabled>Select State</option>
-              <option value="Tripura">Tripura</option>
-              <option value="Assam">Assam</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            :disabled="authStore.isLoading"
-            class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
-            {{ authStore.isLoading ? "Registering..." : "Register" }}
-          </button>
-        </form>
-        <button
-          @click="
-            authStore.showRegisterPopup = false;
-            authStore.error = null;
-          "
-          class="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-        >
-          Close
-        </button>
+              {{ authStore.isLoading ? "Registering..." : "Register" }}
+            </button>
+          </form>
+        </div>
+
         <p v-if="authStore.error" class="mt-2 text-red-500 text-sm">
           {{ authStore.error }}
         </p>
@@ -310,18 +309,13 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useLocationStore } from "@/stores/location";
-import {
-  MagnifyingGlassIcon,
-  ShoppingCartIcon,
-  MapPinIcon,
-} from "@heroicons/vue/24/solid";
+import { MapPinIcon } from "@heroicons/vue/24/solid";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const locationStore = useLocationStore();
 const showDropdown = ref(false);
 
-// Bind selectedLocation to the store
 const selectedLocation = computed({
   get: () => locationStore.selectedLocation,
   set: (value) => locationStore.setLocation(value),
@@ -371,50 +365,63 @@ const logout = () => {
   router.push("/");
 };
 
+const closePopup = () => {
+  authStore.showLoginPopup = false;
+  authStore.otpSent = false;
+  authStore.error = null;
+  authStore.phoneNumber = "";
+  authStore.otp = "";
+  termsAccepted.value = false;
+  firstName.value = "";
+  lastName.value = "";
+  gender.value = "";
+  address.value = {
+    flat: "",
+    area: "",
+    landmark: "",
+    pincode: "",
+    town: "",
+    state: "",
+  };
+};
+
 const handleLoginSubmit = async () => {
-  // If OTP has not been sent yet (first step of login)
   if (!authStore.otpSent) {
     if (!termsAccepted.value) {
       authStore.error = "Please agree to Terms and Conditions";
       return;
     }
+    authStore.isLoading = true;
     const response = await authStore.requestOTP(authStore.phoneNumber);
+    authStore.isLoading = false;
     if (response && response.status === "otp sent") {
-      authStore.error = null; // Clear error on success
-      authStore.otpSent = true; // Crucial: set otpSent to true here
+      authStore.error = null;
+      authStore.otpSent = true;
     } else {
-      authStore.otpSent = false; // Reset if OTP request fails
       authStore.error = response?.msg || "Failed to send OTP.";
     }
   } else {
-    // If OTP has been sent (second step, verifying OTP)
+    authStore.isLoading = true;
     const response = await authStore.verifyOTP(
       authStore.phoneNumber,
       authStore.otp
     );
-
+    authStore.isLoading = false;
     if (response && response.sessionId && response.sessionId !== "0") {
-      // Existing user: logged in successfully
       authStore.login({
         email: response.email || "",
         fullName: response.fullName || "",
         phoneNumber: response.phoneNumber,
         sessionId: response.sessionId,
       });
-      authStore.showLoginPopup = false; // Close popup on successful login
-      authStore.otpSent = false; // Reset OTP state
-      authStore.otp = ""; // Clear OTP input
-      authStore.error = null; // Clear any errors
-      router.push("/"); // Redirect to home or dashboard
+      closePopup();
+      router.push("/");
     } else if (response && response.sessionId === "0") {
-      // New user: OTP verified, now show registration popup
-      authStore.otpSent = false; // Reset OTP state for future logins
-      authStore.otp = ""; // Clear OTP input
-      authStore.showLoginPopup = false; // Close login popup
-      authStore.showRegisterPopup = true; // Open registration popup
-      authStore.error = null; // Clear any errors
+      authStore.otpSent = false;
+      authStore.otp = "";
+      authStore.showRegisterPopup = true;
+      authStore.error = null;
     } else {
-      // Failed OTP verification
       authStore.error = response?.msg || "Invalid OTP. Please try again.";
     }
   }
@@ -430,7 +437,6 @@ const handleRegisterSubmit = async () => {
     address.value.flat,
     address.value.area,
     address.value.landmark,
-    // Ensure pincode and town are together if both exist
     address.value.pincode && address.value.town
       ? `${address.value.pincode} ${address.value.town}`
       : address.value.pincode || address.value.town,
@@ -439,20 +445,19 @@ const handleRegisterSubmit = async () => {
     .filter(Boolean)
     .join(", ");
 
+  authStore.isLoading = true;
   const success = await authStore.registerUser(
     authStore.phoneNumber,
     fullName,
     addressString,
-    gender.value // Pass gender to registerUser
+    gender.value
   );
-
+  authStore.isLoading = false;
   if (success) {
     authStore.showRegisterPopup = false;
-    // The `registerUser` function in your auth store should handle logging in the user
-    // after successful registration and setting the authStore.isAuthenticated state.
-    // If it doesn't, you might need to add authStore.login() call here based on its return.
-    authStore.error = null; // Clear error on successful registration
-    router.push("/"); // Redirect after registration
+    authStore.login({ phoneNumber: authStore.phoneNumber }); // Assume login after registration
+    closePopup();
+    router.push("/");
   }
 };
 </script>
@@ -460,5 +465,11 @@ const handleRegisterSubmit = async () => {
 <style scoped>
 body {
   scroll-padding-top: 80px;
+}
+
+@media (max-width: 640px) {
+  .max-w-md {
+    max-width: 90%; /* Full width on small screens */
+  }
 }
 </style>

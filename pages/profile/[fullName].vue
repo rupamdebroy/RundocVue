@@ -40,6 +40,7 @@
     </div>
   </div>
   <Footer />
+  <BottomNav />
 </template>
 
 <script setup>
@@ -48,6 +49,7 @@ definePageMeta({
 });
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
+import BottomNav from "~/components/BottomNav.vue";
 import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();

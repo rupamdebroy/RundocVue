@@ -83,12 +83,14 @@
       </div>
     </section>
     <Footer />
+    <BottomNav />
   </div>
 </template>
 
 <script setup>
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
+import BottomNav from "~/components/BottomNav.vue";
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";

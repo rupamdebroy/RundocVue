@@ -82,12 +82,14 @@
       </div>
     </section>
     <Footer />
+    <BottomNav />
   </div>
 </template>
 
 <script setup>
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
+import BottomNav from "~/components/BottomNav.vue";
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { usePharmacyStore } from "@/stores/pharmacy";
