@@ -33,7 +33,7 @@
                 </div>
                 <!-- View Doctors button -->
                 <NuxtLink
-                  :to="`/find-clinic?clinic=${clinic.name
+                  :to="`/find-clinic?location=${location}&clinic=${clinic.name
                     .toLowerCase()
                     .replace(/\s+/g, '-')}`"
                   class="ml-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all"
@@ -96,15 +96,15 @@
             <div class="bg-white p-6 rounded-lg shadow-sm">
               <h1 class="text-2xl font-bold mb-2">{{ clinic.name }}</h1>
               <p class="text-gray-600 mb-2">{{ clinic.address }}</p>
-              <p class="text-gray-600">{{ clinic.details }}</p>
+              <p class="text-gray-600">{{ clinic.city }}</p>
             </div>
 
             <!-- Doctors List -->
             <div>
               <h2 class="text-xl font-semibold mb-4">Meet the Doctors</h2>
-              <div v-if="clinic.doctors.length > 0" class="space-y-4">
+              <div v-if="doctors.length > 0" class="space-y-4">
                 <div
-                  v-for="doctor in clinic.doctors"
+                  v-for="doctor in doctors"
                   :key="doctor.id"
                   class="flex items-center p-4 border rounded-lg shadow-sm"
                 >
@@ -116,15 +116,15 @@
                   </div>
                   <!-- Doctor Details -->
                   <div class="flex-1">
-                    <p class="text-lg font-semibold">{{ doctor.name }}</p>
+                    <p class="text-lg font-semibold">{{ doctor.fullName }}</p>
                     <p class="text-sm">Specialty: {{ doctor.specialty }}</p>
                     <p class="text-sm">
-                      Experience: {{ doctor.experience }} years
+                      ID: {{ doctor.id }}
                     </p>
                   </div>
                   <!-- View Button -->
                   <NuxtLink
-                    :to="`/doctor/${doctor.docSlug}?clinic=${clinic.name
+                    :to="`/doctor/${doctor.id}?clinic=${clinic.name
                       .toLowerCase()
                       .replace(/\s+/g, '-')}`"
                     class="ml-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all"
@@ -172,6 +172,7 @@ const locationStore = useLocationStore();
 
 const location = ref("");
 const clinic = ref(null);
+const doctors = ref([]);
 const loading = ref(false);
 const error = ref("");
 const debugMode = ref(true); // Enable debug mode to see logs and debug info
@@ -200,8 +201,8 @@ const fetchData = async () => {
     location.value = route.query.location || locationStore.currentLocation;
     console.log("Find Clinic Page - Location:", location.value);
     if (location.value && location.value !== "Select Location") {
-      locationStore.setLocation(location.value); // Update the store with the query location
-      await clinicsStore.fetchClinics(location.value); // Fetch clinics for this location
+      locationStore.setLocation(location.value);
+      await clinicsStore.fetchClinics(location.value);
       console.log("Clinics fetched:", clinicsStore.clinics);
     } else {
       clinicsStore.error = "Please select a location.";
@@ -218,32 +219,41 @@ const fetchData = async () => {
       return;
     }
 
-    // Ensure clinics are fetched for the current location
-    console.log("Clinics in store before fetch:", clinicsStore.clinics.length);
-    if (!clinicsStore.clinics.length) {
-      const location = locationStore.currentLocation;
-      console.log("Fetching clinics for location:", location);
-      if (location && location !== "Select Location") {
-        await clinicsStore.fetchClinics(location);
-        console.log("Clinics fetched:", clinicsStore.clinics);
-      } else {
-        // Redirect to prompt location selection
-        router.push(`/find-clinic?location=${locationStore.currentLocation}`);
-        error.value = "Please select a location.";
-        loading.value = false;
-        console.log("Redirected: No location selected");
-        return;
-      }
+    // Ensure we have the location
+    const location = locationStore.currentLocation;
+    if (!location || location === "Select Location") {
+      router.push(`/find-clinic`);
+      error.value = "Please select a location first.";
+      loading.value = false;
+      console.log("Redirected: No location selected");
+      return;
     }
 
-    // Find the clinic by slug
+    // Find the clinic by slug from store or fetch if needed
     clinic.value = clinicsStore.clinics.find(
       (c) => c.name.toLowerCase().replace(/\s+/g, "-") === clinicSlug
     );
-    console.log("Clinic found:", clinic.value);
+
     if (!clinic.value) {
-      error.value = "Clinic not found.";
-      console.log("Error: Clinic not found");
+      // If clinic not in store, try to fetch it
+      const clinicId = clinicSlug.split('-').pop(); // Assuming slug contains ID
+      if (clinicId) {
+        const clinicData = await clinicsStore.fetchClinicDetails(clinicId);
+        if (clinicData) {
+          clinic.value = clinicData.clinic;
+          doctors.value = clinicData.doctors;
+        } else {
+          error.value = "Clinic not found.";
+        }
+      } else {
+        error.value = "Invalid clinic identifier.";
+      }
+    } else {
+      // If clinic is in store but we need doctors
+      const clinicDetails = await clinicsStore.fetchClinicDetails(clinic.value.id);
+      if (clinicDetails) {
+        doctors.value = clinicDetails.doctors;
+      }
     }
   }
 
