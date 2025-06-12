@@ -99,7 +99,7 @@ export const useClinicsStore = defineStore("clinics", {
             city: clinicData[0].city
           },
           doctors: clinicData.map(item => ({
-            id: item.docid,
+            id: item.docname,
             name: item.docname,
             fullName: item.docfname,
             specialty: item.specialties,
