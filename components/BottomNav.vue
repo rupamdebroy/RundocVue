@@ -1,88 +1,99 @@
 <template>
   <nav
     v-if="isMobileOrTablet"
-    class="fixed bottom-0 left-0 right-0 bg-white shadow-md py-4 px-6 z-50"
+    class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-md py-3 px-4 z-50"
   >
-    <div class="flex justify-around">
+    <div class="flex justify-between items-center text-black text-sm">
+      <!-- Home -->
       <NuxtLink
         to="/"
-        class="flex flex-col items-center text-gray-700 hover:text-green-600"
+        class="flex flex-col items-center gap-1 hover:text-black/80"
       >
-        <i class="fas fa-home text-xl"></i>
-        <span class="text-xs mt-1">Home</span>
+        <i class="fas fa-home text-lg"></i>
+        <span>home</span>
       </NuxtLink>
+
+      <!-- Doctor -->
       <NuxtLink
         :to="`/find-doctor?location=${locationStore.currentLocation}`"
-        class="flex flex-col items-center text-gray-700 hover:text-green-600"
+        class="flex flex-col items-center gap-1 hover:text-black/80"
       >
-        <i class="fas fa-user-md text-xl"></i>
-        <span class="text-xs mt-1">Doctor</span>
+        <i class="fas fa-user-md text-lg"></i>
+        <span>doctor</span>
       </NuxtLink>
+
+      <!-- Clinic -->
       <NuxtLink
         :to="`/find-clinic?location=${locationStore.currentLocation}`"
-        class="flex flex-col items-center text-gray-700 hover:text-green-600"
+        class="flex flex-col items-center gap-1 hover:text-black/80"
       >
-        <i class="fas fa-clinic-medical text-xl"></i>
-        <span class="text-xs mt-1">Clinic</span>
+        <i class="fas fa-clinic-medical text-lg"></i>
+        <span>clinic</span>
       </NuxtLink>
+
+      <!-- Test -->
       <NuxtLink
         :to="`/labtest?location=${locationStore.currentLocation}`"
-        class="flex flex-col items-center text-gray-700 hover:text-green-600"
+        class="flex flex-col items-center gap-1 hover:text-black/80"
       >
-        <i class="fas fa-vial text-xl"></i>
-        <span class="text-xs mt-1">Test</span>
+        <i class="fas fa-vial text-lg"></i>
+        <span>test</span>
       </NuxtLink>
+
+      <!-- More dropdown -->
       <div class="relative">
         <button
           @click="toggleMoreDropdown"
-          class="flex flex-col items-center text-gray-700 hover:text-green-600 focus:outline-none"
+          class="flex flex-col items-center gap-1 hover:text-black/80 focus:outline-none"
         >
-          <i class="fas fa-ellipsis-h text-xl"></i>
-          <span class="text-xs mt-1">More</span>
+          <i class="fas fa-ellipsis-h text-lg"></i>
+          <span>more</span>
         </button>
-        <div
-          v-if="showMoreDropdown"
-          class="absolute bottom-full mb-2 w-32 bg-white border rounded-md shadow-lg"
-        >
-          <NuxtLink
-            :to="`/pharmacy?location=${locationStore.currentLocation}`"
-            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+
+        <!-- Dropdown -->
+        <transition name="fade">
+          <div
+            v-if="showMoreDropdown"
+            class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-40 bg-white border shadow-lg rounded-lg py-2"
           >
-            Medicine
-          </NuxtLink>
-          <NuxtLink
-            :to="`/find-ambulance?location=${locationStore.currentLocation}`"
-            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          >
-            Ambulance
-          </NuxtLink>
-          <NuxtLink
-            :to="`/home-care?location=${locationStore.currentLocation}`"
-            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          >
-            Home Care
-          </NuxtLink>
-          <NuxtLink
-            to="/blood-doner"
-            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          >
-            Blood Donor
-          </NuxtLink>
-        </div>
+            <NuxtLink
+              :to="`/pharmacy?location=${locationStore.currentLocation}`"
+              class="block px-4 py-2 hover:bg-gray-100 text-sm"
+              >medicine</NuxtLink
+            >
+            <NuxtLink
+              :to="`/find-ambulance?location=${locationStore.currentLocation}`"
+              class="block px-4 py-2 hover:bg-gray-100 text-sm"
+              >ambulance</NuxtLink
+            >
+            <NuxtLink
+              :to="`/home-care?location=${locationStore.currentLocation}`"
+              class="block px-4 py-2 hover:bg-gray-100 text-sm"
+              >home care</NuxtLink
+            >
+            <NuxtLink
+              to="/blood-doner"
+              class="block px-4 py-2 hover:bg-gray-100 text-sm"
+              >blood donor</NuxtLink
+            >
+          </div>
+        </transition>
       </div>
+
+      <!-- Help -->
       <NuxtLink
         to="/help"
-        class="flex flex-col items-center text-gray-700 hover:text-green-600"
+        class="flex flex-col items-center gap-1 hover:text-black/80"
       >
-        <i class="fas fa-question-circle text-xl"></i>
-        <span class="text-xs mt-1">Help</span>
+        <i class="fas fa-question-circle text-lg"></i>
+        <span>help</span>
       </NuxtLink>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useLocationStore } from "@/stores/location";
 
 const locationStore = useLocationStore();
@@ -90,23 +101,13 @@ const showMoreDropdown = ref(false);
 const isMobileOrTablet = ref(false);
 
 const updateScreenSize = () => {
-  isMobileOrTablet.value = window.innerWidth <= 1024; // Tablet and mobile breakpoint
+  isMobileOrTablet.value = window.innerWidth <= 1024;
 };
-
-onMounted(() => {
-  updateScreenSize(); // Initial check
-  window.addEventListener("resize", updateScreenSize);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("resize", updateScreenSize);
-});
 
 const toggleMoreDropdown = () => {
   showMoreDropdown.value = !showMoreDropdown.value;
 };
 
-// Close dropdown when clicking outside
 const handleClickOutside = (event) => {
   if (!event.target.closest(".relative")) {
     showMoreDropdown.value = false;
@@ -114,25 +115,32 @@ const handleClickOutside = (event) => {
 };
 
 onMounted(() => {
+  updateScreenSize();
+  window.addEventListener("resize", updateScreenSize);
   document.addEventListener("click", handleClickOutside);
 });
 
 onUnmounted(() => {
+  window.removeEventListener("resize", updateScreenSize);
   document.removeEventListener("click", handleClickOutside);
 });
 </script>
 
 <style scoped>
-/* Ensure content isn't hidden behind fixed nav on mobile */
+/* Make space for bottom nav */
 @media (max-width: 1024px) {
   body {
-    padding-bottom: 80px; /* Height of bottom nav */
+    padding-bottom: 72px;
   }
 }
 
-/* Style the dropdown */
-.absolute {
-  left: 50%;
-  transform: translateX(-50%);
+/* Simple fade animation */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease-in-out;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

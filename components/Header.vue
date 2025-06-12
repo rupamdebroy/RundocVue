@@ -1,11 +1,17 @@
 <template>
   <header
-    class="bg-white shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-50 backdrop-blur-sm"
+    class="bg-white shadow-md py-3 px-5 sm:px-6 flex justify-between items-center sticky top-0 z-50 backdrop-blur-sm"
   >
+    <!-- Logo -->
     <div class="text-2xl font-bold lowercase text-gray-900">
-      <img class="w-28" src="../assets/rundoclogolarge.png" alt="Logo" />
+      <img
+        class="w-24 sm:w-28"
+        src="../assets/rundoclogolarge.png"
+        alt="Logo"
+      />
     </div>
 
+    <!-- Location Selector -->
     <div class="flex items-center space-x-2">
       <MapPinIcon class="w-5 h-5 text-gray-700" />
       <select
@@ -23,11 +29,12 @@
       </select>
     </div>
 
+    <!-- User / Auth Actions -->
     <div class="flex items-center space-x-4">
       <div v-if="authStore.isAuthenticated" class="relative">
         <button
           @click="toggleDropdown"
-          class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold"
+          class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold"
         >
           {{
             authStore.userInfo.fullName
@@ -35,9 +42,11 @@
               : "U"
           }}
         </button>
+
+        <!-- Dropdown -->
         <div
           v-if="showDropdown"
-          class="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg py-2 z-50"
+          class="absolute right-0 mt-2 w-44 sm:w-48 bg-white border rounded-md shadow-lg py-2 z-50"
         >
           <NuxtLink
             :to="profileRoute"
@@ -62,244 +71,28 @@
         </div>
       </div>
 
+      <!-- Login/Register Icon -->
       <button
         v-else
         @click="authStore.showLoginPopup = true"
-        class="px-4 py-1 border border-black text-sm text-black rounded hover:bg-black hover:text-white transition"
+        class="w-9 h-9 flex items-center justify-center border border-black text-black rounded-full hover:bg-black hover:text-white transition"
+        title="Login/Register"
       >
-        Login/Register
-      </button>
-    </div>
-
-    <!-- Single Popup for Login/Register Flow -->
-    <div
-      v-if="authStore.showLoginPopup"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center h-screen justify-center z-50"
-    >
-      <div
-        class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-4 relative"
-      >
-        <!-- Close Icon -->
-        <button
-          @click="closePopup"
-          class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
-        </button>
-
-        <!-- Phone Number Step -->
-        <div v-if="!authStore.otpSent">
-          <h2 class="text-xl font-bold mb-4">Sign In</h2>
-          <form @submit.prevent="handleLoginSubmit" class="space-y-4">
-            <label class="block text-sm font-medium text-gray-700"
-              >Phone Number</label
-            >
-            <div class="flex items-center">
-              <span class="px-2 bg-gray-100 border rounded-l-md">+91</span>
-              <input
-                v-model="authStore.phoneNumber"
-                type="tel"
-                placeholder="9876543210"
-                class="w-full border rounded-r-md p-2 focus:outline-none"
-                required
-                pattern="[0-9]{10}"
-              />
-            </div>
-            <p class="text-sm text-gray-500 mt-1">
-              OTP will be sent to this number by SMS
-            </p>
-            <label class="flex items-center mt-2">
-              <input
-                v-model="shareOnWhatsApp"
-                type="checkbox"
-                class="mr-2"
-                checked
-                disabled
-              />
-              <span class="text-sm text-gray-700"
-                >Share health tips, appointment details, and offers with me on
-                WhatsApp</span
-              >
-            </label>
-            <label class="flex items-center mt-2">
-              <input
-                v-model="termsAccepted"
-                type="checkbox"
-                class="mr-2"
-                required
-              />
-              <span class="text-sm text-gray-700"
-                >Agree to Terms and Conditions</span
-              >
-            </label>
-            <button
-              type="submit"
-              :disabled="authStore.isLoading"
-              class="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-            >
-              {{ authStore.isLoading ? "Sending..." : "Continue" }}
-            </button>
-          </form>
-        </div>
-
-        <!-- OTP Step -->
-        <div v-else-if="authStore.otpSent && !authStore.showRegisterPopup">
-          <h2 class="text-xl font-bold mb-4">Enter OTP</h2>
-          <form @submit.prevent="handleLoginSubmit" class="space-y-4">
-            <label class="block text-sm font-medium text-gray-700"
-              >Enter OTP</label
-            >
-            <input
-              v-model="authStore.otp"
-              type="text"
-              placeholder="123456"
-              class="w-full border rounded-md p-2 focus:outline-none"
-              required
-              pattern="[0-9]{6}"
-            />
-            <button
-              type="submit"
-              :disabled="authStore.isLoading"
-              class="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-            >
-              {{ authStore.isLoading ? "Verifying..." : "Submit" }}
-            </button>
-          </form>
-        </div>
-
-        <!-- Register Step -->
-        <div v-if="authStore.showRegisterPopup">
-          <h2 class="text-xl font-bold mb-4">Register</h2>
-          <form @submit.prevent="handleRegisterSubmit" class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >First Name *</label
-              >
-              <input
-                v-model="firstName"
-                type="text"
-                class="w-full border rounded-md p-2 focus:outline-none"
-                required
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >Last Name *</label
-              >
-              <input
-                v-model="lastName"
-                type="text"
-                class="w-full border rounded-md p-2 focus:outline-none"
-                required
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >Gender *</label
-              >
-              <select
-                v-model="gender"
-                class="w-full border rounded-md p-2 focus:outline-none"
-                required
-              >
-                <option value="" disabled>Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >Flat, House no., Building, Company, Apartment</label
-              >
-              <input
-                v-model="address.flat"
-                type="text"
-                class="w-full border rounded-md p-2 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >Area, Street, Sector, Village</label
-              >
-              <input
-                v-model="address.area"
-                type="text"
-                class="w-full border rounded-md p-2 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >Landmark</label
-              >
-              <input
-                v-model="address.landmark"
-                type="text"
-                class="w-full border rounded-md p-2 focus:outline-none"
-              />
-            </div>
-            <div class="flex space-x-2">
-              <div class="w-1/2">
-                <label class="block text-sm font-medium text-gray-700"
-                  >Pincode</label
-                >
-                <input
-                  v-model="address.pincode"
-                  type="text"
-                  class="w-full border rounded-md p-2 focus:outline-none"
-                  pattern="[0-9]{6}"
-                />
-              </div>
-              <div class="w-1/2">
-                <label class="block text-sm font-medium text-gray-700"
-                  >Town/City</label
-                >
-                <input
-                  v-model="address.town"
-                  type="text"
-                  class="w-full border rounded-md p-2 focus:outline-none"
-                />
-              </div>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700"
-                >State</label
-              >
-              <select
-                v-model="address.state"
-                class="w-full border rounded-md p-2 focus:outline-none"
-              >
-                <option value="" disabled>Select State</option>
-                <option value="Tripura">Tripura</option>
-                <option value="Assam">Assam</option>
-              </select>
-            </div>
-            <button
-              type="submit"
-              :disabled="authStore.isLoading"
-              class="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-            >
-              {{ authStore.isLoading ? "Registering..." : "Register" }}
-            </button>
-          </form>
-        </div>
-
-        <p v-if="authStore.error" class="mt-2 text-red-500 text-sm">
-          {{ authStore.error }}
-        </p>
-      </div>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5.121 17.804A11.955 11.955 0 0112 15c2.486 0 4.78.755 6.879 2.043M15 11a3 3 0 10-6 0 3 3 0 006 0z"
+          />
+        </svg>
+      </button>
     </div>
   </header>
 </template>

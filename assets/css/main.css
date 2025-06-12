@@ -3,3 +3,580 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+@import url("https://fonts.googleapis.com/css2?family=Outfit&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+/* Apply fonts globally */
+
+/* h1,
+h2,
+h3 {
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+} */
+
+/* .text-outfit {
+  font-family: "Outfit", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+} */
+/* index.css */
+
+/* colors.css */
+
+.squares-canvas {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block; /* Remove default margin/padding of canvas */
+}
+
+:root {
+  /* Backgrounds */
+  --primary-bg: #ffffff; /* Pure white for main background */
+  --secondary-bg: #f7fafd; /* Soft bluish-gray section bg */
+
+  /* Text Colors */
+  --primary-text: #1e293b; /* Very dark blue-gray for high contrast */
+  --primary-text-hover: #0f172a;
+
+  --secondary-text: #64748b; /* Muted blue-gray for secondary text */
+  --secondary-text-hover: #334155;
+
+  --hero-text: #2563eb; /* Blue CTA color for headings/text */
+  --error-text: #dc2626; /* Standard red for errors */
+  --correct-text: #16a34a; /* Green for success/correct */
+
+  /* Buttons */
+  --primary-btn: #0ea5e9; /* Sky Blue for main CTA (like Apollo) */
+  --primary-btn-hover: #0284c7;
+
+  --secondary-btn: #e0f2fe; /* Light sky blue bg */
+  --secondary-btn-hover: #bae6fd;
+
+  /* Borders */
+  --primary-border: #cbd5e1; /* Light gray-blue border */
+  --secondary-border: #e2e8f0;
+}
+
+body {
+  /* font-family: "Outfit", sans-serif;
+  font-weight: 400; */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* .bg-primary {
+  width: 100%;
+  height: 100%;
+  --color: var(--secondary-bg);
+  background-color: var(--primary-bg);
+  background-image: linear-gradient(
+      0deg,
+      transparent 24%,
+      var(--color) 25%,
+      var(--color) 26%,
+      transparent 27%,
+      transparent 74%,
+      var(--color) 75%,
+      var(--color) 76%,
+      transparent 77%,
+      transparent
+    ),
+    linear-gradient(
+      90deg,
+      transparent 24%,
+      var(--color) 25%,
+      var(--color) 26%,
+      transparent 27%,
+      transparent 74%,
+      var(--color) 75%,
+      var(--color) 76%,
+      transparent 77%,
+      transparent
+    );
+  background-size: 55px 55px;
+} */
+
+/* .bg-secondary {
+  background-color: var(--secondary-bg);
+} */
+/* 
+.text-primary {
+  color: var(--primary-text);
+} */
+
+.text-primary-hover:hover {
+  color: var(--primary-text-hover);
+}
+
+/* .text-secondary {
+  color: var(--secondary-text);
+} */
+
+.text-secondary-hover:hover {
+  color: var(--secondary-text-hover);
+}
+
+/* .text-hero {
+  color: var(--hero-text);
+} */
+
+.text-error {
+  color: var(--error-text);
+  font-weight: 200;
+  font-style: italic;
+  font-size: smaller;
+  letter-spacing: 1px;
+  margin-top: 2px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.bg-primary {
+  background-color: var(--primary-bg);
+  background-image: none;
+}
+
+.bg-secondary {
+  background-color: var(--secondary-bg);
+}
+
+.text-primary {
+  color: var(--primary-text);
+}
+
+.text-secondary {
+  color: var(--secondary-text);
+}
+
+.text-hero {
+  color: var(--hero-text);
+}
+
+.text-correct {
+  color: var(--correct-text);
+}
+
+.card {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+/* Add this CSS to your styles */
+.btn-primary {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.125rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  border-radius: 9999px;
+  /* Updated CTA Gradient */
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6); /* Softer tones */
+
+  padding: 0.5rem 1.5rem; /* Added padding for better proportions */
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 15px rgba(108, 40, 216, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2); /* Outer glow + inner shine */
+  border: none; /* Cleaned up border-bottom */
+  overflow: hidden; /* For animation effects */
+}
+
+.btn-primary-CTA {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.525rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  border-radius: 9999px;
+  /* Updated CTA Gradient */
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6); /* Softer tones */
+
+  padding: 1.4rem 2rem; /* Added padding for better proportions */
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 15px rgba(108, 40, 216, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2); /* Outer glow + inner shine */
+  border: none; /* Cleaned up border-bottom */
+  overflow: hidden; /* For animation effects */
+}
+
+.btn-primary-CTA:hover {
+  background: linear-gradient(
+    185deg,
+    #6c28d8,
+    #7c3aed
+  ); /* Slightly lighter gradient */
+  box-shadow: 0 6px 20px rgba(108, 40, 216, 0.6); /* Enhanced shadow */
+  transform: translateY(-8px); /* Subtle lift */
+  animation: pulseGlow 1.5s infinite ease-in-out; /* Pulse animation */
+}
+
+.btn-primary:hover {
+  background: linear-gradient(
+    185deg,
+    #6c28d8,
+    #7c3aed
+  ); /* Slightly lighter gradient */
+  box-shadow: 0 6px 20px rgba(108, 40, 216, 0.6); /* Enhanced shadow */
+  transform: translateY(-2px); /* Subtle lift */
+  animation: pulseGlow 1.5s infinite ease-in-out; /* Pulse animation */
+}
+
+/* Keyframes for the hover animation */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 6px 20px rgba(108, 40, 216, 0.6);
+  }
+  50% {
+    box-shadow: 0 6px 25px rgba(108, 40, 216, 0.8);
+  }
+  100% {
+    box-shadow: 0 6px 20px rgba(108, 40, 216, 0.6);
+  }
+}
+
+/*SCROLL*/
+/* @keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-scroll {
+  display: flex;
+  gap: 3rem;
+  animation: scroll 600s linear infinite;
+  width: max-content;
+} */
+
+.btn-primary:focus {
+  outline: 2px solid #6c28d8; /* focus:outline-none is overridden with a custom focus ring */
+  outline-offset: 2px; /* focus:ring-offset-2 */
+  box-shadow: 0 0 0 2px rgba(108, 40, 216, 0.6); /* focus:ring-2 and focus:ring-primary-btn */
+}
+
+.btn-primary:focus-visible {
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px rgba(108, 40, 216, 0.6); /* Focus ring */
+}
+
+.btn-primary .arrow-icon {
+  transition: transform 0.3s ease-in-out;
+}
+
+.btn-primary:hover .arrow-icon {
+  transform: translateX(4px); /* Group hover:translate-x-1 */
+}
+
+.btn-primary-hover:hover {
+  background-color: var(--primary-btn-hover);
+  color: white;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-btn);
+  color: white;
+  border-width: 1px;
+  border-color: var(--primary-border);
+}
+
+.btn-secondary-hover:hover {
+  background-color: var(--secondary-btn-hover);
+  color: white;
+  border-width: 1px;
+  border-color: var(--primary-border);
+}
+
+.border-primary {
+  border-bottom-width: 1px;
+  border-color: var(--primary-border);
+}
+
+.border-secondary {
+  border-bottom-width: 1px;
+  border-color: var(--secondary-border);
+}
+/* --------------- */
+
+.phone-input-container {
+  width: 40%;
+  background-color: #030712;
+  color: #2b384d;
+}
+
+.phone-input-field {
+  width: 80px;
+  background-color: #030712;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.phone-dropdown {
+  background-color: #030712;
+}
+
+.phone-search {
+  background-color: #030712;
+  border: none;
+}
+
+/* For all browsers */
+::-webkit-scrollbar {
+  width: 14px; /* Adjust scrollbar width */
+  background-color: var(--primary-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    to right,
+    #6c6c6e,
+    #282829
+  ); /* Custom thumb color */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to right, #19191a, #282829); /* Hover color */
+}
+
+::-webkit-scrollbar-track {
+  background: var(--primary-bg);
+  border-radius: 10px;
+}
+
+.poppins-thin {
+  font-family: "Poppins", serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.poppins-extralight {
+  font-family: "Poppins", serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.poppins-light {
+  font-family: "Poppins", serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.poppins-regular {
+  font-family: "Poppins", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.poppins-medium {
+  font-family: "Poppins", serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.poppins-semibold {
+  font-family: "Poppins", serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.poppins-bold {
+  font-family: "Poppins", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.poppins-extrabold {
+  font-family: "Poppins", serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.poppins-black {
+  font-family: "Poppins", serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.poppins-thin-italic {
+  font-family: "Poppins", serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.poppins-extralight-italic {
+  font-family: "Poppins", serif;
+  font-weight: 200;
+  font-style: italic;
+}
+
+.poppins-light-italic {
+  font-family: "Poppins", serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.poppins-regular-italic {
+  font-family: "Poppins", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.poppins-medium-italic {
+  font-family: "Poppins", serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.poppins-semibold-italic {
+  font-family: "Poppins", serif;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.poppins-bold-italic {
+  font-family: "Poppins", serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.poppins-extrabold-italic {
+  font-family: "Poppins", serif;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.poppins-black-italic {
+  font-family: "Poppins", serif;
+  font-weight: 900;
+  font-style: italic;
+}
+
+.outfit-thin {
+  font-family: "Outfit", serif;
+  font-optical-sizing: auto;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.outfit-light {
+  font-family: "Outfit", serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.outfit-regular {
+  font-family: "Outfit", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.outfit-medium {
+  font-family: "Outfit", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.outfit-bold {
+  font-family: "Outfit", serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.outfit-black {
+  font-family: "Outfit", serif;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.roboto-thin {
+  font-family: "Roboto", serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.roboto-extralight {
+  font-family: "Roboto", serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.roboto-light {
+  font-family: "Roboto", serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.roboto-regular {
+  font-family: "Roboto", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.roboto-medium {
+  font-family: "Roboto", serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.roboto-bold {
+  font-family: "Roboto", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.roboto-black {
+  font-family: "Roboto", serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.roboto-thin-italic {
+  font-family: "Roboto", serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.roboto-light-italic {
+  font-family: "Roboto", serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.roboto-regular-italic {
+  font-family: "Roboto", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.roboto-medium-italic {
+  font-family: "Roboto", serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.roboto-bold-italic {
+  font-family: "Roboto", serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.roboto-black-italic {
+  font-family: "Roboto", serif;
+  font-weight: 900;
+  font-style: italic;
+}

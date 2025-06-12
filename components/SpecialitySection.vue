@@ -1,36 +1,56 @@
 <template>
-  <section class="py-10 px-4">
-    <h2 class="text-center text-2xl font-bold text-gray-800 mb-8">
-      Find a Doctor by Speciality in {{ locationStore.currentLocation }}
-    </h2>
-    <div v-if="loading" class="text-center">
-      <p>Loading specialties...</p>
-    </div>
-    <div v-else-if="error" class="text-center text-red-500">
-      <p>{{ error }}</p>
-    </div>
-    <div v-else class="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-5xl mx-auto">
-      <div
-        v-for="speciality in uniqueSpecialties"
-        :key="speciality"
-        class="text-center cursor-pointer"
-        @click="goToDoctorList(speciality)"
-      >
-        <div
-          class="w-16 h-16 mx-auto rounded-full bg-gray-200 flex items-center justify-center"
-        >
-          <!-- Placeholder for speciality icon -->
-        </div>
-        <p class="mt-2 text-sm text-gray-700">{{ speciality }}</p>
+  <section class="py-14 px-6 bg-gray-50">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-center text-3xl font-semibold text-gray-800 mb-10">
+        Explore Specialties in
+        <span class="text-blue-600">{{ locationStore.currentLocation }}</span>
+      </h2>
+
+      <div v-if="loading" class="flex justify-center items-center py-10">
+        <p class="text-gray-600 animate-pulse">Loading specialties...</p>
       </div>
-      <NuxtLink to="/find-doctor" class="text-center">
+
+      <div v-else-if="error" class="text-center text-red-600 py-8">
+        <p>{{ error }}</p>
+      </div>
+
+      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
         <div
-          class="w-16 h-16 mx-auto rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold"
+          v-for="speciality in uniqueSpecialties"
+          :key="speciality"
+          @click="goToDoctorList(speciality)"
+          class="cursor-pointer text-center group transition-all duration-200"
         >
-          See More
+          <div
+            class="w-16 h-16 mx-auto rounded-full bg-white border border-gray-200 flex items-center justify-center group-hover:bg-blue-100 transition"
+          >
+            <!-- Placeholder for icons -->
+            <span
+              class="text-sm font-medium text-gray-600 group-hover:text-blue-600"
+              >🔍</span
+            >
+          </div>
+          <p
+            class="mt-3 text-sm text-gray-700 group-hover:text-blue-600 transition"
+          >
+            {{ speciality }}
+          </p>
         </div>
-        <p class="mt-2 text-sm text-gray-700">See More</p>
-      </NuxtLink>
+
+        <!-- See More -->
+        <NuxtLink to="/find-doctor" class="text-center group">
+          <div
+            class="w-16 h-16 mx-auto rounded-full bg-white border border-gray-300 flex items-center justify-center text-gray-700 font-medium group-hover:bg-blue-100 group-hover:text-blue-600 transition"
+          >
+            +
+          </div>
+          <p
+            class="mt-3 text-sm text-gray-700 group-hover:text-blue-600 transition"
+          >
+            See More
+          </p>
+        </NuxtLink>
+      </div>
     </div>
   </section>
 </template>
@@ -44,6 +64,7 @@ import { useDoctorsStore } from "~/stores/doctors";
 const router = useRouter();
 const locationStore = useLocationStore();
 const doctorsStore = useDoctorsStore();
+
 const uniqueSpecialties = ref([]);
 const loading = ref(true);
 const error = ref(null);
@@ -51,21 +72,20 @@ const error = ref(null);
 const fetchSpecialties = async () => {
   loading.value = true;
   error.value = null;
+
   try {
     await doctorsStore.fetchDoctors(locationStore.currentLocation);
-    if (doctorsStore.doctors.length > 0) {
-      const specialties = doctorsStore.doctors.map(
-        (doctor) => doctor.specilities
-      );
-      const normalizedSpecialties = specialties.map((s) => {
-        if (s.toLowerCase() === "orthapadic") return "Orthopedic";
-        return s;
-      });
-      uniqueSpecialties.value = [...new Set(normalizedSpecialties)].sort();
-    }
+    const specialties = doctorsStore.doctors.map((d) => d.specilities);
+
+    const cleaned = specialties.map((s) => {
+      if (s.toLowerCase() === "orthapadic") return "Orthopedic";
+      return s;
+    });
+
+    uniqueSpecialties.value = [...new Set(cleaned)].sort();
   } catch (err) {
-    console.error("Error fetching specialties:", err);
-    error.value = "Failed to fetch specialties.";
+    console.error(err);
+    error.value = "Failed to fetch specialties. Please try again later.";
   } finally {
     loading.value = false;
   }
@@ -73,10 +93,10 @@ const fetchSpecialties = async () => {
 
 const goToDoctorList = (speciality) => {
   router.push({
-    path: "/doctor-list", // Changed from /find-doctor to /doctor-list
+    path: "/doctor-list",
     query: {
       location: locationStore.currentLocation,
-      specialities: speciality, // Kept as is
+      specialities: speciality,
     },
   });
 };

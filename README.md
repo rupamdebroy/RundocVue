@@ -88,3 +88,12 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 Lazy Loading
 Shimmer UI
 Infinite Scroll
+
+Frontend & Resources
+Theme: ShadCN UI Theme Generator - Zippy Strapper (https://shadcn.dev)
+Components: 21st.dev (https://21st.dev), uiverse (uiverse.io)
+Fonts: Roboto, Outfit, Poppins
+Icons: React Icons, Lucide
+Animations: Framer Motion (https://www.framer.com/motion/), reactbits (https://www.reactbits.dev)
+CSS: Tailwind CSS
+Wireframe Design: Excalidraw
