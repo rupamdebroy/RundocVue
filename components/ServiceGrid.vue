@@ -1,10 +1,11 @@
 <template>
-  <div>
+  <div class="-z-10">
     <!-- Primary Services: Doctor Appointment, Lab Test, Clinics -->
     <section class="py-0 px-4">
-      <h2 class="text-center text-2xl font-bold text-gray-800 mb-8">
-        Our Services
+      <h2 class="text-center text-3xl font-semibold text-gray-800 mb-10">
+        Our <span class="text-blue-600">Services</span>
       </h2>
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
         <NuxtLink
           :to="`/find-doctor?location=${locationStore.currentLocation}`"
@@ -57,10 +58,11 @@
     </section>
 
     <!-- Other Services -->
-    <section class="py-10 px-4 bg-white">
-      <h2 class="text-center text-2xl font-bold text-gray-800 mb-8">
-        Other Services
+    <section class="py-10 px-4 bg-white mt-4">
+      <h2 class="text-center text-3xl font-semibold text-gray-800 mb-10">
+        Other <span class="text-blue-600">Services</span>
       </h2>
+
       <div
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto"
       >

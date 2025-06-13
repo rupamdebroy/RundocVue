@@ -12,11 +12,20 @@
     </p>
   </section>
 
-  <!-- Horizontal Banner Below Main Banner -->
+  <!-- Horizontal Banner -->
   <div class="bg-blue-600 text-white text-center py-3 px-4">
     <p class="text-sm sm:text-base font-medium">
       500+ Verified Doctors | 100+ Specialties | Trusted by Thousands
     </p>
+  </div>
+
+  <!-- Horizontal Banner (Now Below Search) -->
+  <div
+    class="w-full max-w-80 md:max-w-3xl lg:max-w-7xl mx-auto bg-gray-200 rounded-xl shadow-md h-36 flex items-center justify-center mt-10 px-10"
+  >
+    <span class="text-base text-gray-700 font-medium"
+      >Horizontal Ad Banner</span
+    >
   </div>
 
   <!-- Specialties Section -->
@@ -34,35 +43,43 @@
         <p>{{ doctorsStore.error }}</p>
       </div>
 
-      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
-        <div
-          v-for="specialty in uniqueSpecialties"
-          :key="specialty"
-          @click="goToDoctorList(specialty)"
-          class="cursor-pointer text-center group transition-all duration-200"
+      <div v-else>
+        <transition-group
+          name="fade"
+          tag="div"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6"
         >
           <div
-            class="w-16 h-16 mx-auto rounded-full bg-white border border-gray-200 flex items-center justify-center group-hover:bg-blue-100 transition"
+            v-for="specialty in displayedSpecialties"
+            :key="specialty"
+            @click="goToDoctorList(specialty)"
+            class="cursor-pointer text-center group transition-all duration-200"
           >
-            <span
-              class="text-sm font-medium text-gray-600 group-hover:text-blue-600"
+            <div
+              class="w-16 h-16 mx-auto rounded-full bg-white border border-gray-200 flex items-center justify-center group-hover:bg-blue-100 transition"
             >
-              {{ specialty.charAt(0).toUpperCase() }}
-            </span>
+              <span
+                class="text-sm font-medium text-gray-600 group-hover:text-blue-600"
+              >
+                {{ specialty.charAt(0).toUpperCase() }}
+              </span>
+            </div>
+            <p
+              class="mt-3 text-sm text-gray-700 group-hover:text-blue-600 transition"
+            >
+              {{ specialty }}
+            </p>
           </div>
-          <p
-            class="mt-3 text-sm text-gray-700 group-hover:text-blue-600 transition"
-          >
-            {{ specialty }}
-          </p>
-        </div>
-      </div>
+        </transition-group>
 
-      <div
-        v-if="!loading && uniqueSpecialties.length === 0"
-        class="text-center mt-6"
-      >
-        <p class="text-gray-500">No specialties available in this location.</p>
+        <div v-if="uniqueSpecialties.length > 15" class="text-center mt-6">
+          <button
+            @click="showAllSpecialties = !showAllSpecialties"
+            class="text-sm text-blue-600 font-semibold hover:underline transition"
+          >
+            {{ showAllSpecialties ? "See Less" : "See More" }}
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -86,34 +103,42 @@
         <p>{{ symptomsError }}</p>
       </div>
 
-      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
-        <div
-          v-for="symptom in uniqueSymptoms"
-          :key="symptom"
-          @click="goToDoctorListBySymptom(symptom)"
-          class="cursor-pointer text-center group transition-all duration-200"
+      <div v-else>
+        <transition-group
+          name="fade"
+          tag="div"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6"
         >
           <div
-            class="w-16 h-16 mx-auto rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center group-hover:bg-blue-100 transition"
+            v-for="symptom in displayedSymptoms"
+            :key="symptom"
+            @click="goToDoctorListBySymptom(symptom)"
+            class="cursor-pointer text-center group transition-all duration-200"
           >
-            <span
-              class="text-sm font-medium text-gray-600 group-hover:text-blue-600"
-              >🤒</span
+            <div
+              class="w-16 h-16 mx-auto rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center group-hover:bg-blue-100 transition"
             >
+              <span
+                class="text-sm font-medium text-gray-600 group-hover:text-blue-600"
+                >🤒</span
+              >
+            </div>
+            <p
+              class="mt-3 text-sm text-gray-700 group-hover:text-blue-600 transition"
+            >
+              {{ symptom }}
+            </p>
           </div>
-          <p
-            class="mt-3 text-sm text-gray-700 group-hover:text-blue-600 transition"
-          >
-            {{ symptom }}
-          </p>
-        </div>
-      </div>
+        </transition-group>
 
-      <div
-        v-if="!symptomsLoading && uniqueSymptoms.length === 0"
-        class="text-center mt-6"
-      >
-        <p class="text-gray-500">No symptoms available for this location.</p>
+        <div v-if="uniqueSymptoms.length > 15" class="text-center mt-6">
+          <button
+            @click="showAllSymptoms = !showAllSymptoms"
+            class="text-sm text-blue-600 font-semibold hover:underline transition"
+          >
+            {{ showAllSymptoms ? "See Less" : "See More" }}
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -146,7 +171,22 @@ export default {
       uniqueSymptoms: [],
       symptomsLoading: false,
       symptomsError: null,
+      showAllSpecialties: false,
+      showAllSymptoms: false,
     };
+  },
+
+  computed: {
+    displayedSpecialties() {
+      return this.showAllSpecialties
+        ? this.uniqueSpecialties
+        : this.uniqueSpecialties.slice(0, 15);
+    },
+    displayedSymptoms() {
+      return this.showAllSymptoms
+        ? this.uniqueSymptoms
+        : this.uniqueSymptoms.slice(0, 15);
+    },
   },
 
   async mounted() {
@@ -213,10 +253,13 @@ export default {
 </script>
 
 <style scoped>
-/* Smooth center-align inside circle */
-.rounded-full {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(5px);
 }
 </style>

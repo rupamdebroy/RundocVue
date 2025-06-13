@@ -30,18 +30,20 @@
     <div v-else>
       <!-- Filters -->
       <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">
-        <div class="mx-auto">
+        <div class="mx-auto w-full sm:max-w-xs relative z-10">
           <label
             for="specialty-select"
             class="block text-base font-medium text-gray-700 mb-2"
-            >Select Specialty:</label
           >
+            Select Specialty:
+          </label>
           <select
             id="specialty-select"
             v-model="selectedSpecialty"
-            class="border border-gray-300 rounded-xl px-4 py-2 w-full shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            class="border border-gray-300 rounded-xl px-4 py-2 w-52 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white text-gray-700"
             @change="updateSpecialty"
           >
+            <option disabled value="">-- Select Specialty --</option>
             <option
               v-for="specialty in uniqueSpecialties"
               :key="specialty"
@@ -81,7 +83,7 @@
       <!-- Doctor list -->
       <div
         v-if="filteredDoctors.length > 0"
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10"
       >
         <div
           v-for="doctor in filteredDoctors"
@@ -89,17 +91,15 @@
           class="flex flex-col justify-between p-4 border rounded-xl shadow-md bg-white hover:shadow-lg transition-all"
         >
           <!-- Top row: Avatar + Info inline -->
-          <div class="flex items-center space-x-4 mb-4">
-            <!-- Avatar -->
+          <div class="flex items-center space-x-6 mb-2">
             <div
               class="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0"
             >
               {{ doctor.name.charAt(0).toUpperCase() }}
             </div>
 
-            <!-- Name and details in one column -->
-            <div class="flex-1 space-y-0.5">
-              <p class="text-lg font-semibold text-gray-900">
+            <div class="flex-1 space-y-1">
+              <p class="text-lg font-semibold text-gray-900 mb-2">
                 {{ doctor.name }}
               </p>
               <p class="text-sm text-gray-700">
@@ -115,11 +115,11 @@
 
           <!-- View button full width -->
           <button
-            class="mt-auto w-full bg-gray-200 text-gray-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-300 transition-all flex items-center justify-between"
+            class="mt-4 w-full bg-gray-200 text-gray-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-300 transition-all flex items-center justify-between"
             @click="viewDoctor(doctor.doc)"
           >
             <span>View Doctor</span>
-            <span class="ml-2">></span>
+            <i class="fas fa-arrow-right ml-2"></i>
           </button>
         </div>
       </div>
@@ -161,9 +161,7 @@ export default {
 
   computed: {
     filteredDoctors() {
-      if (this.isAllSelected) {
-        return this.doctorsStore.doctors;
-      }
+      if (this.isAllSelected) return this.doctorsStore.doctors;
       return this.doctorsStore.doctors.filter(
         (doctor) => doctor.specilities === this.selectedSpecialty
       );
@@ -246,9 +244,24 @@ export default {
 </script>
 
 <style scoped>
+/* select {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+} */
+
 .rounded-full {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (max-width: 640px) {
+  select {
+    font-size: 16px; /* prevents iOS zoom on tap */
+  }
 }
 </style>

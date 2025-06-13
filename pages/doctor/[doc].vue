@@ -48,7 +48,7 @@
         <!-- Banner Ad -->
         <div class="max-w-7xl mx-auto">
           <div
-            class="bg-gray-200 rounded-xl shadow-md h-24 flex items-center justify-center"
+            class="bg-gray-200 rounded-xl shadow-md h-32 flex items-center justify-center"
           >
             <span class="text-base text-gray-700 font-medium"
               >Horizontal Ad Banner</span

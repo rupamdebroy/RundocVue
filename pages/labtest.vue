@@ -2,90 +2,130 @@
   <div>
     <Header />
     <section class="min-h-screen py-8">
-      <div class="container mx-auto p-4">
-        <!-- Debug Information -->
-        <div v-if="debugMode" class="text-center text-gray-500 mb-4">
-          <p>Debug: Location = {{ locationStore.currentLocation }}</p>
-          <p>Debug: Lab Centers in Store = {{ labStore.labCenters.length }}</p>
-          <p>Error = {{ error || "None" }}</p>
-        </div>
+      <div class="container mx-auto px-4">
+        <h1 class="text-3xl font-semibold text-center text-gray-800 mb-2">
+          Book Lab Test & Diagnostics in
+          <span class="text-blue-600">{{ location }}</span>
+        </h1>
+        <p class="text-center text-green-600 font-medium mb-10">
+          Enjoy Free Booking – No Extra Charges!
+        </p>
 
-        <!-- Lab Test & Diagnostics Page -->
-        <div>
-          <h1 class="text-2xl font-bold mb-4 text-center">
-            Book Lab Test & Diagnostics in {{ location }}
-          </h1>
-          <p class="text-center text-green-600 font-semibold mb-4">
-            Enjoy Free Booking – No Extra Charges!
-          </p>
-
-          <!-- Disclaimer -->
-          <p class="text-center text-gray-600 mb-6">
-            RUNDOC ONLY FACILITATES BOOKINGS WITH REGISTERED PARTNER
-            LABORATORIES. RUNDOC DOES NOT OPERATE ANY LAB OR DIAGNOSTIC CENTER
-            OF ITS OWN.
-          </p>
-
-          <!-- Loading state -->
-          <div v-if="loading" class="text-center">
-            <p>Loading lab centers...</p>
-          </div>
-
-          <!-- Error state -->
-          <div v-else-if="error" class="text-center text-red-500">
-            <p>{{ error }}</p>
-          </div>
-
-          <!-- Lab Centers data -->
-          <div v-else>
-            <!-- Lab Center list -->
-            <div v-if="labStore.labCenters.length > 0" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          <div
+            v-for="(info, index) in infoboxes"
+            :key="index"
+            class="relative w-full h-52 group perspective"
+          >
+            <div
+              class="relative w-full h-full transition-transform duration-500 transform-style group-hover:rotate-y-180"
+            >
               <div
-                v-for="lab in labStore.labCenters"
-                :key="lab.id"
-                class="relative flex items-center p-4 border rounded-lg shadow-sm bg-white"
+                class="absolute w-full h-full rounded-xl p-6 shadow-md flex flex-col items-center justify-center text-center backface-hidden"
+                :class="[
+                  index % 3 === 0
+                    ? 'bg-blue-50'
+                    : index % 3 === 1
+                    ? 'bg-green-50'
+                    : 'bg-yellow-50',
+                ]"
               >
-                <!-- Discount Badge -->
-                <span
-                  class="absolute top-0 right-0 mt-2 mr-2 bg-purple-500 text-white text-xs font-semibold px-2 py-1 rounded-full"
-                >
-                  Discount up to {{ lab.discount }}%
-                </span>
-
-                <!-- Lab Photo -->
-                <img
-                  :src="lab.dp"
-                  alt="Lab DP"
-                  class="w-16 h-16 rounded-full mr-4 object-cover"
-                  @error="handleImageError"
-                />
-
-                <!-- Lab details -->
-                <div class="flex-1">
-                  <p class="text-lg font-semibold">{{ lab.name }}</p>
-                  <p class="text-sm text-gray-600">{{ lab.address }}</p>
+                <div class="text-blue-600 text-4xl mb-2">
+                  <i :class="info.icon"></i>
                 </div>
+                <h3 class="text-lg font-semibold text-gray-800">
+                  {{ info.title }}
+                </h3>
+              </div>
 
-                <!-- Order Lab Test button -->
-                <NuxtLink
-                  :to="`/order-labtest?labcenterId=${lab.id}`"
-                  class="ml-4 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-all"
+              <div
+                class="absolute w-full h-full rounded-xl p-6 shadow-md text-sm text-gray-700 bg-white backface-hidden rotate-y-180"
+              >
+                <p
+                  class="whitespace-pre-line leading-relaxed text-lg items-center justify-center"
                 >
-                  Order Lab Test
-                </NuxtLink>
+                  {{ info.description }}
+                </p>
               </div>
             </div>
-
-            <!-- No lab centers found -->
-            <div v-else class="text-center">
-              <p>No lab centers found in this location.</p>
-            </div>
-
-            <!-- Info message -->
-            <p v-if="labStore.info" class="text-gray-600 mt-4 text-center">
-              {{ labStore.info }}
-            </p>
           </div>
+        </div>
+
+        <!-- Horizontal Banner -->
+        <div class="bg-blue-600 text-white text-center py-3 px-4 mb-8">
+          <p class="text-sm sm:text-base font-medium normal-case">
+            Rundoc only facilitates bookings with registered partner
+            Laboratories. Rundoc does not operate any lab or diagnostic center
+            Of its own.
+          </p>
+        </div>
+
+        <div v-if="loading" class="text-center py-8">
+          <p class="text-gray-500">Loading lab centers...</p>
+        </div>
+
+        <div v-else-if="error" class="text-center text-red-500 py-4">
+          <p>{{ error }}</p>
+        </div>
+
+        <div v-else>
+          <div
+            v-if="labStore.labCenters.length > 0"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6"
+          >
+            <div
+              v-for="lab in labStore.labCenters"
+              :key="lab.id"
+              class="p-4 py-6 border rounded-xl shadow-md bg-white flex flex-col justify-between hover:shadow-lg transition-all relative"
+            >
+              <span
+                class="absolute top-0 right-0 mt-2 mr-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full"
+              >
+                Up to {{ lab.discount }}% OFF
+              </span>
+
+              <div class="flex items-center space-x-4 mb-4 mt-4">
+                <div
+                  class="w-16 h-16 rounded-full flex items-center justify-center text-blue-600 text-xl font-bold bg-blue-200 shrink-0 overflow-hidden"
+                >
+                  <img
+                    v-if="lab.dp"
+                    :src="lab.dp"
+                    alt="Lab DP"
+                    class="w-full h-full object-cover"
+                    @error="handleImageError"
+                  />
+                  <span v-else>{{ lab.name?.charAt(0) || "?" }}</span>
+                </div>
+
+                <div>
+                  <p class="text-lg font-semibold text-gray-800">
+                    {{ lab.name }}
+                  </p>
+                  <p class="text-sm text-gray-600">{{ lab.address }}</p>
+                </div>
+              </div>
+
+              <NuxtLink
+                :to="`/order-labtest?labcenterId=${lab.id}`"
+                class="mt-6 w-full bg-gray-200 text-gray-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-300 transition-all flex items-center justify-between"
+              >
+                <span> Order Lab Test</span>
+                <i class="fas fa-arrow-right ml-2"></i>
+              </NuxtLink>
+            </div>
+          </div>
+
+          <div v-else class="text-center py-10">
+            <p class="text-gray-500">No lab centers found in this location.</p>
+          </div>
+
+          <p
+            v-if="labStore.info"
+            class="text-center text-gray-600 mt-4 text-sm"
+          >
+            {{ labStore.info }}
+          </p>
         </div>
       </div>
     </section>
@@ -111,51 +151,68 @@ const locationStore = useLocationStore();
 const location = ref("");
 const loading = ref(false);
 const error = ref("");
-const debugMode = ref(true); // Enable debug mode to see logs and debug info
+
+const infoboxes = [
+  {
+    title: "Book Tests Online",
+    description:
+      "Schedule your lab tests anytime, anywhere.\n\nNo waiting lines – fast and convenient bookings.",
+    icon: "fas fa-calendar-check",
+  },
+  {
+    title: "Certified Labs",
+    description:
+      "Partnered with trusted and accredited laboratories.\n\nEnsuring accurate and reliable test results.",
+    icon: "fas fa-vial",
+  },
+  {
+    title: "Home Sample Collection",
+    description:
+      "Get samples collected at your doorstep.\n\nSafe, hygienic, and hassle-free experience.",
+    icon: "fas fa-house-user",
+  },
+  {
+    title: "Quick Reports",
+    description:
+      "Receive your test reports faster.\n\nAccess digital reports directly on your phone or email.",
+    icon: "fas fa-file-medical-alt",
+  },
+  {
+    title: "Affordable Packages",
+    description:
+      "Choose from cost-effective health test packages.\n\nHigh-quality services at reasonable prices.",
+    icon: "fas fa-rupee-sign",
+  },
+  {
+    title: "Local & Outstation Booking",
+    description:
+      "Book tests within your city or from outside – we’ve got you covered.\n\nFlexible booking options for your convenience.",
+    icon: "fas fa-globe-asia",
+  },
+];
 
 const fetchData = async () => {
   loading.value = true;
   error.value = "";
 
-  console.log("Fetching data for route:", route.query);
-
-  // Restore location from localStorage
   await locationStore.restoreLocation();
-  console.log("Restored location:", locationStore.currentLocation);
-
-  // Use location from query if available, otherwise fall back to store
   location.value = route.query.location || locationStore.currentLocation;
-  console.log("Location for Lab Test Page:", location.value);
 
   if (location.value && location.value !== "Select Location") {
     locationStore.setLocation(location.value);
-    console.log("Fetching lab centers for location:", location.value);
     await labStore.fetchLabCenters(location.value);
-    console.log("Lab centers fetched:", labStore.labCenters.length);
   } else {
     error.value = "Please select a location.";
-    console.log("Error: No location selected");
     router.push("/");
   }
 
   loading.value = false;
 };
 
-onMounted(async () => {
-  await fetchData();
-});
+onMounted(fetchData);
 
-// Watch for route changes
-watch(
-  () => route.query,
-  async () => {
-    console.log("Route query changed:", route.query);
-    await fetchData();
-  },
-  { deep: true }
-);
+watch(() => route.query, fetchData, { deep: true });
 
-// Fallback image for lab DP if the URL fails
 const handleImageError = (event) => {
   event.target.src = "https://via.placeholder.com/64?text=Lab";
 };
@@ -164,5 +221,30 @@ const handleImageError = (event) => {
 <style scoped>
 .container {
   max-width: 1200px;
+}
+
+/* Add perspective to the parent to enable 3D transform */
+.perspective {
+  perspective: 1000px;
+}
+
+/* Preserve 3D transforms on the element that will be flipped */
+.transform-style {
+  transform-style: preserve-3d;
+}
+
+/* Hide the backface of the elements during the flip */
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Apply the initial rotation to the back face */
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* This is the key change: when the .group is hovered, apply rotateY(180deg) to its child with .transform-style */
+.group:hover .group-hover\:rotate-y-180 {
+  transform: rotateY(180deg);
 }
 </style>

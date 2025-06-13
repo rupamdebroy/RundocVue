@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="`flex items-center justify-between px-6 py-5 rounded-xl ${bgColor}`"
+    :class="`flex items-center justify-between px-6 py-5 rounded-xl ${bgColor} border`"
     class="w-full h-24"
   >
     <!-- Left Section: Icon + Text -->
@@ -12,7 +12,7 @@
 
       <!-- Title + Description -->
       <div>
-        <h3 class="text-base font-semibold text-black leading-tight">
+        <h3 class="text-lg font-semibold text-gray-900">
           {{ title }}
         </h3>
         <p

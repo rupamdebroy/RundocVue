@@ -1,59 +1,85 @@
 <template>
   <div>
     <Header />
-    <section class="min-h-screen py-8">
-      <div class="container mx-auto p-4">
-        <!-- Debug Information -->
-        <div v-if="debugMode" class="text-center text-gray-500 mb-4">
-          <p>Debug: Location = {{ locationStore.currentLocation }}</p>
-          <p>Debug: Lab Center ID = {{ labcenterId }}</p>
-          <p>
+    <section class="min-h-screen bg-gray-50 py-12">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Debug Information (Hidden by default, toggleable for devs) -->
+        <div
+          v-if="debugMode"
+          class="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-6 rounded-md"
+        >
+          <p class="text-sm text-yellow-700">
+            Debug: Location = {{ locationStore.currentLocation }}
+          </p>
+          <p class="text-sm text-yellow-700">
+            Debug: Lab Center ID = {{ labcenterId }}
+          </p>
+          <p class="text-sm text-yellow-700">
             Debug: Lab Center = {{ labCenter ? labCenter.name : "Not Found" }}
           </p>
-          <p>Error = {{ error || "None" }}</p>
+          <p class="text-sm text-yellow-700">Error = {{ error || "None" }}</p>
         </div>
 
         <!-- Order Lab Test & Diagnostics Page -->
-        <div>
-          <h1 class="text-2xl font-bold mb-4 text-center">
-            Place Your Test & Diagnostics Order
+        <div class="max-w-3xl mx-auto">
+          <h1 class="text-3xl font-semibold text-center text-gray-800 mb-2">
+            Book Lab Test
+            <span class="text-blue-600">Lab Test</span> &
+            <span class="text-blue-600">Diagnostics</span>
           </h1>
-          <p class="text-center text-green-600 font-semibold mb-4">
-            Enjoy Free Booking – No Extra Charges!
+
+          <p class="text-center text-green-600 font-medium mb-6 animate-pulse">
+            Free Booking – No Extra Charges!
           </p>
 
-          <!-- Disclaimer -->
-          <p class="text-center text-gray-600 mb-6">
-            RUNDOC ONLY FACILITATES BOOKINGS WITH REGISTERED PARTNER
-            LABORATORIES. RUNDOC DOES NOT OPERATE ANY LAB OR DIAGNOSTIC CENTER
-            OF ITS OWN.
-          </p>
-
-          <!-- Loading state -->
-          <div v-if="loading" class="text-center">
-            <p>Loading order form...</p>
+          <!-- Horizontal Banner -->
+          <div class="bg-blue-600 text-white text-center py-3 px-4 mb-8">
+            <p class="text-sm sm:text-base font-medium normal-case">
+              Rundoc only facilitates bookings with registered partner
+              Laboratories. Rundoc does not operate any lab or diagnostic center
+              Of its own.
+            </p>
           </div>
 
-          <!-- Error state -->
-          <div v-else-if="error" class="text-center text-red-500">
+          <!-- Loading State -->
+          <div v-if="loading" class="text-center py-8">
+            <div
+              class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"
+            ></div>
+            <p class="text-gray-600 mt-2">Loading order form...</p>
+          </div>
+
+          <!-- Error State -->
+          <div
+            v-else-if="error"
+            class="text-center bg-red-100 text-red-600 p-4 rounded-lg"
+          >
             <p>{{ error }}</p>
           </div>
 
           <!-- Order Form -->
-          <div v-else-if="labCenter" class="max-w-2xl mx-auto">
+          <div
+            v-else-if="labCenter"
+            class="bg-white p-6 sm:p-8 rounded-xl shadow-lg"
+          >
             <!-- Lab Center Name -->
-            <h2 class="text-xl font-semibold mb-2">{{ labCenter.name }}</h2>
+            <h2 class="text-2xl font-semibold text-gray-900 mb-6">
+              {{ labCenter.name }}
+            </h2>
 
             <!-- Form -->
-            <form @submit.prevent="submitOrder" class="space-y-4">
+            <form @submit.prevent="submitOrder" class="space-y-6">
               <!-- Patient Name -->
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="patientName"
+                  class="block text-sm font-medium text-gray-700"
                   >Patient Name</label
                 >
                 <select
+                  id="patientName"
                   v-model="form.patientName"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-purple-500 focus:border-purple-500"
+                  class="mt-1 block w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
                 >
                   <option value="" disabled>Select a patient</option>
@@ -69,107 +95,129 @@
 
               <!-- Gender -->
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="gender"
+                  class="block text-sm font-medium text-gray-700"
                   >Gender</label
                 >
                 <input
+                  id="gender"
                   v-model="form.gender"
                   type="text"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100"
+                  class="mt-1 block w-full border border-gray-300 rounded-lg p-3 bg-gray-100 text-gray-600 cursor-not-allowed"
                   readonly
                 />
               </div>
 
               <!-- Age -->
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label for="age" class="block text-sm font-medium text-gray-700"
                   >Age</label
                 >
                 <input
+                  id="age"
                   v-model="form.age"
                   type="number"
                   min="0"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-purple-500 focus:border-purple-500"
+                  class="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
                 />
               </div>
 
               <!-- Email Address -->
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="email"
+                  class="block text-sm font-medium text-gray-700"
                   >Email Address</label
                 >
                 <input
+                  id="email"
                   v-model="form.email"
                   type="email"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-purple-500 focus:border-purple-500"
+                  class="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
                 />
               </div>
 
               <!-- Phone Number -->
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="phone"
+                  class="block text-sm font-medium text-gray-700"
                   >Phone Number</label
                 >
                 <input
+                  id="phone"
                   v-model="form.phone"
                   type="tel"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-purple-500 focus:border-purple-500"
+                  class="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
                 />
               </div>
 
               <!-- Delivery Address -->
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="street"
+                  class="block text-sm font-medium text-gray-700"
                   >Delivery Address</label
                 >
                 <input
+                  id="street"
                   v-model="form.deliveryAddress.street"
                   type="text"
                   placeholder="Street Address"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-purple-500 focus:border-purple-500"
+                  class="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
                 />
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <!-- State/Province -->
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    for="state"
+                    class="block text-sm font-medium text-gray-700"
                     >State/Province</label
                   >
                   <input
+                    id="state"
                     v-model="form.deliveryAddress.state"
                     type="text"
-                    class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-purple-500 focus:border-purple-500"
+                    class="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                     required
                   />
                 </div>
 
                 <!-- City (Disabled, pre-filled) -->
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    for="city"
+                    class="block text-sm font-medium text-gray-700"
                     >City</label
                   >
                   <input
+                    id="city"
                     :value="locationStore.currentLocation"
                     type="text"
-                    class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100"
+                    class="mt-1 block w-full border border-gray-300 rounded-lg p-3 bg-gray-100 text-gray-600 cursor-not-allowed"
                     disabled
                   />
                 </div>
 
                 <!-- ZIP/Postal Code -->
                 <div>
-                  <label class="block text-sm font-medium text-gray-700"
+                  <label
+                    for="zip"
+                    class="block text-sm font-medium text-gray-700"
                     >ZIP/Postal Code</label
                   >
                   <input
+                    id="zip"
                     v-model="form.deliveryAddress.zip"
                     type="text"
-                    class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-purple-500 focus:border-purple-500"
+                    class="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                     required
                   />
                 </div>
@@ -177,46 +225,52 @@
 
               <!-- Upload Prescription -->
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="prescription"
+                  class="block text-sm font-medium text-gray-700"
                   >Upload Prescription</label
                 >
                 <input
+                  id="prescription"
                   type="file"
                   accept="image/*,application/pdf"
                   @change="handlePrescriptionUpload"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  class="mt-1 block w-full border border-gray-300 rounded-lg p-3 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all"
                 />
-                <p v-if="form.prescription" class="text-sm text-gray-600">
+                <p v-if="form.prescription" class="text-sm text-gray-600 mt-2">
                   Uploaded: {{ form.prescription.name }}
                 </p>
               </div>
 
-              <!-- Available Tests Button -->
-              <button
-                type="button"
-                @click="showPopup('tests')"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all"
-              >
-                Available Tests
-              </button>
-
-              <!-- Available Diagnostics Button -->
-              <button
-                type="button"
-                @click="showPopup('diagnostics')"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all ml-2"
-              >
-                Available Diagnostics
-              </button>
+              <!-- Action Buttons -->
+              <div class="flex flex-col sm:flex-row gap-4">
+                <button
+                  type="button"
+                  @click="showPopup('tests')"
+                  class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all font-medium"
+                >
+                  Available Tests
+                </button>
+                <button
+                  type="button"
+                  @click="showPopup('diagnostics')"
+                  class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all font-medium"
+                >
+                  Available Diagnostics
+                </button>
+              </div>
 
               <!-- Home Collection -->
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="homeCollection"
+                  class="block text-sm font-medium text-gray-700"
                   >Do you need home collection?</label
                 >
                 <select
+                  id="homeCollection"
                   v-model="form.homeCollection"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-purple-500 focus:border-purple-500"
+                  class="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 >
                   <option value="Yes">Yes</option>
                   <option value="No">No</option>
@@ -225,32 +279,37 @@
 
               <!-- Notes -->
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="notes"
+                  class="block text-sm font-medium text-gray-700"
                   >Notes</label
                 >
                 <textarea
+                  id="notes"
                   v-model="form.notes"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-purple-500 focus:border-purple-500"
-                  rows="3"
+                  class="mt-1 block w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  rows="4"
                   placeholder="Add any additional notes..."
                 ></textarea>
               </div>
 
               <!-- Added Tests/Diagnostics -->
-              <div v-if="form.selectedTests.length > 0" class="mt-4">
-                <h3 class="text-lg font-semibold">
+              <div v-if="form.selectedTests.length > 0" class="mt-6">
+                <h3 class="text-lg font-semibold text-gray-900">
                   Selected Tests/Diagnostics
                 </h3>
-                <ul class="list-disc pl-5 mt-2">
+                <ul class="mt-3 space-y-3">
                   <li
                     v-for="(test, index) in form.selectedTests"
                     :key="test.id"
-                    class="flex items-center justify-between"
+                    class="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
                   >
-                    <span>{{ test.name }} (₹{{ test.price }})</span>
+                    <span class="text-gray-700"
+                      >{{ test.name }} (₹{{ test.price }})</span
+                    >
                     <button
                       @click="removeTest(index)"
-                      class="text-red-500 hover:text-red-700"
+                      class="text-red-500 hover:text-red-700 transition-all"
                       aria-label="Remove test"
                     >
                       <i class="fas fa-times"></i>
@@ -260,16 +319,20 @@
               </div>
 
               <!-- Terms and Conditions -->
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-3">
                 <input
+                  id="terms"
                   v-model="form.acceptTerms"
                   type="checkbox"
-                  class="h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                  class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   required
                 />
-                <label class="text-sm text-gray-700">
+                <label for="terms" class="text-sm text-gray-700">
                   I accept the
-                  <NuxtLink to="/terms" class="text-purple-600 hover:underline">
+                  <NuxtLink
+                    to="/terms"
+                    class="text-blue-600 hover:underline font-medium"
+                  >
                     Terms & Conditions
                   </NuxtLink>
                 </label>
@@ -279,7 +342,7 @@
               <button
                 type="submit"
                 :disabled="form.selectedTests.length === 0"
-                class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all disabled:bg-gray-400"
+                class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Submit Order
               </button>
@@ -288,10 +351,12 @@
             <!-- Popup for Tests/Diagnostics -->
             <div
               v-if="showPopupModal"
-              class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+              class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"
             >
-              <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-                <h3 class="text-lg font-semibold mb-4">
+              <div
+                class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-y-auto"
+              >
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">
                   {{
                     popupType === "tests"
                       ? "Available Tests"
@@ -300,28 +365,30 @@
                 </h3>
                 <div
                   v-if="popupItems.length > 0"
-                  class="space-y-2 max-h-60 overflow-y-auto"
+                  class="space-y-3 max-h-96 overflow-y-auto"
                 >
                   <div
                     v-for="item in popupItems"
                     :key="item.id"
-                    class="flex items-center justify-between"
+                    class="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
                   >
-                    <span>{{ item.name }} (₹{{ item.price }})</span>
+                    <span class="text-gray-700"
+                      >{{ item.name }} (₹{{ item.price }})</span
+                    >
                     <button
                       @click="addTest(item)"
-                      class="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
+                      class="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 transition-all text-sm font-medium"
                     >
                       Add
                     </button>
                   </div>
                 </div>
-                <div v-else class="text-center text-gray-500">
+                <div v-else class="text-center text-gray-500 py-4">
                   Not Available
                 </div>
                 <button
                   @click="showPopupModal = false"
-                  class="mt-4 w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  class="mt-6 w-full bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition-all font-medium"
                 >
                   Close
                 </button>
@@ -330,7 +397,10 @@
           </div>
 
           <!-- Fallback -->
-          <div v-else class="text-center text-red-500">
+          <div
+            v-else
+            class="text-center bg-red-100 text-red-600 p-4 rounded-lg"
+          >
             <p>Lab center not found. Please select a lab center.</p>
           </div>
         </div>
@@ -361,7 +431,7 @@ const labcenterId = ref(route.query.labcenterId);
 const labCenter = ref(null);
 const loading = ref(false);
 const error = ref("");
-const debugMode = ref(true);
+const debugMode = ref(false); // Changed to false for production
 
 // Form data
 const form = ref({
@@ -380,7 +450,7 @@ const form = ref({
   selectedTests: [],
   homeCollection: "No",
   notes: "",
-  acceptTerms: true, // Auto-tick terms
+  acceptTerms: true,
 });
 
 // Simulated patient data
@@ -400,7 +470,6 @@ const fetchData = async () => {
 
   console.log("Fetching data for route:", route.query);
 
-  // Restore location from localStorage
   await locationStore.restoreLocation();
   console.log("Restored location:", locationStore.currentLocation);
 
@@ -414,14 +483,12 @@ const fetchData = async () => {
     return;
   }
 
-  // Fetch lab centers if not already in store
   if (!labStore.labCenters.length || labStore.selectedLocation !== location) {
     console.log("Fetching lab centers for location:", location);
     await labStore.fetchLabCenters(location);
     console.log("Lab centers fetched:", labStore.labCenters.length);
   }
 
-  // Find the lab center
   labCenter.value = labStore.labCenters.find(
     (l) => l.id === parseInt(labcenterId.value)
   );
@@ -432,7 +499,6 @@ const fetchData = async () => {
     console.log("Error: Lab center not found");
   }
 
-  // Pre-fill form data if user is authenticated
   if (authStore.isAuthenticated) {
     form.value.email = authStore.userInfo.email || "";
     form.value.phone = authStore.userInfo.phone || "";
@@ -449,7 +515,6 @@ onMounted(async () => {
   await fetchData();
 });
 
-// Watch for route changes
 watch(
   () => route.query.labcenterId,
   async (newId) => {
@@ -458,7 +523,6 @@ watch(
   }
 );
 
-// Watch for patient selection to pre-fill gender
 watch(
   () => form.value.patientName,
   (newPatientName) => {
@@ -469,7 +533,6 @@ watch(
   }
 );
 
-// Popup methods
 const showPopup = (type) => {
   popupType.value = type;
   popupItems.value = type === "tests" ? labStore.tests : labStore.diagnostics;
@@ -487,7 +550,6 @@ const removeTest = (index) => {
   form.value.selectedTests.splice(index, 1);
 };
 
-// Form methods
 const handlePrescriptionUpload = (event) => {
   form.value.prescription = event.target.files[0];
 };
@@ -505,7 +567,6 @@ const submitOrder = () => {
     return;
   }
 
-  // Generate a unique order ID (simulated)
   const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   console.log("Order submitted:", {
     orderId,
@@ -531,5 +592,34 @@ const submitOrder = () => {
 <style scoped>
 .container {
   max-width: 1200px;
+}
+
+/* Ensure smooth transitions for interactive elements */
+.transition-all {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Custom focus ring for accessibility */
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Ensure modal is scrollable on small screens */
+@media (max-height: 600px) {
+  .max-h-96 {
+    max-height: 60vh;
+  }
+}
+
+/* File input custom styling */
+input[type="file"] {
+  cursor: pointer;
+}
+
+/* Disabled input styling */
+input:disabled,
+select:disabled {
+  background-color: #f3f4f6;
+  opacity: 0.7;
 }
 </style>

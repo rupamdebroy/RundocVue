@@ -14,49 +14,54 @@
         <p>{{ error }}</p>
       </div>
 
-      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
-        <div
-          v-for="speciality in uniqueSpecialties"
-          :key="speciality"
-          @click="goToDoctorList(speciality)"
-          class="cursor-pointer text-center group transition-all duration-200"
+      <div v-else>
+        <!-- Grid with animated transitions -->
+        <transition-group
+          name="fade"
+          tag="div"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6"
         >
           <div
-            class="w-16 h-16 mx-auto rounded-full bg-white border border-gray-200 flex items-center justify-center group-hover:bg-blue-100 transition"
+            v-for="speciality in displayedSpecialties"
+            :key="speciality"
+            @click="goToDoctorList(speciality)"
+            class="cursor-pointer text-center group transition-all duration-200"
           >
-            <!-- Placeholder for icons -->
-            <span
-              class="text-sm font-medium text-gray-600 group-hover:text-blue-600"
-              >🔍</span
+            <div
+              class="w-16 h-16 mx-auto rounded-full bg-white border border-gray-200 flex items-center justify-center group-hover:bg-blue-100 transition"
             >
+              <span
+                class="text-sm font-medium text-gray-600 group-hover:text-blue-600"
+                >🔍</span
+              >
+            </div>
+            <p
+              class="mt-3 text-sm text-gray-700 group-hover:text-blue-600 transition"
+            >
+              {{ speciality }}
+            </p>
           </div>
-          <p
-            class="mt-3 text-sm text-gray-700 group-hover:text-blue-600 transition"
-          >
-            {{ speciality }}
-          </p>
-        </div>
+        </transition-group>
 
-        <!-- See More -->
-        <NuxtLink to="/find-doctor" class="text-center group">
-          <div
-            class="w-16 h-16 mx-auto rounded-full bg-white border border-gray-300 flex items-center justify-center text-gray-700 font-medium group-hover:bg-blue-100 group-hover:text-blue-600 transition"
+        <!-- See More / See Less -->
+        <div
+          v-if="uniqueSpecialties.length > 15"
+          class="col-span-full text-center mt-6"
+        >
+          <button
+            @click="toggleShowAll"
+            class="text-sm text-blue-600 font-semibold hover:underline transition"
           >
-            +
-          </div>
-          <p
-            class="mt-3 text-sm text-gray-700 group-hover:text-blue-600 transition"
-          >
-            See More
-          </p>
-        </NuxtLink>
+            {{ showAll ? "See Less" : "See More" }}
+          </button>
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useLocationStore } from "@/stores/location";
 import { useDoctorsStore } from "~/stores/doctors";
@@ -68,6 +73,7 @@ const doctorsStore = useDoctorsStore();
 const uniqueSpecialties = ref([]);
 const loading = ref(true);
 const error = ref(null);
+const showAll = ref(false);
 
 const fetchSpecialties = async () => {
   loading.value = true;
@@ -91,6 +97,14 @@ const fetchSpecialties = async () => {
   }
 };
 
+const displayedSpecialties = computed(() =>
+  showAll.value ? uniqueSpecialties.value : uniqueSpecialties.value.slice(0, 15)
+);
+
+const toggleShowAll = () => {
+  showAll.value = !showAll.value;
+};
+
 const goToDoctorList = (speciality) => {
   router.push({
     path: "/doctor-list",
@@ -103,3 +117,15 @@ const goToDoctorList = (speciality) => {
 
 onMounted(fetchSpecialties);
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(5px);
+}
+</style>
