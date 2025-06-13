@@ -1,35 +1,36 @@
 <template>
-  <div>
+  <div class="min-h-screen bg-gray-50">
     <Header />
-    <section class="min-h-screen py-8">
+    <section class="py-6 px-4 sm:px-6 lg:px-8 min-h-screen">
       <!-- Debug Information -->
-      <div v-if="debugMode" class="text-center text-gray-500 mb-4">
+      <!-- <div v-if="debugMode" class="text-center text-gray-500 mb-4">
         <p>Debug: Location = {{ locationStore.currentLocation }}</p>
         <p>Debug: Doctors in Store = {{ doctorsStore.doctors.length }}</p>
         <p>Debug: Doctor Found = {{ doctor ? doctor.name : "Not Found" }}</p>
         <p>Debug: Error = {{ error || "None" }}</p>
-      </div>
+      </div> -->
 
       <!-- Loading State -->
-      <div v-if="loading" class="text-center text-gray-600">
+      <div v-if="loading" class="text-center text-gray-600 py-8">
         Loading doctor details...
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="text-center text-red-500">{{ error }}</div>
+      <div v-else-if="error" class="text-center text-red-500 py-8">
+        {{ error }}
+      </div>
 
       <!-- Doctor Details -->
-      <div v-else-if="doctor" class="space-y-10">
+      <div v-else-if="doctor" class="space-y-8">
         <!-- Breadcrumb Navigation -->
-        <div class="max-w-7xl mx-auto">
-          <nav class="text-blue-700 text-sm">
+        <!-- <div class="max-w-7xl mx-auto">
+          <nav class="text-blue-600 text-sm">
             <NuxtLink to="/" class="">Home</NuxtLink>
             <span class="mx-2">></span>
             <NuxtLink
               :to="`/find-doctor?location=${doctorsStore.selectedLocation}`"
               class=""
-              >Find Doctors</NuxtLink
-            >
+            >Find Doctors</NuxtLink>
             <span class="mx-2">></span>
             <span v-if="clinicSlug">
               <NuxtLink
@@ -42,99 +43,91 @@
             </span>
             <span class="text-blue-700 font-medium">Dr. {{ doctor.name }}</span>
           </nav>
-        </div>
+        </div> -->
 
         <!-- Banner Ad -->
         <div class="max-w-7xl mx-auto">
-          <div class="bg-slate-400 py-20 rounded-xl text-center text-white">
-            BANNER AD
+          <div
+            class="bg-gray-200 rounded-xl shadow-md h-24 flex items-center justify-center"
+          >
+            <span class="text-base text-gray-700 font-medium"
+              >Horizontal Ad Banner</span
+            >
           </div>
         </div>
 
         <!-- 👨‍⚕️ Doctor Info Card -->
         <div
-          class="relative bg-white p-6 md:p-8 rounded-2xl shadow-2xl max-w-7xl mx-auto mt-10 border border-gray-200"
+          class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg max-w-7xl mx-auto border border-gray-200"
         >
-          <!-- Top Section: Avatar + Info -->
-          <div class="flex flex-col gap-6 md:gap-6">
-            <div class="flex flex-col md:flex-row items-center gap-6 md:gap-10">
+          <div class="flex flex-col gap-6">
+            <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
               <img
                 src="https://static.vecteezy.com/system/resources/previews/041/408/858/non_2x/ai-generated-a-smiling-doctor-with-glasses-and-a-white-lab-coat-isolated-on-transparent-background-free-png.png"
-                class="top-0 left-0 size-64 object-cover opacity-100 pointer-events-none"
+                class="w-48 h-48 object-cover"
                 alt="Doctor Illustration"
               />
-              <!-- Doctor Info -->
-              <div
-                class="items-center justify-center text-center md:text-left space-y-2"
-              >
-                <h1
-                  class="text-2xl md:text-4xl font-bold text-gray-900 leading-snug"
-                >
+              <div class="text-center md:text-left space-y-2">
+                <h1 class="text-xl md:text-3xl font-bold text-gray-900">
                   Dr. {{ doctor.name }}
                 </h1>
-                <p class="text-gray-600 text-base md:text-lg">
-                  {{ doctor.degree }}
-                </p>
-                <p
-                  class="text-blue-700 font-medium text-base md:text-lg tracking-wide"
-                >
+                <p class="text-gray-600 text-base">{{ doctor.degree }}</p>
+                <p class="text-blue-700 font-medium text-base tracking-wide">
                   {{ doctor.specilities }}
                 </p>
               </div>
             </div>
 
-            <!-- Divider -->
-            <div class="border-t border-gray-400"></div>
+            <div class="border-t border-gray-300"></div>
 
             <!-- 👍👎 Recommend Doctor -->
             <div
               v-if="!loading && !error && doctor"
-              class="flex flex-row justify-center items-center gap-4"
+              class="flex flex-col items-center gap-3"
             >
-              <p class="text-sm font-medium text-gray-600">
-                Recommend this Doctor:
-              </p>
-              <div class="flex items-center justify-center gap-6">
-                <button
-                  v-if="authStore.isAuthenticated"
-                  @click="recommendDoctor(true)"
-                  :class="[
-                    'text-3xl transition-transform duration-200',
-                    userRecommendation && userRecommendation.value === true
-                      ? 'text-green-500 scale-125 animate-bounce'
-                      : 'text-gray-400 hover:text-green-400 hover:scale-110',
-                  ]"
-                  aria-label="Recommend doctor with thumbs up"
-                >
-                  👍
-                </button>
-                <button
-                  v-if="authStore.isAuthenticated"
-                  @click="recommendDoctor(false)"
-                  :class="[
-                    'text-3xl transition-transform duration-200',
-                    userRecommendation && userRecommendation.value === false
-                      ? 'text-red-500 scale-125 animate-bounce'
-                      : 'text-gray-400 hover:text-red-400 hover:scale-110',
-                  ]"
-                  aria-label="Do not recommend doctor with thumbs down"
-                >
-                  👎
-                </button>
-                <p
-                  v-if="!authStore.isAuthenticated"
-                  class="text-sm text-gray-600"
-                >
-                  Please
-                  <NuxtLink to="/auth" class="text-blue-700 underline"
-                    >log in</NuxtLink
-                  >
-                  to recommend.
+              <div class="flex items-center gap-4">
+                <p class="text-sm font-medium text-gray-600">
+                  Recommend this Doctor:
                 </p>
+                <div class="flex items-center gap-4">
+                  <button
+                    v-if="authStore.isAuthenticated"
+                    @click="recommendDoctor(true)"
+                    :class="[
+                      'text-2xl transition-transform duration-200',
+                      userRecommendation && userRecommendation.value === true
+                        ? 'text-green-500 scale-125 animate-bounce'
+                        : 'text-gray-400 hover:text-green-400 hover:scale-110',
+                    ]"
+                    aria-label="Recommend doctor with thumbs up"
+                  >
+                    👍
+                  </button>
+                  <button
+                    v-if="authStore.isAuthenticated"
+                    @click="recommendDoctor(false)"
+                    :class="[
+                      'text-2xl transition-transform duration-200',
+                      userRecommendation && userRecommendation.value === false
+                        ? 'text-red-500 scale-125 animate-bounce'
+                        : 'text-gray-400 hover:text-red-400 hover:scale-110',
+                    ]"
+                    aria-label="Do not recommend doctor with thumbs down"
+                  >
+                    👎
+                  </button>
+                  <p
+                    v-if="!authStore.isAuthenticated"
+                    class="text-sm text-gray-600"
+                  >
+                    Please
+                    <NuxtLink to="/auth" class="text-blue-700 underline"
+                      >log in</NuxtLink
+                    >
+                    to recommend.
+                  </p>
+                </div>
               </div>
-
-              <!-- VERTICAL DIVIDER -->
-              <div class="border-r border-gray-400 text-gray-50">|</div>
               <p
                 v-if="recommendationPercentage > 0"
                 class="text-sm text-gray-600"
@@ -143,72 +136,68 @@
                 {{ doctor.name }}
               </p>
             </div>
-          </div>
 
-          <!-- Divider -->
-          <div class="border-t mt-4 pt-6 border-gray-400"></div>
+            <div class="border-t border-gray-300"></div>
 
-          <!-- Stats Section -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-            <div class="space-y-1 border-r border-gray-400 text-gray-50">
-              <p class="text-2xl md:text-3xl font-semibold text-gray-900">
-                {{ formatNumber(2050) }}
-              </p>
-              <p class="text-sm text-gray-500">Patients</p>
+            <!-- Stats Section -->
+            <div class="flex flex-row justify-around text-center">
+              <div class="space-y-1">
+                <p class="text-xl md:text-2xl font-semibold text-gray-900">
+                  {{ formatNumber(2050) }}
+                </p>
+                <p class="text-sm text-gray-500">Patients</p>
+              </div>
+              <div v-if="doctor.experience !== ''" class="space-y-1">
+                <p class="text-xl md:text-2xl font-semibold text-gray-900">
+                  {{ doctor.experience }} Years
+                </p>
+                <p class="text-sm text-gray-500">Experience</p>
+              </div>
+              <div class="space-y-1">
+                <p class="text-xl md:text-2xl font-semibold text-gray-900">
+                  {{ formatNumber(5300) }}
+                </p>
+                <p class="text-sm text-gray-500">Reviews</p>
+              </div>
             </div>
 
-            <div
-              v-if="doctor.experience !== ''"
-              class="space-y-1 border-r border-gray-400 text-gray-50"
-            >
-              <p class="text-2xl md:text-3xl font-semibold text-gray-900">
-                {{ doctor.experience }} Years
-              </p>
-              <p class="text-sm text-gray-500">Experience</p>
-            </div>
-            <div class="space-y-1">
-              <p class="text-2xl md:text-3xl font-semibold text-gray-900">
-                {{ formatNumber(5300) }}
-              </p>
-              <p class="text-sm text-gray-500">Reviews</p>
-            </div>
-          </div>
+            <div class="border-t border-gray-300"></div>
 
-          <!-- Divider -->
-          <div class="border-t mt-4 pt-6 border-gray-400"></div>
-
-          <!-- 📖 About Doctor -->
-          <div class="py-0 rounded-2xl">
-            <p class="text-gray-600 leading-relaxed">
-              Dr. {{ doctor.name }} is an experienced
-              {{ doctor.specilities.toLowerCase() }} specialist with over
-              {{ doctor.experience || "several" }} years of practice. Committed
-              to providing top-notch care, Dr. {{ doctor.name }} focuses on
-              accurate diagnosis and effective treatment plans tailored to each
-              patient's needs.
-            </p>
+            <!-- 📖 About Doctor -->
+            <div class="py-4">
+              <p class="text-gray-600 leading-relaxed">
+                Dr. {{ doctor.name }} is an experienced
+                {{ doctor.specilities.toLowerCase() }} specialist with over
+                {{ doctor.experience || "several" }} years of practice.
+                Committed to providing top-notch care, Dr.
+                {{ doctor.name }} focuses on accurate diagnosis and effective
+                treatment plans tailored to each patient's needs.
+              </p>
+            </div>
           </div>
         </div>
 
         <!-- 👨‍⚕️ Related Doctors -->
-        <div class="max-w-7xl mx-auto py-4">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-4">
-            Other {{ doctor.specilities }} Doctors from
-            {{ doctorsStore.selectedLocation }}
+        <div class="max-w-7xl mx-auto py-6">
+          <h2 class="text-center text-2xl font-semibold text-gray-800 mb-4">
+            Other
+            <span class="text-blue-600">{{ doctor.specilities }}</span> Doctors
+            from
+            <span class="text-blue-600">{{
+              doctorsStore.selectedLocation
+            }}</span>
           </h2>
-          <div class="relative px-8">
-            <!-- Left Arrow -->
+
+          <div class="relative px-8 sm:px-12">
             <button
               @click="scrollLeft"
-              class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 rounded-full shadow hover:bg-blue-600 transition"
+              class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 rounded-full shadow hover:bg-blue-600 transition"
             >
               <ChevronLeftIcon class="w-5 h-5" />
             </button>
-
-            <!-- Doctor Carousel -->
             <div
               ref="doctorsList"
-              class="flex gap-5 overflow-x-auto snap-x snap-mandatory py-4 px-2"
+              class="flex gap-4 overflow-x-auto snap-x snap-mandatory py-4 px-2 hide-scrollbar"
             >
               <div
                 v-for="relatedDoctor in relatedDoctors"
@@ -229,11 +218,9 @@
                 </p>
               </div>
             </div>
-
-            <!-- Right Arrow -->
             <button
               @click="scrollRight"
-              class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 rounded-full shadow hover:bg-blue-600 transition"
+              class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 rounded-full shadow hover:bg-blue-600 transition"
             >
               <ChevronRightIcon class="w-5 h-5" />
             </button>
@@ -241,17 +228,16 @@
         </div>
 
         <!-- 📅 Available Dates -->
-        <div class="bg-gray-100 py-8">
-          <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-2xl font-semibold text-gray-800 py-4">
-              Available Dates
-              <span v-if="clinic">at {{ clinic.name }}</span>
+        <div class="bg-gray-100 py-6">
+          <div class="max-w-7xl mx-auto px-0">
+            <h2 class="text-center text-2xl font-semibold text-gray-800 mb-4">
+              Available Dates <span v-if="clinic">at {{ clinic.name }}</span>
             </h2>
 
-            <div v-if="scheduleLoading" class="text-start text-gray-500">
+            <div v-if="scheduleLoading" class="text-center text-gray-500">
               Loading schedule...
             </div>
-            <div v-else-if="scheduleError" class="text-start text-red-500">
+            <div v-else-if="scheduleError" class="text-center text-red-500">
               {{ scheduleError }}
             </div>
             <div
@@ -264,77 +250,92 @@
               >. Please check back later or choose another doctor.
             </div>
 
-            <div v-else class="flex flex-wrap gap-4 justify-start mt-4">
-              <div
-                v-for="date in availableDates"
-                :key="date"
-                @click="selectDate(date)"
-                :class="[
-                  'w-24 p-4 rounded-lg border text-center cursor-pointer transition-all duration-200',
-                  selectedDate === date
-                    ? 'bg-blue-700 text-white border-blue-700 shadow-lg'
-                    : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100',
-                ]"
+            <div v-else class="relative px-14">
+              <button
+                @click="scrollLeftDates"
+                class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 rounded-full shadow hover:bg-blue-600 transition"
               >
-                <p class="text-sm font-medium">{{ formatMonthYear(date) }}</p>
-                <p class="text-2xl font-bold">{{ formatDay(date) }}</p>
+                <ChevronLeftIcon class="w-5 h-5" />
+              </button>
+              <div
+                ref="datesList"
+                class="flex gap-4 overflow-x-auto snap-x snap-mandatory py-4 hide-scrollbar"
+              >
+                <div
+                  v-for="date in availableDates"
+                  :key="date"
+                  @click="selectDate(date)"
+                  :class="[
+                    'flex-shrink-0 w-24 p-4 rounded-lg border text-center cursor-pointer transition-all duration-200',
+                    selectedDate === date
+                      ? 'bg-blue-700 text-white border-blue-700 shadow-lg'
+                      : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100',
+                  ]"
+                >
+                  <p class="text-sm font-medium">{{ formatMonthYear(date) }}</p>
+                  <p class="text-xl font-bold">{{ formatDay(date) }}</p>
+                </div>
               </div>
+              <button
+                @click="scrollRightDates"
+                class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 rounded-full shadow hover:bg-blue-600 transition"
+              >
+                <ChevronRightIcon class="w-5 h-5" />
+              </button>
             </div>
           </div>
         </div>
 
         <!-- 📋 Appointment Summary -->
-        <div v-if="selectedSlot" class="py-0">
-          <div
-            class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
-          >
-            <div class="space-y-2">
-              <h3 class="text-xl py-4 font-semibold text-gray-800">
-                Appointment Details
-              </h3>
+        <div v-if="selectedSlot" class="py-6 px-4">
+          <div class="max-w-4xl mx-auto">
+            <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">
+              <span class="text-blue-600">Appointment</span> Details
+            </h2>
 
-              <div
-                class="flex items-center gap-6 border rounded-2xl p-4 bg-white shadow-xl shadow-gray-200"
-              >
-                <div>
-                  <p class="text-gray-600">
-                    <span class="font-medium">Date:</span>
-                    {{ selectedSlot.date || selectedSlot.scheduledate }}
-                  </p>
-                  <p class="text-gray-600">
-                    <span class="font-medium">Time:</span>
-                    {{ selectedSlot.time || selectedSlot.scheduletime }}
-                  </p>
-                  <p class="text-gray-600">
-                    <span class="font-medium">Clinic:</span>
-                    <NuxtLink
-                      v-if="clinic"
-                      :to="`/find-clinic?clinic=${clinicSlug}`"
-                      class="text-blue-700 underline"
-                    >
-                      {{ clinic.name }}
-                    </NuxtLink>
-                    <span v-else>{{ selectedSlot.clinicname }}</span>
-                  </p>
-                  <p class="text-gray-600">
-                    <span class="font-medium">Address:</span>
-                    {{ clinic ? clinic.address : selectedSlot.ClinicA }}
-                  </p>
-                  <p class="text-gray-600">
-                    <span class="font-medium">Doctor Fee:</span> ₹{{
-                      selectedSlot.docfee || "500"
-                    }}
-                  </p>
-                  <p class="text-gray-600">
-                    <span class="font-medium">Platform Fee:</span> ₹{{
-                      selectedSlot.pfee || "50"
-                    }}
-                  </p>
-                </div>
+            <div
+              class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-6 border rounded-2xl p-6 bg-white shadow-md"
+            >
+              <!-- Left: Info -->
+              <div class="space-y-2 text-gray-700 flex-1">
+                <p>
+                  <span class="font-medium">Date:</span>
+                  {{ selectedSlot.date || selectedSlot.scheduledate }}
+                </p>
 
+                <p>
+                  <span class="font-medium">Clinic:</span>
+                  <NuxtLink
+                    v-if="clinic"
+                    :to="`/find-clinic?clinic=${clinicSlug}`"
+                    class="text-blue-600 underline hover:text-blue-500 transition"
+                  >
+                    {{ clinic.name }}
+                  </NuxtLink>
+                  <span v-else>{{ selectedSlot.clinicname }}</span>
+                </p>
+
+                <p>
+                  <span class="font-medium">Address:</span>
+                  {{ clinic ? clinic.address : selectedSlot.ClinicA }}
+                </p>
+
+                <p>
+                  <span class="font-medium">Doctor Fee:</span>
+                  ₹{{ selectedSlot.docfee || "500" }}
+                </p>
+
+                <p>
+                  <span class="font-medium">Platform Fee:</span>
+                  ₹{{ selectedSlot.pfee || "50" }}
+                </p>
+              </div>
+
+              <!-- Right: Button -->
+              <div class="sm:self-center w-full sm:w-auto">
                 <button
                   @click="submitBooking"
-                  class="md:ml-4 bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition-all shadow-md"
+                  class="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-all shadow"
                 >
                   Book Clinic Visit
                 </button>
@@ -390,8 +391,9 @@ const selectedSlot = ref(null);
 const userRecommendation = ref(null); // true (thumbs up), false (thumbs down), null (no recommendation)
 const recommendationPercentage = ref(0); // Simulated percentage
 
-// Reference for smooth scrolling
+// References for smooth scrolling
 const doctorsList = ref(null);
+const datesList = ref(null);
 
 // Computed properties
 const relatedDoctors = computed(() => {
@@ -626,6 +628,14 @@ const scrollRight = () => {
   doctorsList.value.scrollBy({ left: 150, behavior: "smooth" });
 };
 
+const scrollLeftDates = () => {
+  datesList.value.scrollBy({ left: -150, behavior: "smooth" });
+};
+
+const scrollRightDates = () => {
+  datesList.value.scrollBy({ left: 150, behavior: "smooth" });
+};
+
 const formatNumber = (num) => {
   if (num >= 1000) {
     return (num / 1000).toFixed(2) + "K";
@@ -676,43 +686,67 @@ const submitBooking = () => {
 }
 
 /* Doctor Info Card */
-.relative.bg-white {
+.bg-white {
   transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.relative.bg-white:hover {
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+.bg-white:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 /* Typography */
-h1.text-2xl {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
-  font-weight: 700;
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
 }
 
-p.text-gray-600 {
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-gray-600 {
   line-height: 1.75;
 }
 
 /* Buttons */
-button.bg-green-600 {
+.bg-green-600 {
   transition: all 0.2s ease;
 }
 
-button.bg-green-600:hover {
+.bg-green-600:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Date Selection */
-.w-24.p-4 {
+/* Date Selection and Carousel */
+.w-24 {
   transition: all 0.2s ease;
 }
 
-.w-24.p-4:hover {
+.w-24:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Adjustments */
+@media (min-width: 640px) {
+  .text-xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
 }
 </style>

@@ -16,7 +16,7 @@
       <MapPinIcon class="w-5 h-5 text-gray-700" />
       <select
         v-model="selectedLocation"
-        class="border px-2 py-1 rounded text-sm text-gray-700 focus:outline-none"
+        class="px-0 py-1 rounded text-sm text-gray-700 focus:outline-none"
       >
         <option value="" disabled>Select Location</option>
         <option

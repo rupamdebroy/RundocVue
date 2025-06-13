@@ -1,92 +1,136 @@
 <template>
   <Header />
-  <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Doctors in {{ location }}</h1>
 
-    <!-- Loading state -->
-    <div v-if="loading" class="text-center">
-      <p>Loading doctors...</p>
+  <div class="container max-w-7xl mx-auto p-4 min-h-screen flex flex-col">
+    <h2 class="text-center text-3xl font-semibold text-gray-800 mb-4 py-6">
+      Doctors in
+      <span class="text-blue-600">{{ location }}</span>
+    </h2>
+
+    <!-- Horizontal Banner (Now Below Search) -->
+    <div
+      class="w-full bg-gray-200 rounded-xl shadow-md h-36 flex items-center justify-center mb-10"
+    >
+      <span class="text-base text-gray-700 font-medium"
+        >Horizontal Ad Banner</span
+      >
     </div>
 
-    <!-- Error state -->
-    <div v-else-if="doctorsStore.error" class="text-center text-red-500">
+    <!-- Loading State -->
+    <div v-if="loading" class="flex justify-center items-center py-8">
+      <p class="text-gray-500">Loading doctors...</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="doctorsStore.error" class="text-center text-red-600 py-4">
       <p>{{ doctorsStore.error }}</p>
     </div>
 
-    <!-- Doctors data -->
+    <!-- Doctor Filter & List -->
     <div v-else>
-      <!-- Dropdown for specialties -->
-      <div class="mb-6">
-        <label for="specialty-select" class="block text-lg font-medium mb-2"
-          >Select Specialty:</label
-        >
-        <select
-          id="specialty-select"
-          v-model="selectedSpecialty"
-          class="border rounded-lg p-2 w-full max-w-xs"
-          @change="updateSpecialty"
-        >
-          <option
-            v-for="specialty in uniqueSpecialties"
-            :key="specialty"
-            :value="specialty"
+      <!-- Filters -->
+      <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">
+        <div class="mx-auto">
+          <label
+            for="specialty-select"
+            class="block text-base font-medium text-gray-700 mb-2"
+            >Select Specialty:</label
           >
-            {{ specialty }}
-          </option>
-        </select>
-      </div>
+          <select
+            id="specialty-select"
+            v-model="selectedSpecialty"
+            class="border border-gray-300 rounded-xl px-4 py-2 w-full shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            @change="updateSpecialty"
+          >
+            <option
+              v-for="specialty in uniqueSpecialties"
+              :key="specialty"
+              :value="specialty"
+            >
+              {{ specialty }}
+            </option>
+          </select>
+        </div>
 
-      <!-- "All" filter -->
-      <div class="mb-6">
-        <button
-          class="w-12 h-12 rounded-full border-2 flex items-center justify-center text-sm font-medium"
-          :class="
-            isAllSelected
-              ? 'border-blue-500 text-blue-500'
-              : 'border-gray-300 text-gray-500'
-          "
-          @click="toggleAllFilter"
-        >
-          All
-        </button>
+        <div class="flex flex-col justify-end">
+          <label class="text-base font-medium text-gray-700 mb-2"
+            >Filter:</label
+          >
+          <div class="flex space-x-4 items-center">
+            <button
+              class="w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-medium transition-colors duration-300"
+              :class="
+                isAllSelected
+                  ? 'border-blue-600 text-blue-600 bg-blue-100'
+                  : 'border-gray-300 text-gray-600 hover:border-blue-400 hover:text-blue-500'
+              "
+              @click="toggleAllFilter"
+            >
+              All
+            </button>
+            <label
+              class="flex items-center space-x-2 text-gray-400 cursor-not-allowed"
+            >
+              <input type="radio" disabled class="accent-blue-500" />
+              <span>Today</span>
+            </label>
+          </div>
+        </div>
       </div>
 
       <!-- Doctor list -->
-      <div v-if="filteredDoctors.length > 0" class="space-y-4">
+      <div
+        v-if="filteredDoctors.length > 0"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
         <div
           v-for="doctor in filteredDoctors"
           :key="doctor.id"
-          class="flex items-center p-4 border rounded-lg shadow-sm"
+          class="flex flex-col justify-between p-4 border rounded-xl shadow-md bg-white hover:shadow-lg transition-all"
         >
-          <!-- Circular "image" with first letter -->
-          <div
-            class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white text-xl font-bold mr-4"
-          >
-            {{ doctor.name.charAt(0).toUpperCase() }}
+          <!-- Top row: Avatar + Info inline -->
+          <div class="flex items-center space-x-4 mb-4">
+            <!-- Avatar -->
+            <div
+              class="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0"
+            >
+              {{ doctor.name.charAt(0).toUpperCase() }}
+            </div>
+
+            <!-- Name and details in one column -->
+            <div class="flex-1 space-y-0.5">
+              <p class="text-lg font-semibold text-gray-900">
+                {{ doctor.name }}
+              </p>
+              <p class="text-sm text-gray-700">
+                Specialty:
+                <span class="font-medium">{{ doctor.specilities }}</span>
+              </p>
+              <p class="text-sm text-gray-700">Degree: {{ doctor.degree }}</p>
+              <p class="text-sm text-gray-700">
+                Experience: {{ doctor.experience }} years
+              </p>
+            </div>
           </div>
-          <!-- Doctor details -->
-          <div class="flex-1">
-            <p class="text-lg font-semibold">{{ doctor.name }}</p>
-            <p class="text-sm text-gray-600">{{ doctor.name }}</p>
-            <p class="text-sm">Specialty: {{ doctor.specilities }}</p>
-            <p class="text-sm">Experience: {{ doctor.experience }} years</p>
-          </div>
-          <!-- View button -->
+
+          <!-- View button full width -->
           <button
-            class="ml-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all"
+            class="mt-auto w-full bg-gray-200 text-gray-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-300 transition-all flex items-center justify-between"
             @click="viewDoctor(doctor.doc)"
           >
-            View
+            <span>View Doctor</span>
+            <span class="ml-2">></span>
           </button>
         </div>
       </div>
 
-      <!-- No doctors found -->
-      <div v-else class="text-center">
-        <p>No doctors found for this specialty.</p>
+      <!-- No Results -->
+      <div v-else class="text-center py-8">
+        <p class="text-gray-500">No doctors found for this specialty.</p>
       </div>
     </div>
   </div>
+
   <Footer />
   <BottomNav />
 </template>
@@ -127,7 +171,6 @@ export default {
   },
 
   async mounted() {
-    // Get query parameters
     this.location = this.$route.query.location || "";
     this.selectedSpecialty = this.$route.query.specialities || "";
     this.isAllSelected = this.$route.query.specialities === "all";
@@ -145,21 +188,17 @@ export default {
       this.uniqueSpecialties = [];
 
       try {
-        // Fetch doctors using the Pinia store
         await this.doctorsStore.fetchDoctors(this.location);
 
-        // Extract specialties
         if (this.doctorsStore.doctors.length > 0) {
           const specialties = this.doctorsStore.doctors.map(
-            (doctor) => doctor.specilities
+            (d) => d.specilities
           );
-          const normalizedSpecialties = specialties.map((s) => {
-            if (s.toLowerCase() === "orthapadic") return "Orthopedic";
-            return s;
-          });
-          this.uniqueSpecialties = [...new Set(normalizedSpecialties)].sort();
+          const normalized = specialties.map((s) =>
+            s.toLowerCase() === "orthapadic" ? "Orthopedic" : s
+          );
+          this.uniqueSpecialties = [...new Set(normalized)].sort();
 
-          // If the selected specialty from URL isn't in the list, reset it
           if (
             this.selectedSpecialty &&
             !this.uniqueSpecialties.includes(this.selectedSpecialty)
@@ -178,7 +217,6 @@ export default {
     },
 
     updateSpecialty() {
-      // Update URL with the new specialty
       this.isAllSelected = false;
       this.$router.push({
         path: "/doctor-list",
@@ -201,7 +239,6 @@ export default {
     },
 
     viewDoctor(docSlug) {
-      // Redirect to the doctor's profile page
       this.$router.push(`/doctor/${docSlug}`);
     },
   },

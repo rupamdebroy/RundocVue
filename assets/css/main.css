@@ -331,14 +331,14 @@ body {
 
 /* For all browsers */
 ::-webkit-scrollbar {
-  width: 14px; /* Adjust scrollbar width */
+  width: 10px; /* Adjust scrollbar width */
   background-color: var(--primary-bg);
 }
 
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(
     to right,
-    #6c6c6e,
+    #6c6c6eae,
     #282829
   ); /* Custom thumb color */
   border-radius: 10px;
