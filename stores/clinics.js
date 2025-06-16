@@ -23,8 +23,11 @@ export const useClinicsStore = defineStore("clinics", {
       }
 
       const normalizedLocation = location.toLowerCase();
-      
-      if (this.selectedLocation.toLowerCase() === normalizedLocation && this.clinics.length > 0) {
+
+      if (
+        this.selectedLocation.toLowerCase() === normalizedLocation &&
+        this.clinics.length > 0
+      ) {
         console.log("Using cached clinics for", normalizedLocation);
         this.info = `${this.clinics.length} clinic(s) found in ${location}.`;
         return;
@@ -44,22 +47,28 @@ export const useClinicsStore = defineStore("clinics", {
           {
             headers: {
               "Content-Type": "application/json",
-              "Authorization": "Bearer Rupam@98639999",
+              Authorization: "Bearer Rupam@98639999",
             },
           }
         );
+        // Log the full response from the ClinicList API
+        console.log("Response from ClinicList.php:", response);
+        // Log only the data part of the response for ClinicList API
+        console.log("Data from ClinicList.php:", response.data);
 
         if (response.data.success) {
-          this.clinics = response.data.data.map(clinic => ({
+          this.clinics = response.data.data.map((clinic) => ({
             id: clinic.Cilinic_id,
             name: clinic.Cilinic_name,
             address: clinic.Cilinic_address,
-            city: clinic.city
+            city: clinic.city,
           }));
-          
+
           this.info = `${this.clinics.length} clinic(s) found in ${location}.`;
         } else {
-          throw new Error(response.data.message || "No clinics found for this location");
+          throw new Error(
+            response.data.message || "No clinics found for this location"
+          );
         }
       } catch (err) {
         console.error("API Error fetching clinics:", err);
@@ -71,61 +80,71 @@ export const useClinicsStore = defineStore("clinics", {
     },
 
     async fetchClinicDetails(clinicId) {
-  this.isLoading = true;
-  this.error = null;
+      this.isLoading = true;
+      this.error = null;
 
-  try {
-    const response = await axios({
-      method: 'POST',
-      url: 'https://api.rundoc.in/api/app3/ClinicDetails.php',
-      data: { Cilinic_id: clinicId },
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer Rupam@98639999'
-      },
-      // Important for CORS
-      withCredentials: false
-    });
-
-    if (response.data.success) {
-      const clinicData = response.data.data;
-      
-      if (clinicData.length > 0) {
-        return {
-          clinic: {
-            id: clinicId,
-            name: clinicData[0].Cilinic_name,
-            address: clinicData[0].Cilinic_address,
-            city: clinicData[0].city
+      try {
+        const response = await axios({
+          method: "POST",
+          url: "https://api.rundoc.in/api/app3/ClinicDetails.php",
+          data: { Cilinic_id: clinicId },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer Rupam@98639999",
           },
-          doctors: clinicData.map(item => ({
-            id: item.docname,
-            name: item.docname,
-            fullName: item.docfname,
-            specialty: item.specialties,
-            scheduleId: item.scheduleid
-          }))
-        };
+          // Important for CORS
+          withCredentials: false,
+        });
+        // Log the full response from the ClinicDetails API
+        console.log("Response from ClinicDetails.php:", response);
+        // Log only the data part of the response for ClinicDetails API
+        console.log("Data from ClinicDetails.php:", response.data);
+
+        if (response.data.success) {
+          const clinicData = response.data.data;
+
+          if (clinicData.length > 0) {
+            return {
+              clinic: {
+                id: clinicId,
+                name: clinicData[0].Cilinic_name,
+                address: clinicData[0].Cilinic_address,
+                city: clinicData[0].city,
+              },
+              doctors: clinicData.map((item) => ({
+                id: item.docname,
+                name: item.docname,
+                fullName: item.docfname,
+                specialty: item.specialties,
+                scheduleId: item.scheduleid,
+              })),
+            };
+          }
+          throw new Error("Clinic details not found");
+        } else {
+          throw new Error(
+            response.data.message || "Failed to fetch clinic details"
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching clinic details:", error);
+
+        // Handle CORS-specific errors
+        if (
+          error.message.includes("CORS") ||
+          error.message.includes("Network Error")
+        ) {
+          this.error =
+            "Could not connect to the server. Please try again later.";
+        } else {
+          this.error = error.message || "An unexpected error occurred";
+        }
+
+        return null;
+      } finally {
+        this.isLoading = false;
       }
-      throw new Error("Clinic details not found");
-    } else {
-      throw new Error(response.data.message || "Failed to fetch clinic details");
-    }
-  } catch (error) {
-    console.error("Error fetching clinic details:", error);
-    
-    // Handle CORS-specific errors
-    if (error.message.includes('CORS') || error.message.includes('Network Error')) {
-      this.error = "Could not connect to the server. Please try again later.";
-    } else {
-      this.error = error.message || "An unexpected error occurred";
-    }
-    
-    return null;
-  } finally {
-    this.isLoading = false;
-  }
-},
+    },
 
     clearClinics() {
       console.log("Clearing clinics store");
@@ -140,8 +159,10 @@ export const useClinicsStore = defineStore("clinics", {
 
   getters: {
     hasClinics: (state) => state.clinics.length > 0,
-    clinicsByLocation: (state) => (location) => 
-      state.clinics.filter(c => c.city.toLowerCase() === location.toLowerCase()),
+    clinicsByLocation: (state) => (location) =>
+      state.clinics.filter(
+        (c) => c.city.toLowerCase() === location.toLowerCase()
+      ),
     hasDoctors: (state) => state.doctors.length > 0,
   },
 });

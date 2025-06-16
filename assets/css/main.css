@@ -24,6 +24,28 @@ h3 {
 
 /* colors.css */
 
+/* Basic reset/global styles if you have them */
+html,
+body {
+  min-height: 100vh; /* Ensures body takes at least full viewport height */
+  /* Add other global font/color settings here if desired */
+}
+
+/* Make space for fixed bottom nav on mobile/tablet devices */
+/* This media query should match the breakpoint used in your BottomNav component (max-width: 1024px) */
+@media (max-width: 1024px) {
+  body {
+    /*
+      Calculate this value based on your BottomNav's actual height.
+      Your nav has py-4 (16px top + 16px bottom = 32px padding).
+      The content inside (icon + text) is likely around 30-40px.
+      So, 32px + ~35px = ~67px.
+      72px provides a safe buffer.
+    */
+    padding-bottom: 82px;
+  }
+}
+
 .squares-canvas {
   width: 100%;
   height: 100%;

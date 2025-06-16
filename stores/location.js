@@ -3,9 +3,10 @@ import axios from "axios";
 
 export const useLocationStore = defineStore("location", {
   state: () => ({
-    selectedLocation: "",
-    availableLocations: [],
-    error: "",
+    selectedLocation: "", // Currently selected location
+    availableLocations: [], // List of available locations from API
+    error: "", // Error message for API failures
+    showLocationSelector: false, // Controls visibility of location selector UI
   }),
 
   actions: {
@@ -48,12 +49,19 @@ export const useLocationStore = defineStore("location", {
       localStorage.removeItem("selectedLocation");
     },
 
-    // New method to restore location from localStorage
     restoreLocation() {
       const savedLocation = localStorage.getItem("selectedLocation");
       if (savedLocation) {
         this.selectedLocation = savedLocation;
       }
+    },
+
+    openLocationSelector() {
+      this.showLocationSelector = true;
+    },
+
+    closeLocationSelector() {
+      this.showLocationSelector = false;
     },
   },
 

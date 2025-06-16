@@ -1,8 +1,7 @@
 <template>
   <header
-    class="bg-white shadow-md py-3 px-5 sm:px-6 flex justify-between items-center sticky top-0 z-50 backdrop-blur-sm"
+    class="bg-white shadow-md py-2 px-4 sm:px-6 flex justify-between items-center sticky top-0 z-50 backdrop-blur-sm"
   >
-    <!-- Logo -->
     <div class="text-2xl font-bold lowercase text-gray-900">
       <img
         class="w-24 sm:w-28"
@@ -11,30 +10,150 @@
       />
     </div>
 
-    <!-- Location Selector -->
-    <div class="flex items-center space-x-2">
-      <MapPinIcon class="w-5 h-5 text-gray-700" />
-      <select
-        v-model="selectedLocation"
-        class="border px-2 py-1 rounded text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <div class="flex items-center justify-between relative mr-5">
+      <button
+        @click="openLocationSelector"
+        class="flex items-center space-x-1 px-3 py-2 rounded-full border-gray-300 bg-gray-50 text-gray-700 text-xs font-medium hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 justify-center"
+        aria-haspopup="true"
+        :aria-expanded="showLocationSelector.toString()"
       >
-        <option value="" disabled>Select Location</option>
-        <option
-          v-for="location in locationStore.availableLocations"
-          :key="location.id"
-          :value="location.name"
+        <MapPinIcon class="w-[14px] h-[14px]" />
+        <span class="text-blue-600">{{
+          locationStore.currentLocation || "Select City"
+        }}</span>
+        <ChevronDownIcon class="w-[14px] h-[14px]" />
+      </button>
+
+      <!-- DESKTOP / WEB VERSION LOCATION POPUP-->
+      <transition name="modal-fade">
+        <div
+          v-if="showLocationSelector && !isMobileOrTablet"
+          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 h-screen"
         >
-          {{ location.name }}
-        </option>
-      </select>
+          <div
+            class="bg-white rounded-lg shadow-xl w-11/12 max-w-lg p-6 transform transition-all"
+          >
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">
+              Select City
+            </h3>
+            <input
+              type="text"
+              v-model="locationSearchQuery"
+              placeholder="Search city..."
+              class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm mb-4"
+            />
+            <button
+              @click="detectLocation"
+              class="w-full bg-blue-50 text-blue-600 py-2 rounded-md mb-4 flex items-center justify-center hover:bg-blue-100 transition"
+            >
+              <TargetIcon class="w-5 h-5 mr-2" />
+              Detect My Location
+            </button>
+
+            <!-- City Icons -->
+            <div class="grid grid-cols-3 gap-4 max-h-60 overflow-y-auto">
+              <button
+                v-for="location in filteredLocations"
+                :key="location.id"
+                @click="selectLocation(location.name)"
+                class="flex flex-col items-center p-3 rounded-lg border hover:bg-blue-50 transition-all duration-200"
+                :class="{
+                  'bg-blue-100 border-blue-400 text-blue-800 font-semibold':
+                    location.name === locationStore.currentLocation,
+                }"
+              >
+                <i class="fas fa-city text-xl text-blue-600 mb-2"></i>
+                <span class="text-sm text-center">{{ location.name }}</span>
+              </button>
+              <p
+                v-if="filteredLocations.length === 0"
+                class="col-span-3 text-center text-gray-500"
+              >
+                No cities found matching "{{ locationSearchQuery }}"
+              </p>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+              <button
+                @click="closeLocationSelector"
+                class="px-4 py-2 text-gray-600 hover:text-gray-800 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
     </div>
 
-    <!-- User / Auth Actions -->
-    <div class="flex items-center space-x-4">
+    <transition name="slide-up">
+      <div
+        v-if="showLocationSelector && isMobileOrTablet"
+        class="fixed inset-0 bg-white z-[100px] flex flex-col"
+      >
+        <div
+          class="flex items-center justify-between p-4 border-b border-gray-200"
+        >
+          <h2 class="text-xl font-semibold text-gray-800">Select City</h2>
+          <button
+            @click="closeLocationSelector"
+            class="text-gray-500 hover:text-gray-700"
+          >
+            <XMarkIcon class="w-6 h-6" />
+          </button>
+        </div>
+
+        <div class="p-4 bg-white">
+          <input
+            type="text"
+            v-model="locationSearchQuery"
+            placeholder="Search city..."
+            class="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base mb-4"
+          />
+          <button
+            @click="detectLocation"
+            class="w-full bg-blue-50 text-blue-600 py-3 rounded-md mb-4 hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center text-base font-medium"
+          >
+            <TargetIcon class="w-5 h-5 mr-2" /> Detect My Location
+          </button>
+
+          <hr class="my-4 border-gray-200" />
+
+          <h3 class="text-lg font-semibold text-gray-800 mb-3">
+            Popular Cities
+          </h3>
+          <div class="grid grid-cols-2 gap-3">
+            <NuxtLink
+              v-for="location in filteredLocations"
+              :key="location.id"
+              @click="selectLocation(location.name)"
+              :to="`/?location=${location.name}`"
+              class="block text-center px-4 py-3 rounded-lg border text-gray-700 hover:bg-blue-50 hover:border-blue-200 transition-colors duration-200 text-sm font-medium"
+              :class="{
+                'bg-blue-100 border-blue-400 text-blue-800 font-semibold':
+                  location.name === locationStore.currentLocation,
+              }"
+            >
+              {{ location.name }}
+            </NuxtLink>
+            <p
+              v-if="filteredLocations.length === 0 && locationSearchQuery"
+              class="col-span-2 text-center text-sm text-gray-500 py-4"
+            >
+              No cities found matching "{{ locationSearchQuery }}"
+            </p>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <div class="flex items-center space-x-4 -z-10">
       <div v-if="authStore.isAuthenticated" class="relative">
         <button
           @click="toggleDropdown"
-          class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold hover:bg-gray-300 transition"
+          class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold hover:bg-gray-300 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-haspopup="true"
+          :aria-expanded="showDropdown.toString()"
         >
           {{
             authStore.userInfo.fullName
@@ -43,35 +162,49 @@
           }}
         </button>
 
-        <!-- Dropdown -->
-        <div
-          v-if="showDropdown"
-          class="absolute right-0 mt-2 w-44 sm:w-48 bg-white border rounded-md shadow-lg py-2 z-50"
-        >
-          <NuxtLink
-            :to="profileRoute"
-            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-            @click="navigateToProfile"
+        <transition name="user-dropdown-transition">
+          <div
+            v-if="showDropdown"
+            class="absolute right-0 mt-2 w-52 sm:w-60 bg-white border border-gray-200 rounded-lg shadow-xl py-2 origin-top-right transform-gpu"
+            @click.stop=""
           >
-            View Profile Info
-          </NuxtLink>
-          <NuxtLink
-            to="/my-bookings"
-            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-            @click="navigateToBookings"
-          >
-            View Bookings
-          </NuxtLink>
-          <button
-            @click="logout"
-            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-          >
-            Logout
-          </button>
-        </div>
+            <div class="px-4 py-2 border-b border-gray-100 mb-1">
+              <p class="font-semibold text-gray-800 text-base truncate">
+                {{ authStore.userInfo.fullName || "User" }}
+              </p>
+              <p class="text-sm text-gray-500 truncate">
+                {{ authStore.userInfo.phoneNumber || "N/A" }}
+              </p>
+            </div>
+
+            <NuxtLink
+              :to="profileRoute"
+              class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150 rounded-md mx-2"
+              @click="navigateToProfile"
+            >
+              <UserCircleIcon class="h-5 w-5 mr-3 text-blue-500" />
+              <span>View Profile Info</span>
+            </NuxtLink>
+            <NuxtLink
+              to="/my-bookings"
+              class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150 rounded-md mx-2"
+              @click="navigateToBookings"
+            >
+              <ClipboardDocumentListIcon class="h-5 w-5 mr-3 text-blue-500" />
+              <span>View Bookings</span>
+            </NuxtLink>
+            <hr class="my-2 border-gray-100" />
+            <button
+              @click="logout"
+              class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition duration-150 rounded-md mx-2"
+            >
+              <ArrowRightOnRectangleIcon class="h-5 w-5 mr-3 text-red-500" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </transition>
       </div>
 
-      <!-- Login/Register Icon -->
       <button
         v-else
         @click="authStore.showLoginPopup = true"
@@ -96,7 +229,6 @@
     </div>
   </header>
 
-  <!-- Login/Register Popup -->
   <div
     v-if="authStore.showLoginPopup"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -121,7 +253,6 @@
         </svg>
       </button>
 
-      <!-- Login Form -->
       <div v-if="!authStore.showRegisterPopup">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">
           {{ authStore.otpSent ? "Enter OTP" : "Login" }}
@@ -223,7 +354,6 @@
         </form>
       </div>
 
-      <!-- Register Form -->
       <div v-if="authStore.showRegisterPopup">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">Register</h2>
         <div v-if="authStore.error" class="text-red-500 text-sm mb-4">
@@ -347,17 +477,30 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter } from "#app";
 import { useAuthStore } from "@/stores/auth";
 import { useLocationStore } from "@/stores/location";
-import { MapPinIcon } from "@heroicons/vue/24/solid";
+import {
+  MapPinIcon,
+  ChevronDownIcon,
+  XMarkIcon,
+  UserCircleIcon,
+  ClipboardDocumentListIcon,
+  ArrowRightOnRectangleIcon,
+} from "@heroicons/vue/24/solid";
+import { TargetIcon } from "lucide-vue-next";
 import axios from "axios";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const locationStore = useLocationStore();
+
 const showDropdown = ref(false);
+const showLocationSelector = ref(false);
+const locationSearchQuery = ref("");
+const locationPopover = ref(null);
+const isMobileOrTablet = ref(false);
 
 // Form data
 const phoneNumberInput = ref("");
@@ -374,12 +517,17 @@ const address = ref({
   town: "",
   state: "",
 });
-const serverOtp = ref(""); // Store API-provided OTP
+const serverOtp = ref("");
 
-// Location selector
-const selectedLocation = computed({
-  get: () => locationStore.selectedLocation,
-  set: (value) => locationStore.setLocation(value),
+// Computed property for filtering locations
+const filteredLocations = computed(() => {
+  if (!locationSearchQuery.value) {
+    return locationStore.availableLocations;
+  }
+  const query = locationSearchQuery.value.toLowerCase();
+  return locationStore.availableLocations.filter((location) =>
+    location.name.toLowerCase().includes(query)
+  );
 });
 
 // Profile route
@@ -388,13 +536,83 @@ const profileRoute = computed(() => {
   return `/profile/${encodeURIComponent(fullName)}`;
 });
 
-// Initialize on mount
-onMounted(() => {
-  locationStore.fetchLocations();
-  authStore.restoreSession();
-});
+// Location selector logic
+const updateScreenSize = () => {
+  isMobileOrTablet.value = window.innerWidth <= 1024;
+};
 
-// Dropdown navigation
+const openLocationSelector = () => {
+  showLocationSelector.value = true;
+};
+
+const closeLocationSelector = () => {
+  showLocationSelector.value = false;
+  locationSearchQuery.value = "";
+};
+
+const selectLocation = (locationName) => {
+  locationStore.setLocation(locationName);
+  closeLocationSelector();
+};
+
+const detectLocation = async () => {
+  if (navigator.geolocation) {
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+      const { latitude, longitude } = position.coords;
+      const geoResponse = await axios.get(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+      );
+      const detectedCity =
+        geoResponse.data.address.city ||
+        geoResponse.data.address.town ||
+        geoResponse.data.address.village;
+      if (detectedCity) {
+        const foundLocation = locationStore.availableLocations.find(
+          (loc) => loc.name.toLowerCase() === detectedCity.toLowerCase()
+        );
+        if (foundLocation) {
+          locationStore.setLocation(foundLocation.name);
+          alert(`Location detected: ${foundLocation.name}`);
+        } else {
+          locationStore.setLocation(detectedCity);
+          alert(
+            `Location detected: ${detectedCity}. This city might not be in our primary service list.`
+          );
+        }
+      } else {
+        alert("Could not determine city from your coordinates.");
+      }
+    } catch (error) {
+      console.error("Geolocation or reverse geocoding error:", error);
+      alert("Error detecting location. Please select manually or try again.");
+    } finally {
+      closeLocationSelector();
+    }
+  } else {
+    alert("Geolocation is not supported by your browser.");
+    closeLocationSelector();
+  }
+};
+
+const handleClickOutsideLocationSelector = (event) => {
+  const locationButton = event.target.closest(
+    ".flex.items-center.space-x-2 > button"
+  );
+  if (
+    showLocationSelector.value &&
+    !isMobileOrTablet.value &&
+    locationPopover.value &&
+    !locationPopover.value.contains(event.target) &&
+    !locationButton?.contains(event.target)
+  ) {
+    closeLocationSelector();
+  }
+};
+
+// User dropdown
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;
 };
@@ -415,7 +633,7 @@ const logout = () => {
   router.push("/");
 };
 
-// Restrict input to digits only
+// Login/Register
 const restrictToDigits = (event) => {
   const input = event.target;
   input.value = input.value.replace(/[^0-9]/g, "");
@@ -426,7 +644,6 @@ const restrictToDigits = (event) => {
   }
 };
 
-// Close popup and reset state
 const closePopup = () => {
   authStore.showLoginPopup = false;
   authStore.showRegisterPopup = false;
@@ -451,7 +668,6 @@ const closePopup = () => {
   serverOtp.value = "";
 };
 
-// Handle login submission
 const handleLoginSubmit = async () => {
   try {
     if (!authStore.otpSent) {
@@ -478,7 +694,7 @@ const handleLoginSubmit = async () => {
       if (response.data.status === "otp sent") {
         authStore.error = null;
         authStore.otpSent = true;
-        serverOtp.value = response.data.otp; // Store the OTP from API
+        serverOtp.value = response.data.otp;
       } else {
         authStore.error = response.data.msg || "Failed to send OTP.";
       }
@@ -488,7 +704,6 @@ const handleLoginSubmit = async () => {
         authStore.error = "Please enter a valid 6-digit OTP";
         return;
       }
-      // Validate user-entered OTP against server OTP
       if (authStore.otp !== serverOtp.value) {
         authStore.error = "Invalid OTP. Please try again.";
         return;
@@ -504,7 +719,6 @@ const handleLoginSubmit = async () => {
           },
         }
       );
-      // Check if response is unexpectedly the OTP request response
       if (response.data.status === "otp sent") {
         authStore.error = "Unexpected response from server. Please try again.";
         authStore.isLoading = false;
@@ -518,7 +732,14 @@ const handleLoginSubmit = async () => {
           sessionId: response.data.sessionId,
         });
         closePopup();
-        router.push("/");
+        // Check for stored redirect and navigate
+        const redirectAfterLogin = sessionStorage.getItem("redirectAfterLogin");
+        if (redirectAfterLogin) {
+          router.push(redirectAfterLogin);
+          sessionStorage.removeItem("redirectAfterLogin");
+        } else {
+          router.push("/");
+        }
       } else if (response.data.sessionId === "0") {
         authStore.otpSent = false;
         authStore.otp = "";
@@ -539,7 +760,6 @@ const handleLoginSubmit = async () => {
   }
 };
 
-// Handle registration submission
 const handleRegisterSubmit = async () => {
   try {
     const fullName = `${firstName.value} ${lastName.value}`.trim();
@@ -582,7 +802,14 @@ const handleRegisterSubmit = async () => {
         sessionId: response.data.sessionId,
       });
       closePopup();
-      router.push("/");
+      // Check for stored redirect and navigate
+      const redirectAfterLogin = sessionStorage.getItem("redirectAfterLogin");
+      if (redirectAfterLogin) {
+        router.push(redirectAfterLogin);
+        sessionStorage.removeItem("redirectAfterLogin");
+      } else {
+        router.push("/");
+      }
     } else {
       authStore.error =
         response.data.msg || "Registration failed. Please try again.";
@@ -597,15 +824,87 @@ const handleRegisterSubmit = async () => {
     authStore.isLoading = false;
   }
 };
+
+// Lifecycle hooks
+onMounted(() => {
+  locationStore.fetchLocations();
+  authStore.restoreSession();
+  updateScreenSize();
+  window.addEventListener("resize", updateScreenSize);
+  document.addEventListener("click", handleClickOutsideLocationSelector);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", updateScreenSize);
+  document.removeEventListener("click", handleClickOutsideLocationSelector);
+});
+
+watch(showLocationSelector, (newValue) => {
+  if (newValue && isMobileOrTablet.value) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+});
 </script>
 
 <style scoped>
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
 /* Header Styles */
 header {
   transition: all 0.3s ease;
 }
 
-/* Popup Styles */
+/* Custom Scrollbar for desktop popover */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Transitions for Location Selector */
+/* Fade & Scale for Desktop Popover */
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Ease out back */
+}
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+}
+
+/* Slide Up for Mobile Overlay */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.3s ease-out;
+}
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
+
+/* Existing Popup Styles */
 .max-w-md {
   max-width: 90%;
 }

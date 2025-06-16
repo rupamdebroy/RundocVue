@@ -2,6 +2,8 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <Header />
+    <!-- The new web header navigation -->
+    <WebHeaderNav />
     <main class="flex-grow">
       <HeroSection />
       <ServiceGrid />

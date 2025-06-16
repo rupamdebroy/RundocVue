@@ -1,352 +1,754 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 flex flex-col">
     <Header />
-    <section class="py-6 px-4 sm:px-6 lg:px-8 min-h-screen">
-      <!-- Debug Information -->
-      <!-- <div v-if="debugMode" class="text-center text-gray-500 mb-4">
-        <p>Debug: Location = {{ locationStore.currentLocation }}</p>
-        <p>Debug: Doctors in Store = {{ doctorsStore.doctors.length }}</p>
-        <p>Debug: Doctor Found = {{ doctor ? doctor.name : "Not Found" }}</p>
-        <p>Debug: Error = {{ error || "None" }}</p>
-      </div> -->
-
-      <!-- Loading State -->
-      <div v-if="loading" class="text-center text-gray-600 py-8">
-        Loading doctor details...
+    <WebHeaderNav />
+    <section class="flex-grow py-4 px-4 sm:px-6 lg:px-8">
+      <div
+        v-if="loading"
+        class="flex justify-center items-center min-h-[60vh] flex-col"
+      >
+        <i
+          class="fas fa-spinner fa-spin text-blue-600 text-5xl mb-6 animate-pulse"
+        ></i>
+        <p class="text-xl text-gray-700 font-medium animate-pulse">
+          Fetching doctor's detailed profile...
+        </p>
       </div>
 
-      <!-- Error State -->
-      <div v-else-if="error" class="text-center text-red-500 py-8">
-        {{ error }}
-      </div>
-
-      <!-- Doctor Details -->
-      <div v-else-if="doctor" class="space-y-8">
-        <!-- Breadcrumb Navigation -->
-        <!-- <div class="max-w-7xl mx-auto">
-          <nav class="text-blue-600 text-sm">
-            <NuxtLink to="/" class="">Home</NuxtLink>
-            <span class="mx-2">></span>
-            <NuxtLink
-              :to="`/find-doctor?location=${doctorsStore.selectedLocation}`"
-              class=""
-            >Find Doctors</NuxtLink>
-            <span class="mx-2">></span>
-            <span v-if="clinicSlug">
-              <NuxtLink
-                :to="`/find-clinic?clinic=${clinicSlug}`"
-                class="text-blue-700 font-medium"
-              >
-                {{ clinic ? clinic.name : "Clinic" }}
-              </NuxtLink>
-              <span class="mx-2">></span>
-            </span>
-            <span class="text-blue-700 font-medium">Dr. {{ doctor.name }}</span>
-          </nav>
-        </div> -->
-
-        <!-- Banner Ad -->
-        <div class="max-w-7xl mx-auto">
-          <div
-            class="bg-gray-200 rounded-xl shadow-md h-32 flex items-center justify-center"
-          >
-            <span class="text-base text-gray-700 font-medium"
-              >Horizontal Ad Banner</span
-            >
-          </div>
-        </div>
-
-        <!-- 👨‍⚕️ Doctor Info Card -->
-        <div
-          class="bg-white p-4 sm:p-6 rounded-2xl shadow-lg max-w-7xl mx-auto border border-gray-200"
+      <div
+        v-else-if="error"
+        class="text-center text-red-600 py-16 px-4 rounded-xl bg-red-50 border border-red-200 max-w-2xl mx-auto shadow-lg"
+      >
+        <p class="text-2xl font-bold mb-4 flex items-center justify-center">
+          <i class="fas fa-exclamation-triangle mr-3 text-red-500"></i> Oh no!
+          Something went wrong.
+        </p>
+        <p class="text-lg text-gray-800 mb-6">{{ error }}</p>
+        <button
+          @click="router.back()"
+          class="px-8 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300 font-semibold flex items-center justify-center mx-auto"
         >
-          <div class="flex flex-col gap-6">
-            <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+          <i class="fas fa-arrow-left mr-2"></i> Go Back
+        </button>
+      </div>
+
+      <div v-else-if="doctor" class="max-w-7xl mx-auto space-y-8 py-2">
+        <div
+          class="bg-white p-4 sm:p-8 rounded-3xl shadow-2xl border border-blue-100 animate-fade-in-up delay-100"
+        >
+          <div
+            class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8"
+          >
+            <div class="relative w-28 h-28 sm:w-56 sm:h-56 flex-shrink-0">
               <img
-                src="https://static.vecteezy.com/system/resources/previews/041/408/858/non_2x/ai-generated-a-smiling-doctor-with-glasses-and-a-white-lab-coat-isolated-on-transparent-background-free-png.png"
-                class="w-48 h-48 object-cover"
-                alt="Doctor Illustration"
+                src="https://placehold.co/224x224/E0F2FE/1E40AF?text=Dr.+Avatar"
+                alt="Doctor Avatar"
+                class="w-full h-full object-cover rounded-full border-4 border-blue-200 shadow-lg"
+                onerror="this.onerror=null;this.src='https://placehold.co/224x224/E0F2FE/1E40AF?text=Dr.+Avatar';"
               />
-              <div class="text-center md:text-left space-y-2">
-                <h1 class="text-xl md:text-3xl font-bold text-gray-900">
-                  Dr. {{ doctor.name }}
-                </h1>
-                <p class="text-gray-600 text-base">{{ doctor.degree }}</p>
-                <p class="text-blue-700 font-medium text-base tracking-wide">
-                  {{ doctor.specilities }}
-                </p>
+              <div
+                class="absolute bottom-0 right-0 bg-green-500 text-white rounded-full p-1 text-xs font-bold shadow-md"
+              >
+                <i class="fas fa-check-circle"></i> Verified
               </div>
             </div>
 
-            <div class="border-t border-gray-300"></div>
+            <div class="text-center md:text-left flex-grow space-y-1">
+              <h1
+                class="text-xl sm:text-4xl font-extrabold text-gray-900 leading-tight"
+              >
+                Dr. {{ doctor.name }}
+              </h1>
+              <p
+                class="text-sm sm:text-xl text-gray-700 font-semibold flex items-center justify-center md:justify-start"
+              >
+                <i
+                  class="fas fa-user-graduate mr-2 text-purple-600 text-base sm:text-xl"
+                ></i
+                >{{ doctor.degree }}
+              </p>
+              <p
+                class="text-sm sm:text-xl text-blue-700 font-bold tracking-wide flex items-center justify-center md:justify-start"
+              >
+                <i
+                  class="fas fa-stethoscope mr-2 text-red-500 text-base sm:text-xl"
+                ></i
+                >{{ doctor.specilities }}
+              </p>
+              <div
+                class="flex items-center justify-center md:justify-start text-xs sm:text-lg text-gray-600 space-x-3 mt-2"
+              >
+                <span class="flex items-center"
+                  ><i class="fas fa-heart text-pink-500 mr-1 text-sm"></i>98%
+                  Rating</span
+                >
+                <span class="flex items-center"
+                  ><i class="fas fa-comments text-yellow-600 mr-1 text-sm"></i
+                  >{{ formatNumber(5300) }} Reviews</span
+                >
+              </div>
 
-            <!-- 👍👎 Recommend Doctor -->
-            <div
-              v-if="!loading && !error && doctor"
-              class="flex flex-col items-center gap-3"
-            >
-              <div class="flex items-center gap-4">
-                <p class="text-sm font-medium text-gray-600">
+              <div
+                class="pt-4 md:pt-6 flex flex-col md:flex-row items-center justify-center md:justify-start gap-3 md:gap-6 animate-fade-in-up delay-200"
+              >
+                <p
+                  class="text-sm sm:text-lg font-medium text-gray-700 flex-shrink-0"
+                >
                   Recommend this Doctor:
                 </p>
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
                   <button
                     v-if="authStore.isAuthenticated"
                     @click="recommendDoctor(true)"
                     :class="[
-                      'text-2xl transition-transform duration-200',
+                      'w-10 h-10 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-xl sm:text-4xl shadow-md transition-all duration-300 transform',
                       userRecommendation && userRecommendation.value === true
-                        ? 'text-green-500 scale-125 animate-bounce'
-                        : 'text-gray-400 hover:text-green-400 hover:scale-110',
+                        ? 'bg-green-100 text-green-600 scale-110 border-2 border-green-500 animate-recommend-bounce'
+                        : 'bg-gray-100 text-gray-500 hover:bg-green-50 hover:text-green-500 hover:scale-105',
                     ]"
                     aria-label="Recommend doctor with thumbs up"
                   >
-                    👍
+                    <i class="fas fa-thumbs-up"></i>
                   </button>
                   <button
                     v-if="authStore.isAuthenticated"
                     @click="recommendDoctor(false)"
                     :class="[
-                      'text-2xl transition-transform duration-200',
+                      'w-10 h-10 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-xl sm:text-4xl shadow-md transition-all duration-300 transform',
                       userRecommendation && userRecommendation.value === false
-                        ? 'text-red-500 scale-125 animate-bounce'
-                        : 'text-gray-400 hover:text-red-400 hover:scale-110',
+                        ? 'bg-red-100 text-red-600 scale-110 border-2 border-red-500 animate-recommend-bounce'
+                        : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500 hover:scale-105',
                     ]"
                     aria-label="Do not recommend doctor with thumbs down"
                   >
-                    👎
+                    <i class="fas fa-thumbs-down"></i>
                   </button>
-                  <p
-                    v-if="!authStore.isAuthenticated"
-                    class="text-sm text-gray-600"
+                </div>
+                <p
+                  v-if="!authStore.isAuthenticated"
+                  class="text-xs text-gray-600 text-center md:text-left"
+                >
+                  Please
+                  <NuxtLink
+                    to="/auth"
+                    class="text-blue-700 underline hover:text-blue-500"
+                    >log in</NuxtLink
                   >
-                    Please
-                    <NuxtLink to="/auth" class="text-blue-700 underline"
-                      >log in</NuxtLink
-                    >
-                    to recommend.
-                  </p>
+                  to recommend.
+                </p>
+                <div
+                  v-if="recommendationPercentage > 0"
+                  class="text-xs sm:text-base text-gray-600 font-medium flex items-center justify-center md:justify-start mt-2 md:mt-0"
+                >
+                  <i class="fas fa-chart-line mr-2 text-blue-500"></i>
+                  {{ recommendationPercentage }}% of users recommend Dr.
+                  {{ doctor.name }}
                 </div>
               </div>
-              <p
-                v-if="recommendationPercentage > 0"
-                class="text-sm text-gray-600"
-              >
-                {{ recommendationPercentage }}% of users recommend Dr.
-                {{ doctor.name }}
+            </div>
+          </div>
+
+          <div
+            class="grid grid-cols-3 gap-2 sm:gap-6 pt-4 mt-4 border-t border-gray-200 animate-fade-in-up delay-300"
+          >
+            <div
+              class="flex flex-col items-center text-center p-2 sm:p-4 bg-blue-50 rounded-xl shadow-sm border border-blue-200"
+            >
+              <i
+                class="fas fa-users text-2xl sm:text-4xl text-blue-600 mb-2"
+              ></i>
+              <p class="text-lg sm:text-2xl font-bold text-gray-900">
+                {{ formatNumber(2050) }}+
               </p>
+              <p class="text-xs text-gray-600">Patients Treated</p>
             </div>
-
-            <div class="border-t border-gray-300"></div>
-
-            <!-- Stats Section -->
-            <div class="flex flex-row justify-around text-center">
-              <div class="space-y-1">
-                <p class="text-xl md:text-2xl font-semibold text-gray-900">
-                  {{ formatNumber(2050) }}
-                </p>
-                <p class="text-sm text-gray-500">Patients</p>
-              </div>
-              <div v-if="doctor.experience !== ''" class="space-y-1">
-                <p class="text-xl md:text-2xl font-semibold text-gray-900">
-                  {{ doctor.experience }} Years
-                </p>
-                <p class="text-sm text-gray-500">Experience</p>
-              </div>
-              <div class="space-y-1">
-                <p class="text-xl md:text-2xl font-semibold text-gray-900">
-                  {{ formatNumber(5300) }}
-                </p>
-                <p class="text-sm text-gray-500">Reviews</p>
-              </div>
-            </div>
-
-            <div class="border-t border-gray-300"></div>
-
-            <!-- 📖 About Doctor -->
-            <div class="py-4">
-              <p class="text-gray-600 leading-relaxed">
-                Dr. {{ doctor.name }} is an experienced
-                {{ doctor.specilities.toLowerCase() }} specialist with over
-                {{ doctor.experience || "several" }} years of practice.
-                Committed to providing top-notch care, Dr.
-                {{ doctor.name }} focuses on accurate diagnosis and effective
-                treatment plans tailored to each patient's needs.
+            <div
+              v-if="doctor.experience !== ''"
+              class="flex flex-col items-center text-center p-2 sm:p-4 bg-green-50 rounded-xl shadow-sm border border-green-200"
+            >
+              <i
+                class="fas fa-briefcase-medical text-2xl sm:text-4xl text-green-600 mb-2"
+              ></i>
+              <p class="text-lg sm:text-2xl font-bold text-gray-900">
+                {{ doctor.experience }}
               </p>
+              <p class="text-xs text-gray-600">Years Experience</p>
             </div>
+            <div
+              class="flex flex-col items-center text-center p-2 sm:p-4 bg-yellow-50 rounded-xl shadow-sm border border-yellow-200"
+            >
+              <i
+                class="fas fa-star text-2xl sm:text-4xl text-yellow-600 mb-2"
+              ></i>
+              <p class="text-lg sm:text-2xl font-bold text-gray-900">
+                {{ formatNumber(5300) }}+
+              </p>
+              <p class="text-xs text-gray-600">Positive Reviews</p>
+            </div>
+          </div>
+
+          <div
+            class="pt-6 mt-6 border-t border-gray-200 animate-fade-in-up delay-400"
+          >
+            <h2
+              class="text-lg sm:text-2xl font-bold text-gray-900 mb-3 flex items-center"
+            >
+              <i
+                class="fas fa-info-circle mr-2 text-blue-600 text-xl sm:text-2xl"
+              ></i>
+              About Dr. {{ doctor.name }}
+            </h2>
+            <p class="text-sm text-gray-700 leading-relaxed">
+              Dr. {{ doctor.name }} is a highly experienced
+              <span class="font-semibold text-blue-800">{{
+                doctor.specilities.toLowerCase()
+              }}</span>
+              specialist with over
+              <span class="font-semibold text-blue-800">{{
+                doctor.experience || "several"
+              }}</span>
+              years of dedicated practice. Known for a patient-centric approach,
+              Dr. {{ doctor.name }} excels in providing precise diagnoses and
+              developing effective, personalized treatment plans. Committed to
+              continuous learning and staying updated with the latest medical
+              advancements, Dr. {{ doctor.name }} ensures every patient receives
+              the highest standard of care.
+            </p>
           </div>
         </div>
 
-        <!-- 👨‍⚕️ Related Doctors -->
-        <div class="max-w-7xl mx-auto py-6">
-          <h2 class="text-center text-2xl font-semibold text-gray-800 mb-4">
+        <div
+          class="max-w-7xl mx-auto py-6 bg-white rounded-2xl shadow-lg border border-gray-200 animate-fade-in-up delay-500"
+        >
+          <h2
+            class="text-lg sm:text-3xl font-bold text-gray-900 mb-5 flex flex-col sm:flex-row items-center justify-center text-center px-4"
+          >
+            <i
+              class="fas fa-user-md mr-0 sm:mr-3 mb-2 sm:mb-0 text-blue-600"
+            ></i>
             Other
-            <span class="text-blue-600">{{ doctor.specilities }}</span> Doctors
-            from
-            <span class="text-blue-600">{{
+            <span class="text-blue-600 sm:ml-2 sm:mr-1">
+              {{ doctor.specilities }}</span
+            >
+            Doctors in
+            <span class="text-blue-600 sm:ml-1">{{
               doctorsStore.selectedLocation
             }}</span>
           </h2>
 
-          <div class="relative px-8 sm:px-12">
+          <div class="relative px-4 sm:px-10">
             <button
               @click="scrollLeft"
-              class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 rounded-full shadow hover:bg-blue-600 transition"
+              class="absolute left-0 sm:left-4 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 sm:p-3 rounded-full shadow-lg hover:bg-blue-600 transition-all transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Scroll left"
             >
-              <ChevronLeftIcon class="w-5 h-5" />
+              <ChevronLeftIcon class="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
             <div
               ref="doctorsList"
-              class="flex gap-4 overflow-x-auto snap-x snap-mandatory py-4 px-2 hide-scrollbar"
+              class="flex gap-3 sm:gap-6 overflow-x-auto snap-x snap-mandatory py-3 px-2 hide-scrollbar scroll-smooth"
             >
               <div
                 v-for="relatedDoctor in relatedDoctors"
                 :key="relatedDoctor.id"
                 @click="navigateToDoctor(relatedDoctor.doc)"
-                class="flex-shrink-0 text-center w-32 snap-center cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition"
+                class="flex-shrink-0 w-28 sm:w-48 text-center snap-center cursor-pointer bg-blue-50 rounded-xl p-3 sm:p-4 shadow-md hover:shadow-lg hover:bg-blue-100 transition-all duration-300 transform hover:-translate-y-1 border border-blue-200"
               >
-                <div
-                  class="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-xl font-bold text-blue-700 shadow"
+                <img
+                  src="https://placehold.co/100x100/E0F2FE/1E40AF?text=Dr.+Avatar"
+                  alt="Related Doctor Avatar"
+                  class="w-16 h-16 sm:w-24 sm:h-24 mx-auto object-cover rounded-full border-2 border-blue-300 shadow-sm mb-2"
+                  onerror="this.onerror=null;this.src='https://placehold.co/100x100/E0F2FE/1E40AF?text=Dr.+Avatar';"
+                />
+                <p
+                  class="text-sm sm:text-lg font-bold text-gray-800 truncate mb-1"
                 >
-                  {{ relatedDoctor.name.charAt(0) }}
-                </div>
-                <p class="mt-2 text-sm font-medium text-gray-800 truncate">
-                  {{ relatedDoctor.name }}
+                  Dr. {{ relatedDoctor.name }}
                 </p>
-                <p class="text-xs text-gray-500">
+                <p class="text-xs text-blue-700 font-medium">
                   {{ relatedDoctor.specilities }}
                 </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  Exp: {{ relatedDoctor.experience }} yrs
+                </p>
+              </div>
+              <div
+                v-if="relatedDoctors.length === 0"
+                class="text-center text-gray-600 py-4 w-full"
+              >
+                No other doctors found for this specialty.
               </div>
             </div>
             <button
               @click="scrollRight"
-              class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 rounded-full shadow hover:bg-blue-600 transition"
+              class="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 sm:p-3 rounded-full shadow-lg hover:bg-blue-600 transition-all transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Scroll right"
             >
-              <ChevronRightIcon class="w-5 h-5" />
+              <ChevronRightIcon class="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
         </div>
 
-        <!-- 📅 Available Dates -->
-        <div class="bg-gray-100 py-6">
-          <div class="max-w-7xl mx-auto px-0">
-            <h2 class="text-center text-2xl font-semibold text-gray-800 mb-4">
-              Available Dates <span v-if="clinic">at {{ clinic.name }}</span>
+        <div
+          class="bg-gradient-to-br from-blue-50 to-indigo-50 py-8 sm:py-10 rounded-3xl shadow-xl border border-blue-200 animate-fade-in-up delay-600"
+        >
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2
+              class="text-xl sm:text-3xl font-bold text-gray-900 mb-8 flex flex-col sm:flex-row items-center justify-center text-center"
+            >
+              <i
+                class="fas fa-calendar-alt mr-0 sm:mr-3 mb-2 sm:mb-0 text-blue-600"
+              ></i>
+              Available Slots
+              <span v-if="clinic"
+                >at <span class="text-blue-700">{{ clinic.name }}</span></span
+              >
             </h2>
 
-            <div v-if="scheduleLoading" class="text-center text-gray-500">
-              Loading schedule...
+            <div
+              v-if="scheduleLoading"
+              class="flex justify-center items-center py-8 flex-col"
+            >
+              <i
+                class="fas fa-sync-alt fa-spin text-blue-500 text-3xl mb-4"
+              ></i>
+              <p class="text-lg text-gray-600 animate-pulse">
+                Loading doctor's schedule...
+              </p>
             </div>
-            <div v-else-if="scheduleError" class="text-center text-red-500">
-              {{ scheduleError }}
+            <div
+              v-else-if="scheduleError"
+              class="text-center text-red-500 py-8 text-lg"
+            >
+              <i class="fas fa-exclamation-circle mr-2"></i> {{ scheduleError }}
             </div>
             <div
               v-else-if="availableDates.length === 0"
-              class="text-center bg-yellow-100 text-yellow-800 px-4 py-3 rounded-xl font-medium shadow"
+              class="text-center bg-yellow-100 text-yellow-800 px-6 py-5 rounded-xl font-medium shadow-md"
             >
-              Sorry, there are currently no available appointment slots for Dr.
-              {{ doctor.name }}
-              <span v-if="clinic">at {{ clinic.name }}</span
-              >. Please check back later or choose another doctor.
+              <p class="text-base sm:text-lg mb-2">
+                <i class="fas fa-calendar-times mr-2"></i> Sorry, no available
+                appointment slots for Dr. {{ doctor.name }}
+              </p>
+              <p class="text-sm">
+                <span v-if="clinic">at {{ clinic.name }}</span
+                >. Please check back later or choose another doctor.
+              </p>
             </div>
 
-            <div v-else class="relative px-14">
-              <button
-                @click="scrollLeftDates"
-                class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 rounded-full shadow hover:bg-blue-600 transition"
-              >
-                <ChevronLeftIcon class="w-5 h-5" />
-              </button>
-              <div
-                ref="datesList"
-                class="flex gap-4 overflow-x-auto snap-x snap-mandatory py-4 hide-scrollbar"
-              >
-                <div
-                  v-for="date in availableDates"
-                  :key="date"
-                  @click="selectDate(date)"
-                  :class="[
-                    'flex-shrink-0 w-24 p-4 rounded-lg border text-center cursor-pointer transition-all duration-200',
-                    selectedDate === date
-                      ? 'bg-blue-700 text-white border-blue-700 shadow-lg'
-                      : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100',
-                  ]"
+            <div v-else class="space-y-8">
+              <div class="relative px-8 sm:px-12">
+                <button
+                  @click="scrollLeftDates"
+                  class="absolute left-0 sm:left-4 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 sm:p-3 rounded-full shadow-lg hover:bg-blue-600 transition-all transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  aria-label="Scroll dates left"
                 >
-                  <p class="text-sm font-medium">{{ formatMonthYear(date) }}</p>
-                  <p class="text-xl font-bold">{{ formatDay(date) }}</p>
+                  <ChevronLeftIcon class="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
+                <div
+                  ref="datesList"
+                  class="flex gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory py-4 px-2 hide-scrollbar scroll-smooth"
+                >
+                  <div
+                    v-for="date in availableDates"
+                    :key="date.fullDate"
+                    @click="selectDate(date)"
+                    :class="[
+                      'flex-shrink-0 w-28 sm:w-32 p-3 sm:p-4 rounded-xl border-2 text-center cursor-pointer transition-all duration-200 shadow-md',
+                      selectedDate && selectedDate.fullDate === date.fullDate
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-lg scale-105'
+                        : 'bg-white text-gray-800 border-gray-300 hover:bg-blue-50 hover:border-blue-400',
+                    ]"
+                  >
+                    <p class="text-base sm:text-lg font-bold">
+                      {{ date.dayName }}
+                    </p>
+                    <p class="text-sm font-medium">{{ date.monthDate }}</p>
+                  </div>
+                </div>
+                <button
+                  @click="scrollRightDates"
+                  class="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 sm:p-3 rounded-full shadow-lg hover:bg-blue-600 transition-all transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  aria-label="Scroll dates right"
+                >
+                  <ChevronRightIcon class="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
+              </div>
+
+              <div
+                v-if="selectedDate && availableSlots.length > 0"
+                class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 mt-8 animate-fade-in-up delay-700"
+              >
+                <h3
+                  class="text-xl font-bold text-gray-800 mb-6 flex items-center justify-center text-center"
+                >
+                  <i class="fas fa-clock mr-3 text-blue-600"></i> Select a Time
+                  Slot for {{ selectedDate.fullDateFormatted }}
+                </h3>
+                <div
+                  class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4"
+                >
+                  <button
+                    v-for="slot in availableSlots"
+                    :key="slot.scheduletime"
+                    @click="selectSlot(slot)"
+                    :class="[
+                      'px-4 py-2 sm:px-5 sm:py-3 rounded-xl border-2 text-center font-semibold transition-all duration-200 transform hover:scale-105 shadow-sm text-sm sm:text-base',
+                      selectedSlot &&
+                      selectedSlot.scheduletime === slot.scheduletime
+                        ? 'bg-green-600 text-white border-green-600 shadow-lg'
+                        : 'bg-gray-100 text-gray-800 border-gray-300 hover:bg-green-50 hover:border-green-400',
+                    ]"
+                  >
+                    {{ slot.scheduletime }}
+                  </button>
                 </div>
               </div>
-              <button
-                @click="scrollRightDates"
-                class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-blue-700 text-white p-2 rounded-full shadow hover:bg-blue-600 transition"
+              <div
+                v-else-if="selectedDate && availableSlots.length === 0"
+                class="text-center bg-yellow-100 text-yellow-800 px-6 py-5 rounded-xl font-medium shadow-md mt-8"
               >
-                <ChevronRightIcon class="w-5 h-5" />
-              </button>
+                <p class="text-base sm:text-lg mb-2">
+                  <i class="fas fa-exclamation-circle mr-2"></i> No available
+                  slots for {{ selectedDate.fullDateFormatted }}.
+                </p>
+                <p class="text-sm">
+                  Please select another date or check back later.
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 📋 Appointment Summary -->
-        <div v-if="selectedSlot" class="py-6 px-4">
-          <div class="max-w-4xl mx-auto">
-            <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">
-              <span class="text-blue-600">Appointment</span> Details
-            </h2>
+        <div
+          v-if="selectedSlot"
+          class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl border border-green-200 max-w-4xl mx-auto animate-fade-in-up delay-800"
+        >
+          <h2
+            class="text-xl sm:text-3xl font-bold text-center text-gray-900 mb-8 flex flex-col sm:flex-row items-center justify-center text-center"
+          >
+            <i
+              class="fas fa-check-circle mr-0 sm:mr-3 mb-2 sm:mb-0 text-green-600"
+            ></i>
+            Confirm Your <span class="text-blue-600 sm:ml-2">Appointment</span>
+          </h2>
 
-            <div
-              class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-6 border rounded-2xl p-6 bg-white shadow-md"
-            >
-              <!-- Left: Info -->
-              <div class="space-y-2 text-gray-700 flex-1">
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-10 text-gray-700 text-base sm:text-lg"
+          >
+            <div class="flex items-center">
+              <i
+                class="fas fa-calendar-day mr-4 text-blue-500 text-xl sm:text-2xl"
+              ></i>
+              <div>
+                <p class="font-medium">Appointment Date:</p>
                 <p>
-                  <span class="font-medium">Date:</span>
-                  {{ selectedSlot.date || selectedSlot.scheduledate }}
-                </p>
-
-                <p>
-                  <span class="font-medium">Clinic:</span>
-                  <NuxtLink
-                    v-if="clinic"
-                    :to="`/find-clinic?clinic=${clinicSlug}`"
-                    class="text-blue-600 underline hover:text-blue-500 transition"
-                  >
-                    {{ clinic.name }}
-                  </NuxtLink>
-                  <span v-else>{{ selectedSlot.clinicname }}</span>
-                </p>
-
-                <p>
-                  <span class="font-medium">Address:</span>
-                  {{ clinic ? clinic.address : selectedSlot.ClinicA }}
-                </p>
-
-                <p>
-                  <span class="font-medium">Doctor Fee:</span>
-                  ₹{{ selectedSlot.docfee || "500" }}
-                </p>
-
-                <p>
-                  <span class="font-medium">Platform Fee:</span>
-                  ₹{{ selectedSlot.pfee || "50" }}
+                  {{ selectedSlot.scheduledate }} ({{ selectedSlot.Dayname }})
                 </p>
               </div>
-
-              <!-- Right: Button -->
-              <div class="sm:self-center w-full sm:w-auto">
-                <button
-                  @click="submitBooking"
-                  class="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-all shadow"
+            </div>
+            <div class="flex items-center">
+              <i
+                class="fas fa-clock mr-4 text-blue-500 text-xl sm:text-2xl"
+              ></i>
+              <div>
+                <p class="font-medium">Reporting Time:</p>
+                <p>{{ selectedSlot.scheduletime }}</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <i
+                class="fas fa-hospital mr-4 text-blue-500 text-xl sm:text-2xl"
+              ></i>
+              <div>
+                <p class="font-medium">Clinic:</p>
+                <NuxtLink
+                  :to="`/find-clinic?location=${
+                    locationStore.currentLocation
+                  }&clinic=${slugify(selectedSlot.clinicname)}`"
+                  class="text-blue-600 underline hover:text-blue-500 transition"
                 >
-                  Book Clinic Visit
-                </button>
+                  {{ selectedSlot.clinicname }}
+                </NuxtLink>
+              </div>
+            </div>
+            <div class="flex items-start">
+              <i
+                class="fas fa-map-marker-alt mr-4 text-blue-500 text-xl sm:text-2xl mt-1"
+              ></i>
+              <div>
+                <p class="font-medium">Address:</p>
+                <p>{{ selectedSlot.ClinicA }}</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <i
+                class="fas fa-hand-holding-usd mr-4 text-blue-500 text-xl sm:text-2xl"
+              ></i>
+              <div>
+                <p class="font-medium">Doctor Fee:</p>
+                <p>₹{{ selectedSlot.docfee }}</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <i
+                class="fas fa-money-bill-wave mr-4 text-blue-500 text-xl sm:text-2xl"
+              ></i>
+              <div>
+                <p class="font-medium">Platform Fee:</p>
+                <p>₹{{ selectedSlot.pfee }}</p>
               </div>
             </div>
           </div>
+
+          <button
+            @click="openPaymentModal"
+            class="mt-8 sm:mt-10 w-full bg-green-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-xl hover:bg-green-700 transition-all shadow-xl text-base sm:text-xl font-bold flex items-center justify-center animate-pulse-once"
+          >
+            <i class="fas fa-wallet mr-3"></i> Proceed to Payment
+          </button>
         </div>
       </div>
     </section>
+
     <Footer />
     <BottomNav />
+
+    <!-- Booking Confirmation Modal -->
+    <Teleport to="body">
+      <Transition name="confirm-modal-fade">
+        <div
+          v-if="showBookingConfirmationModal"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        >
+          <div
+            class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm"
+            @click="closeBookingConfirmationModal"
+          ></div>
+          <div
+            class="relative bg-white rounded-2xl shadow-3xl w-full max-w-sm p-8 text-center transform transition-all duration-300 scale-95 opacity-0"
+            :class="{ 'scale-100 opacity-100': showBookingConfirmationModal }"
+            @click.stop
+          >
+            <i
+              :class="
+                bookingSuccess
+                  ? 'fas fa-check-circle text-green-500'
+                  : 'fas fa-times-circle text-red-500'
+              "
+              class="text-6xl mb-6"
+            ></i>
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">
+              {{ bookingSuccess ? "Booking Confirmed!" : "Booking Failed" }}
+            </h3>
+            <p class="text-gray-700 mb-6">{{ bookingMessage }}</p>
+            <button
+              @click="closeBookingConfirmationModal"
+              :class="
+                bookingSuccess
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-blue-600 hover:bg-blue-700'
+              "
+              class="px-6 py-3 text-white rounded-lg font-semibold transition-colors shadow-md"
+            >
+              {{ bookingSuccess ? "Done" : "Close" }}
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Payment Modal -->
+    <Teleport to="body">
+      <Transition name="payment-modal-fade">
+        <div
+          v-if="showPaymentModal"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        >
+          <div
+            class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm"
+            @click="closePaymentModal"
+          ></div>
+          <div
+            class="relative bg-white rounded-2xl shadow-3xl w-full max-w-md p-6 sm:p-8 text-left transform transition-all duration-300 scale-95 opacity-0"
+            :class="{ 'scale-100 opacity-100': showPaymentModal }"
+            @click.stop
+          >
+            <h3
+              class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center"
+            >
+              <i class="fas fa-wallet mr-2 text-blue-600"></i> Book Appointment
+            </h3>
+
+            <div class="space-y-4">
+              <!-- Patient Selection -->
+              <div>
+                <label
+                  for="patientType"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Book Appointment For
+                </label>
+                <select
+                  id="patientType"
+                  v-model="patientType"
+                  @change="updatePatientDetails"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
+                >
+                  <option value="self">Self</option>
+                  <option
+                    v-for="member in familyMembers"
+                    :key="member.id"
+                    :value="member.id"
+                  >
+                    {{ member.name }} ({{ member.relation }})
+                  </option>
+                </select>
+              </div>
+
+              <!-- Patient Details -->
+              <div>
+                <label
+                  for="patientName"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Name
+                </label>
+                <input
+                  id="patientName"
+                  v-model="patientDetails.name"
+                  type="text"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  readonly
+                />
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="patientAge"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Age
+                  </label>
+                  <input
+                    id="patientAge"
+                    v-model="patientDetails.age"
+                    type="number"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    :readonly="patientType !== 'self'"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="patientGender"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Gender
+                  </label>
+                  <select
+                    id="patientGender"
+                    v-model="patientDetails.gender"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    :disabled="patientType !== 'self'"
+                  >
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Fee Details -->
+              <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <p class="text-sm font-medium text-gray-700 mb-2">
+                  Payment Details
+                </p>
+                <div class="flex justify-between text-sm text-gray-600">
+                  <span>Platform Fee</span>
+                  <span>₹{{ selectedSlot.pfee }}</span>
+                </div>
+                <div
+                  v-if="docfeeCollect"
+                  class="flex justify-between text-sm text-gray-600 mt-1"
+                >
+                  <span>Doctor Fee</span>
+                  <span>₹{{ selectedSlot.docfee }}</span>
+                </div>
+                <div v-else class="text-xs text-red-600 mt-2 italic">
+                  Note: Doctor fee (₹{{ selectedSlot.docfee }}) to be paid at
+                  the clinic.
+                </div>
+                <div
+                  class="flex justify-between text-sm font-bold text-gray-800 mt-2"
+                >
+                  <span>Total Payable Now</span>
+                  <span>₹{{ totalPayable }}</span>
+                </div>
+              </div>
+
+              <!-- Platform Fee Disclaimer -->
+              <div class="text-xs text-gray-600">
+                <label class="flex items-start cursor-pointer">
+                  <input
+                    type="checkbox"
+                    v-model="platformFeeUnderstood"
+                    class="mt-1 mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    checked
+                  />
+                  <span>
+                    I understand that we charge a small platform fee of ₹50 to
+                    help keep things running smoothly. This fee is usually
+                    non-refundable, but if the doctor doesn’t show up, your ₹50
+                    will be credited back to your Rundoc Wallet for use in
+                    future transactions. For more info, visit our
+                    <NuxtLink
+                      to="/refund-cancellation"
+                      class="text-blue-600 underline hover:text-blue-500"
+                    >
+                      Refund and Cancellation Policy </NuxtLink
+                    >.
+                  </span>
+                </label>
+              </div>
+
+              <!-- Terms & Conditions -->
+              <div class="text-xs text-gray-600">
+                <label class="flex items-start cursor-pointer">
+                  <input
+                    type="checkbox"
+                    v-model="termsAccepted"
+                    class="mt-1 mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    checked
+                  />
+                  <span>
+                    I agree to Rundoc’s
+                    <NuxtLink
+                      to="/terms-conditions"
+                      class="text-blue-600 underline hover:text-blue-500"
+                    >
+                      Terms & Conditions </NuxtLink
+                    >.
+                  </span>
+                </label>
+              </div>
+
+              <!-- Pay Button -->
+              <button
+                @click="initiatePayment"
+                :disabled="!platformFeeUnderstood || !termsAccepted"
+                :class="[
+                  'w-full px-6 py-3 rounded-lg font-semibold transition-colors shadow-md text-sm sm:text-base',
+                  platformFeeUnderstood && termsAccepted
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed',
+                ]"
+              >
+                <i class="fas fa-credit-card mr-2"></i> Pay ₹{{ totalPayable }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -358,10 +760,10 @@ import { onMounted, ref, computed, watch } from "vue";
 import { useDoctorsStore } from "@/stores/doctors";
 import { useClinicsStore } from "@/stores/clinics";
 import { useLocationStore } from "@/stores/location";
-import axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/24/solid";
 import { navigateTo, useRoute, useRouter } from "#app";
+import axios from "axios";
 
 // Route, Router, and Stores
 const route = useRoute();
@@ -372,7 +774,6 @@ const locationStore = useLocationStore();
 const authStore = useAuthStore();
 const doctorSlug = ref(route.params.doc);
 const clinicSlug = ref(route.query.clinic || "");
-const debugMode = ref(true); // Enable debug mode to see logs and debug info
 
 // Doctor State
 const loading = ref(true);
@@ -384,12 +785,37 @@ const clinic = ref(null);
 const scheduleLoading = ref(true);
 const scheduleError = ref("");
 const schedule = ref([]);
-const selectedDate = ref("");
+const selectedDate = ref(null);
 const selectedSlot = ref(null);
 
 // Recommendation State
-const userRecommendation = ref(null); // true (thumbs up), false (thumbs down), null (no recommendation)
-const recommendationPercentage = ref(0); // Simulated percentage
+const userRecommendation = ref(null);
+const recommendationPercentage = ref(0);
+
+// Booking Confirmation Modal State
+const showBookingConfirmationModal = ref(false);
+const bookingSuccess = ref(false);
+const bookingMessage = ref("");
+
+// Payment Modal State
+const showPaymentModal = ref(false);
+const patientType = ref("self");
+const patientDetails = ref({
+  name: "",
+  age: "",
+  gender: "",
+});
+const platformFeeUnderstood = ref(true);
+const termsAccepted = ref(true);
+const docfeeCollect = ref(true); // Determined by bookingStart API
+
+// Family Members (Simulated, max limits as per client: Father 1, Mother 1, Brother 1, Sister 1, Wife 1, Son 2, Daughter 2)
+const familyMembers = ref([
+  // Example data; in real app, fetch from backend
+  { id: 1, name: "John Doe Sr.", relation: "Father", age: 60, gender: "M" },
+  { id: 2, name: "Jane Doe", relation: "Mother", age: 58, gender: "F" },
+  { id: 3, name: "Mike Doe", relation: "Son", age: 25, gender: "M" },
+]);
 
 // References for smooth scrolling
 const doctorsList = ref(null);
@@ -397,110 +823,174 @@ const datesList = ref(null);
 
 // Computed properties
 const relatedDoctors = computed(() => {
+  if (!doctor.value || !doctorsStore.doctors.length) return [];
   return doctorsStore.doctors.filter(
     (doc) =>
       doc.doc !== doctorSlug.value &&
-      doc.specilities === doctor.value?.specilities
+      doc.specilities === doctor.value.specilities
   );
 });
 
 const availableDates = computed(() => {
-  const today = new Date("2025-06-04");
-  return schedule.value
-    .map((s) => s.date)
-    .filter((date) => new Date(date) >= today)
-    .sort();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const dates = schedule.value
+    .map((s) => {
+      const dateKey = s.scheduledate || s.date;
+      const dateObj = new Date(dateKey);
+      if (isNaN(dateObj.getTime())) {
+        console.warn(`Invalid date found in schedule: ${dateKey}`);
+        return null;
+      }
+
+      dateObj.setHours(0, 0, 0, 0);
+
+      return {
+        fullDate: dateKey,
+        dayName: formatDayOfWeek(dateObj),
+        monthDate: formatMonthDate(dateObj),
+        fullDateFormatted: formatFullDate(dateObj),
+      };
+    })
+    .filter(
+      (date) =>
+        date && new Date(date.fullDate).setHours(0, 0, 0, 0) >= today.getTime()
+    )
+    .sort(
+      (a, b) => new Date(a.fullDate).getTime() - new Date(b.fullDate).getTime()
+    );
+
+  const uniqueDates = [];
+  const seenDates = new Set();
+  for (const date of dates) {
+    if (!seenDates.has(date.fullDate)) {
+      uniqueDates.push(date);
+      seenDates.add(date.fullDate);
+    }
+  }
+  return uniqueDates;
 });
 
 const availableSlots = computed(() => {
   if (!selectedDate.value) return [];
-  const slots =
-    schedule.value.find((s) => s.date === selectedDate.value)?.slots || [];
-  return slots.filter((slot) => slot.available);
+
+  const slotsForSelectedDate = schedule.value
+    .filter((s) => (s.scheduledate || s.date) === selectedDate.value.fullDate)
+    .flatMap((s) => s.slots);
+
+  return slotsForSelectedDate.filter((slot) => slot && slot.scheduletime);
 });
+
+const totalPayable = computed(() => {
+  if (!selectedSlot.value) return 0;
+  const platformFee = parseInt(selectedSlot.value.pfee) || 0;
+  const doctorFee = docfeeCollect.value
+    ? parseInt(selectedSlot.value.docfee) || 0
+    : 0;
+  return platformFee + doctorFee;
+});
+
+// Functions
+const slugify = (text) => {
+  if (!text) return "";
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-");
+};
 
 const fetchDoctorData = async () => {
   loading.value = true;
   scheduleLoading.value = true;
   error.value = "";
   scheduleError.value = "";
+  selectedSlot.value = null;
+  selectedDate.value = null;
 
   try {
-    // Restore location from localStorage
     await locationStore.restoreLocation();
-    console.log("Restored location:", locationStore.currentLocation);
+    let currentLocation = locationStore.currentLocation;
 
-    // Check if a location is set
-    let location = locationStore.currentLocation;
-    console.log("Location before validation:", location);
-
-    if (!location || location === "Select Location") {
-      console.warn("No location selected, redirecting to home");
+    if (!currentLocation || currentLocation === "Select Location") {
       error.value = "Please select a location first.";
       navigateTo("/");
       return;
     }
 
-    // Fetch doctors if not already in store
     if (
       !doctorsStore.doctors.length ||
-      doctorsStore.selectedLocation !== location
+      doctorsStore.selectedLocation !== currentLocation
     ) {
-      console.log("Fetching doctors for location:", location);
-      await doctorsStore.fetchDoctors(location);
-      console.log("Doctors fetched:", doctorsStore.doctors.length);
+      await doctorsStore.fetchDoctors(currentLocation);
     }
 
-    // Validate location and doctors in store
     if (!doctorsStore.selectedLocation || doctorsStore.doctors.length === 0) {
-      console.warn("No doctors found for location, redirecting to home");
       error.value = "No doctors found in the selected location.";
-      navigateTo("/");
       return;
     }
 
-    // Find the doctor
     doctor.value = doctorsStore.doctors.find(
       (doc) => doc.doc === doctorSlug.value
     );
-    console.log("Doctor found:", doctor.value);
     if (!doctor.value) {
       error.value = "Doctor not found in the selected location.";
       return;
     }
 
-    // Fetch Clinic if clinicSlug is provided
     if (clinicSlug.value) {
-      // Fetch clinics if not already in store
       if (
         !clinicsStore.clinics.length ||
-        clinicsStore.selectedLocation !== location
+        clinicsStore.selectedLocation !== currentLocation
       ) {
-        console.log("Fetching clinics for location:", location);
-        await clinicsStore.fetchClinics(location);
-        console.log("Clinics fetched:", clinicsStore.clinics.length);
+        await clinicsStore.fetchClinics(currentLocation);
       }
 
       const foundClinic = clinicsStore.clinics.find(
-        (c) => c.name.toLowerCase().replace(/\s+/g, "-") === clinicSlug.value
+        (c) => slugify(c.name) === clinicSlug.value
       );
-      console.log("Clinic found:", foundClinic);
+
       if (foundClinic) {
         clinic.value = foundClinic;
         const doctorInClinic = foundClinic.doctors.find(
           (d) => d.docSlug === doctorSlug.value
         );
-        if (doctorInClinic) {
-          schedule.value = doctorInClinic.schedules || [];
+
+        if (
+          doctorInClinic &&
+          doctorInClinic.schedules &&
+          doctorInClinic.schedules.length > 0
+        ) {
+          schedule.value = doctorInClinic.schedules.map((s) => ({
+            date: s.date,
+            scheduledate: s.date,
+            slots: s.slots.map((slot) => ({
+              ...slot,
+              scheduledate: s.date,
+              clinicname: foundClinic.name,
+              ClinicA: foundClinic.address,
+              docfee: slot.docfee || doctor.value.docfee,
+              pfee: slot.pfee || "50",
+              Dayname: new Date(s.date).toLocaleString("en-US", {
+                weekday: "long",
+              }),
+            })),
+          }));
           autoSelectDate();
         } else {
-          scheduleError.value = "Doctor not found in this clinic.";
+          scheduleError.value =
+            "This doctor does not have an available schedule at this clinic.";
+          schedule.value = [];
         }
       } else {
-        scheduleError.value = "Clinic not found.";
+        scheduleError.value =
+          "The specified clinic was not found for this location.";
+        schedule.value = [];
       }
     } else {
-      // Fetch general schedule if no clinic is specified
       try {
         const response = await axios.post(
           "https://api.rundoc.in/api/app3/doctor.php",
@@ -513,42 +1003,52 @@ const fetchDoctorData = async () => {
           }
         );
 
-        console.log("Schedule API response:", response.data);
         if (Object.keys(response.data).length === 0) {
-          scheduleError.value = "No schedule found for this doctor.";
+          scheduleError.value = "No general schedule found for this doctor.";
+          schedule.value = [];
         } else {
           schedule.value = Object.entries(response.data).map(
-            ([date, slots]) => ({
-              date,
-              slots: slots.map((slot) => ({
-                time: slot,
-                available: true, // Assuming all slots are available for mock
-                scheduledate: date,
-                scheduletime: slot,
-                clinicname: "General Clinic", // Fallback for API data
-                ClinicA: "Unknown Address", // Fallback for API data
+            ([date, slotsArray]) => ({
+              date: date,
+              scheduledate: date,
+              slots: slotsArray.map((slot) => ({
+                ...slot,
+                scheduledate: slot.scheduledate || date,
+                Dayname:
+                  slot.Dayname ||
+                  new Date(date).toLocaleString("en-US", { weekday: "long" }),
+                clinicname: slot.clinicname || "Virtual Clinic",
+                ClinicA: slot.ClinicA || "Online Consultation",
+                docfee: slot.docfee || doctor.value.docfee || "500",
+                pfee: slot.pfee || "50",
               })),
             })
           );
           autoSelectDate();
         }
       } catch (err) {
-        console.error("Error fetching schedule:", err);
-        scheduleError.value = "Error fetching schedule. Please try again.";
+        console.error("Error fetching general schedule:", err);
+        scheduleError.value =
+          "Error fetching general schedule. Please try again.";
+        schedule.value = [];
       }
     }
 
-    // Fetch Recommendation Data (Simulated)
     if (authStore.isAuthenticated) {
-      try {
-        recommendationPercentage.value = 85; // Simulated
-      } catch (err) {
-        console.error("Error fetching recommendation:", err);
-        recommendationPercentage.value = 0;
-      }
+      userRecommendation.value = { value: Math.random() > 0.5 };
+      recommendationPercentage.value = 85;
+      // Fetch user details for "Self"
+      patientDetails.value = {
+        name: authStore.userInfo.name || "User Name",
+        age: authStore.userInfo.age || "",
+        gender: authStore.userInfo.gender || "M",
+      };
+      // Fetch family members from backend (simulated here)
+      // familyMembers.value = await fetchFamilyMembers(authStore.userInfo.uid);
     }
   } catch (err) {
-    error.value = "Error fetching doctor info.";
+    error.value =
+      "Failed to load doctor details or data. Please check location.";
     console.error(err);
   } finally {
     loading.value = false;
@@ -556,34 +1056,13 @@ const fetchDoctorData = async () => {
   }
 };
 
-// Fetch Doctor, Schedule, and Recommendation on Mount
-onMounted(async () => {
-  await fetchDoctorData();
-});
-
-// Watch for route changes
-watch(
-  () => route.params.doc,
-  async (newSlug) => {
-    doctorSlug.value = newSlug;
-    await fetchDoctorData();
-  }
-);
-
-// Watch for clinic changes
-watch(
-  () => route.query.clinic,
-  async (newClinicSlug) => {
-    clinicSlug.value = newClinicSlug || "";
-    await fetchDoctorData();
-  }
-);
-
-// Recommendation Function
 const recommendDoctor = async (isRecommended) => {
   if (!authStore.isAuthenticated) {
-    sessionStorage.setItem("redirectAfterLogin", route.fullPath);
-    navigateTo("/auth");
+    sessionStorage.setItem(
+      "redirectAfterLogin",
+      router.currentRoute.value.fullPath
+    );
+    router.push("/auth");
     return;
   }
 
@@ -594,159 +1073,426 @@ const recommendDoctor = async (isRecommended) => {
 
   try {
     recommendationPercentage.value = isRecommended
-      ? Math.min(recommendationPercentage.value + 5, 100)
-      : Math.max(recommendationPercentage.value - 5, 0);
+      ? Math.min(
+          recommendationPercentage.value +
+            (recommendationPercentage.value < 95 ? 5 : 0),
+          100
+        )
+      : Math.max(
+          recommendationPercentage.value -
+            (recommendationPercentage.value > 5 ? 5 : 0),
+          0
+        );
   } catch (err) {
     console.error("Error submitting recommendation:", err);
-    userRecommendation.value = null; // Reset on error
+    userRecommendation.value = null;
   }
 };
 
-// Other functions
 const autoSelectDate = () => {
   if (availableDates.value.length > 0) {
-    selectedDate.value = availableDates.value[0];
-    selectDate(selectedDate.value);
+    selectDate(availableDates.value[0]);
+  } else {
+    selectedDate.value = null;
+    selectedSlot.value = null;
   }
 };
 
-const selectDate = (date) => {
-  selectedDate.value = date;
-  const slots = availableSlots.value;
-  selectedSlot.value = slots.length > 0 ? slots[0] : null;
+const selectDate = (dateObj) => {
+  selectedDate.value = dateObj;
+  selectedSlot.value = null;
+};
+
+const selectSlot = (slot) => {
+  selectedSlot.value = { ...slot, doctorName: doctor.value.name };
+  console.log("Selected Slot:", selectedSlot.value);
 };
 
 const navigateToDoctor = (docSlug) => {
-  navigateTo(`/doctor/${docSlug}`);
+  const query = clinicSlug.value ? { clinic: clinicSlug.value } : {};
+  router.push({ path: `/doctor/${docSlug}`, query });
 };
 
 const scrollLeft = () => {
-  doctorsList.value.scrollBy({ left: -150, behavior: "smooth" });
+  if (doctorsList.value)
+    doctorsList.value.scrollBy({ left: -250, behavior: "smooth" });
 };
 
 const scrollRight = () => {
-  doctorsList.value.scrollBy({ left: 150, behavior: "smooth" });
+  if (doctorsList.value)
+    doctorsList.value.scrollBy({ left: 250, behavior: "smooth" });
 };
 
 const scrollLeftDates = () => {
-  datesList.value.scrollBy({ left: -150, behavior: "smooth" });
+  if (datesList.value)
+    datesList.value.scrollBy({ left: -150, behavior: "smooth" });
 };
 
 const scrollRightDates = () => {
-  datesList.value.scrollBy({ left: 150, behavior: "smooth" });
+  if (datesList.value)
+    datesList.value.scrollBy({ left: 150, behavior: "smooth" });
 };
 
 const formatNumber = (num) => {
   if (num >= 1000) {
-    return (num / 1000).toFixed(2) + "K";
+    return (num / 1000).toFixed(1) + "K";
   }
   return num.toString();
 };
 
-const formatMonthYear = (date) => {
-  const dateObj = new Date(date);
-  return dateObj.toLocaleString("en-US", { month: "short", year: "numeric" });
+const formatMonthDate = (dateObj) => {
+  return dateObj.toLocaleString("en-US", { month: "short", day: "numeric" });
 };
 
-const formatDay = (date) => {
-  return parseInt(date.split("-")[2]);
+const formatDayOfWeek = (dateObj) => {
+  return dateObj.toLocaleString("en-US", { weekday: "short" });
 };
 
-const submitBooking = () => {
+const formatFullDate = (dateObj) => {
+  return dateObj.toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const openPaymentModal = async () => {
   if (!authStore.isAuthenticated) {
-    sessionStorage.setItem("redirectAfterLogin", route.fullPath);
-    alert("Please log in to book an appointment.");
-    navigateTo("/auth");
+    sessionStorage.setItem(
+      "redirectAfterLogin",
+      router.currentRoute.value.fullPath
+    );
+    router.push("/auth");
     return;
   }
 
-  console.log("Booking submitted:", {
-    doctor: doctor.value.name,
-    date: selectedSlot.value.date || selectedSlot.value.scheduledate,
-    time: selectedSlot.value.time || selectedSlot.value.scheduletime,
-    clinic: clinic ? clinic.name : selectedSlot.value.clinicname,
-    address: clinic ? clinic.address : selectedSlot.value.ClinicA,
-    docfee: selectedSlot.value.docfee || "500",
-    pfee: selectedSlot.value.pfee || "50",
-    sessionId: authStore.userInfo.sessionId,
-  });
-  alert("Booking submitted! (Placeholder action)");
+  if (!selectedSlot.value) {
+    bookingSuccess.value = false;
+    bookingMessage.value = "Please select a date and time slot.";
+    showBookingConfirmationModal.value = true;
+    return;
+  }
+
+  // Check slot availability via bookingStart API
+  try {
+    const payload = {
+      dt: selectedSlot.value.scheduledate,
+      id: selectedSlot.value.scheduleid,
+      st: selectedSlot.value.scheduletime,
+      pid: authStore.userInfo.pid || null,
+    };
+
+    const response = await axios.post(
+      "https://api.rundoc.in/api/app3/bookingStart.php",
+      JSON.stringify(payload),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            authStore.userInfo.token || "Rupam@98639999"
+          }`,
+        },
+      }
+    );
+
+    if (response.data.message === "Ticket full") {
+      bookingSuccess.value = false;
+      bookingMessage.value = "This slot is no longer available.";
+      showBookingConfirmationModal.value = true;
+      return;
+    }
+
+    if (response.data.message === "You already booked this ticket") {
+      bookingSuccess.value = false;
+      bookingMessage.value = "You have already booked this slot.";
+      showBookingConfirmationModal.value = true;
+      return;
+    }
+
+    if (!response.data.booking_open) {
+      bookingSuccess.value = false;
+      bookingMessage.value = "Booking is not open for this slot.";
+      showBookingConfirmationModal.value = true;
+      return;
+    }
+
+    docfeeCollect.value = response.data.docfee_c === 1;
+    showPaymentModal.value = true;
+  } catch (err) {
+    console.error("Booking start error:", err);
+    bookingSuccess.value = false;
+    bookingMessage.value = "Failed to verify slot availability.";
+    showBookingConfirmationModal.value = true;
+  }
 };
+
+const closePaymentModal = () => {
+  showPaymentModal.value = false;
+};
+
+const updatePatientDetails = () => {
+  if (patientType.value === "self") {
+    patientDetails.value = {
+      name: authStore.userInfo.name || "User Name",
+      age: authStore.userInfo.age || "",
+      gender: authStore.userInfo.gender || "M",
+    };
+  } else {
+    const member = familyMembers.value.find((m) => m.id === patientType.value);
+    if (member) {
+      patientDetails.value = {
+        name: member.name,
+        age: member.age,
+        gender: member.gender,
+      };
+    }
+  }
+};
+
+const initiatePayment = async () => {
+  if (!platformFeeUnderstood.value || !termsAccepted.value) return;
+
+  try {
+    const payload = {
+      dt: selectedSlot.value.scheduledate,
+      id: selectedSlot.value.scheduleid,
+      st: selectedSlot.value.scheduletime,
+      pid: authStore.userInfo.pid || 209, // Replace with actual patient ID
+      name: patientDetails.value.name,
+      age: patientDetails.value.age.toString(),
+      Gender: patientDetails.value.gender,
+      Phone: authStore.userInfo.phone || "9876543210",
+      total: totalPayable.value,
+    };
+
+    const response = await axios.post(
+      "https://api.rundoc.in/api/app3/bookingOrderIDvue.php",
+      JSON.stringify(payload),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            authStore.userInfo.token || "Rupam@98639999"
+          }`,
+        },
+      }
+    );
+
+    const { data, marchent_OI, serverid } = response.data;
+
+    // Load Razorpay SDK dynamically
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => {
+      const options = {
+        key: data.key,
+        amount: data.amount,
+        currency: "INR",
+        name: data.name,
+        description: data.description,
+        image: data.image,
+        order_id: data.order_id,
+        prefill: data.prefill,
+        notes: data.notes,
+        theme: data.theme,
+        handler: async (response) => {
+          // Verify payment on server
+          try {
+            // Simulate server verification
+            // await axios.post('/api/verify-payment', { razorpay_payment_id: response.razorpay_payment_id, marchent_OI, serverid });
+            bookingSuccess.value = true;
+            bookingMessage.value =
+              "Your appointment has been successfully booked! A confirmation email has been sent.";
+            showPaymentModal.value = false;
+            showBookingConfirmationModal.value = true;
+            selectedSlot.value = null;
+            selectedDate.value = null;
+          } catch (err) {
+            console.error("Payment verification error:", err);
+            bookingSuccess.value = false;
+            bookingMessage.value = "Payment verification failed.";
+            showBookingConfirmationModal.value = true;
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            bookingSuccess.value = false;
+            bookingMessage.value = "Payment cancelled.";
+            showBookingConfirmationModal.value = true;
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    };
+    document.body.appendChild(script);
+  } catch (err) {
+    console.error("Payment initiation error:", err);
+    bookingSuccess.value = false;
+    bookingMessage.value = "Failed to initiate payment.";
+    showBookingConfirmationModal.value = true;
+  }
+};
+
+const closeBookingConfirmationModal = () => {
+  showBookingConfirmationModal.value = false;
+  if (bookingSuccess.value) {
+    // router.push('/my-bookings');
+  }
+};
+
+onMounted(async () => {
+  await fetchDoctorData();
+});
+
+watch(
+  [() => route.params.doc, () => route.query.clinic],
+  async ([newDocSlug, newClinicSlug]) => {
+    doctorSlug.value = newDocSlug;
+    clinicSlug.value = newClinicSlug || "";
+    await fetchDoctorData();
+  }
+);
 </script>
 
 <style scoped>
-/* Hide Scrollbar but Keep Functionality */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+}
+.animate-fade-in-up.delay-100 {
+  animation-delay: 0.1s;
+}
+.animate-fade-in-up.delay-200 {
+  animation-delay: 0.2s;
+}
+.animate-fade-in-up.delay-300 {
+  animation-delay: 0.3s;
+}
+.animate-fade-in-up.delay-400 {
+  animation-delay: 0.4s;
+}
+.animate-fade-in-up.delay-500 {
+  animation-delay: 0.5s;
+}
+.animate-fade-in-up.delay-600 {
+  animation-delay: 0.6s;
+}
+.animate-fade-in-up.delay-700 {
+  animation-delay: 0.7s;
+}
+.animate-fade-in-up.delay-800 {
+  animation-delay: 0.8s;
+}
+
+@keyframes recommend-bounce {
+  0%,
+  100% {
+    transform: scale(1.1);
+  }
+  20% {
+    transform: scale(1.08);
+  }
+  40% {
+    transform: scale(1.12);
+  }
+  60% {
+    transform: scale(1.08);
+  }
+  80% {
+    transform: scale(1.11);
+  }
+}
+.animate-recommend-bounce {
+  animation: recommend-bounce 0.8s ease-out forwards;
+}
+
+@keyframes pulse-once {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+.animate-pulse-once {
+  animation: pulse-once 1.2s ease-in-out;
+}
+
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
-/* Doctor Info Card */
-.bg-white {
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.confirm-modal-fade-enter-active,
+.confirm-modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.confirm-modal-fade-enter-from,
+.confirm-modal-fade-leave-to {
+  opacity: 0;
 }
 
-.bg-white:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+.confirm-modal-fade-enter-active .relative,
+.confirm-modal-fade-leave-active .relative {
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
-/* Typography */
-.text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
+.confirm-modal-fade-enter-from .relative,
+.confirm-modal-fade-leave-to .relative {
+  transform: scale(0.9);
+  opacity: 0;
 }
 
-.text-2xl {
-  font-size: 1.5rem;
-  line-height: 2rem;
+.payment-modal-fade-enter-active,
+.payment-modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.payment-modal-fade-enter-from,
+.payment-modal-fade-leave-to {
+  opacity: 0;
 }
 
-.text-3xl {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
+.payment-modal-fade-enter-active .relative,
+.payment-modal-fade-leave-active .relative {
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
-.text-gray-600 {
-  line-height: 1.75;
-}
-
-/* Buttons */
-.bg-green-600 {
-  transition: all 0.2s ease;
-}
-
-.bg-green-600:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Date Selection and Carousel */
-.w-24 {
-  transition: all 0.2s ease;
-}
-
-.w-24:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive Adjustments */
-@media (min-width: 640px) {
-  .text-xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .text-xl {
-    font-size: 1.875rem;
-    line-height: 2.25rem;
-  }
+.payment-modal-fade-enter-from .relative,
+.payment-modal-fade-leave-to .relative {
+  transform: scale(0.9);
+  opacity: 0;
 }
 </style>
