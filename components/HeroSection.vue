@@ -1,24 +1,17 @@
 <template>
   <section
-    class="relative bg-gradient-to-br from-blue-50 to-white text-gray-900 overflow-hidden py-16 sm:py-20 lg:py-24"
+    class="relative bg-gradient-to-br from-blue-50 to-white text-gray-900 py-6 sm:py-10 lg:py-10"
   >
     <div class="max-w-5xl mx-auto px-4 relative z-20">
-      <h1
-        class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 leading-tight mb-6 animate-fade-in-down"
-      >
-        Your Health Journey Starts <span class="text-blue-600">Here.</span>
-      </h1>
-      <p
-        class="text-base sm:text-lg text-gray-700 text-center max-w-2xl mx-auto mb-10 animate-fade-in-up"
-      >
-        Find the right doctors, clinics, and health services with ease.
-      </p>
-
-      <div class="relative mx-auto max-w-2xl w-full mb-12 animate-zoom-in z-20">
+      <div class="relative mx-auto max-w-2xl w-full mb-6 animate-zoom-in z-20">
         <input
           type="text"
           :placeholder="currentPlaceholder"
-          @input="handleSearch"
+          @input="handleSearchInput"
+          @focus="handleInputFocus"
+          @blur="handleInputBlur"
+          v-model="searchInput"
+          ref="searchInputRef"
           class="w-full py-3 px-6 text-base rounded-full border-2 border-blue-200 bg-white poppins-regular focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-gray-900 placeholder-gray-500 shadow-lg hover:shadow-xl"
         />
         <div
@@ -28,20 +21,34 @@
         </div>
 
         <div
-          v-if="searchResults.length > 0"
+          v-if="showSuggestions"
           class="absolute w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl z-20 max-h-64 overflow-y-auto text-left animate-slide-down"
+          @mousedown.prevent
+          ref="suggestionsDropdown"
         >
-          <NuxtLink
-            v-for="result in searchResults"
-            :key="result.id"
-            :to="getSearchResultLink(result)"
-            class="block px-4 py-2 text-gray-800 hover:bg-blue-600 hover:text-white transition-all duration-200 outfit-medium border-b border-gray-100 last:border-b-0 z-10 text-sm"
-          >
-            {{ result.name }}
-            <span class="text-xs text-gray-500 hover:text-white ml-2"
-              >({{ getResultTypeText(result.type) }})</span
+          <div v-if="filteredSuggestions.length > 0">
+            <h4
+              v-if="!searchInput"
+              class="px-4 py-2 text-gray-600 outfit-medium border-b border-gray-100 sticky top-0 bg-white z-10"
             >
-          </NuxtLink>
+              Top Suggestions
+            </h4>
+            <NuxtLink
+              v-for="result in filteredSuggestions"
+              :key="result.id"
+              :to="getSearchResultLink(result)"
+              class="block px-4 py-2 text-gray-800 hover:bg-blue-600 hover:text-white transition-all duration-200 outfit-medium border-b border-gray-100 last:border-b-0 z-10 text-sm"
+              @click="handleSuggestionClick"
+            >
+              {{ result.name }}
+              <span class="text-xs text-gray-500 hover:text-white ml-2"
+                >({{ getResultTypeText(result.type) }})</span
+              >
+            </NuxtLink>
+          </div>
+          <div v-else class="px-4 py-2 text-gray-600 text-center">
+            No results found.
+          </div>
         </div>
       </div>
 
@@ -63,6 +70,12 @@ import { useLocationStore } from "@/stores/location";
 
 // Location Store
 const locationStore = useLocationStore();
+
+// Refs
+const searchInput = ref(""); // v-model for the input
+const searchInputRef = ref(null); // Ref to the input element
+const suggestionsDropdown = ref(null); // Ref to the dropdown element
+const showSuggestions = ref(false);
 
 // Animated Placeholder in Search Input
 const currentPlaceholder = ref("Search Doctor");
@@ -92,8 +105,7 @@ onUnmounted(() => {
   clearInterval(placeholderInterval);
 });
 
-// Search Logic (Mock Data)
-const searchResults = ref([]);
+// Mock Data for Search and Initial Suggestions
 const mockData = [
   // Doctors
   {
@@ -249,27 +261,102 @@ const mockData = [
   { id: 604, name: "Blood Donation Camps", type: "service" },
 ];
 
-const handleSearch = (event) => {
-  const query = event.target.value.toLowerCase();
-  if (query.length < 2) {
-    searchResults.value = [];
-    return;
-  }
-  searchResults.value = mockData
-    .filter(
-      (item) =>
-        item.name.toLowerCase().includes(query) ||
-        (item.specialty && item.specialty.toLowerCase().includes(query)) ||
-        (item.location && item.location.toLowerCase().includes(query))
-    )
-    .slice(0, 10); // Reduced limit for a more compact dropdown
+// Initial "trending" or "top" suggestions (you can customize this)
+const initialSuggestions = [
+  // Example of top doctors, trending specialties, etc.
+  {
+    id: "t1",
+    name: "Top Doctors in Baidyabati",
+    type: "trend_doctor_location",
+  },
+  {
+    id: "t2",
+    name: "Dermatologists near me",
+    type: "trend_specialty_location",
+  },
+  { id: "t3", name: "Online Doctor Consultation", type: "trend_service" },
+  { id: "t4", name: "Full Body Checkup", type: "lab_test" },
+  { id: "t5", name: "Fever", type: "symptom" }, // Assuming you'd link to symptoms page
+  { id: "t6", name: "Cold & Flu", type: "symptom" },
+  { id: "t7", name: "Buy Medicines Online", type: "medicine" },
+  { id: "t8", name: "Emergency Ambulance", type: "service" },
+  { id: "t9", name: "Cardiologist", type: "specialty" },
+  { id: "t10", name: "Pediatrician", type: "specialty" },
+  // Add more as needed
+];
+
+// Combine mockData and initialSuggestions for comprehensive search
+const allSearchableData = [...mockData, ...initialSuggestions];
+
+let searchTimeout = null;
+
+const filteredSuggestions = ref([]);
+
+const handleSearchInput = () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    const query = searchInput.value.toLowerCase();
+    if (query.length === 0) {
+      filteredSuggestions.value = initialSuggestions.slice(0, 10); // Show top 10 initial suggestions
+    } else {
+      filteredSuggestions.value = allSearchableData
+        .filter(
+          (item) =>
+            item.name.toLowerCase().includes(query) ||
+            (item.specialty && item.specialty.toLowerCase().includes(query)) ||
+            (item.location && item.location.toLowerCase().includes(query))
+        )
+        .slice(0, 10); // Limit results
+    }
+  }, 200); // Debounce search input by 200ms
 };
 
+const handleInputFocus = () => {
+  showSuggestions.value = true;
+  // Load initial suggestions when input is focused and nothing is typed yet
+  if (!searchInput.value) {
+    filteredSuggestions.value = initialSuggestions.slice(0, 10);
+  } else {
+    // If there's already text, re-run the search
+    handleSearchInput();
+  }
+};
+
+const handleInputBlur = (event) => {
+  // Use a slight delay to allow click on a suggestion to register
+  setTimeout(() => {
+    if (
+      suggestionsDropdown.value &&
+      !suggestionsDropdown.value.contains(event.relatedTarget) && // Check if focus moved to inside dropdown
+      event.relatedTarget !== searchInputRef.value // Check if focus moved back to input
+    ) {
+      showSuggestions.value = false;
+    }
+  }, 100);
+};
+
+const handleSuggestionClick = () => {
+  showSuggestions.value = false; // Hide suggestions after clicking one
+};
+
+// Adjusted getSearchResultLink to handle new trend types and symptoms
 const getSearchResultLink = (result) => {
   const currentLocation = locationStore.currentLocation || "unknown"; // Fallback for location
   switch (result.type) {
     case "doctor":
-    case "specialty": // Assuming specialties lead to doctor search as well
+    case "specialty":
+    case "trend_specialty_location":
+    case "trend_doctor_location":
+      // For trends, we might need more specific logic or just route to a generic search for now
+      if (result.type === "trend_doctor_location") {
+        return `/find-doctor?location=${currentLocation}`;
+      }
+      if (result.type === "trend_specialty_location") {
+        const specialty = result.name.split(" ")[0]; // Basic extraction
+        return `/find-doctor?location=${currentLocation}&specialities=${encodeURIComponent(
+          specialty
+        )}`;
+      }
       return `/find-doctor?location=${currentLocation}&query=${encodeURIComponent(
         result.name
       )}`;
@@ -287,15 +374,23 @@ const getSearchResultLink = (result) => {
         result.name
       )}`;
     case "service":
-      // More specific routing for services like ambulance/blood donor if applicable
+    case "trend_service":
       if (result.name.toLowerCase().includes("ambulance")) {
         return `/find-ambulance?location=${currentLocation}`;
       } else if (result.name.toLowerCase().includes("blood")) {
         return `/blood-doner`;
+      } else if (
+        result.name.toLowerCase().includes("online doctor consultation")
+      ) {
+        return `/online-consultation`; // Example specific route
       }
-      return `/services?query=${encodeURIComponent(result.name)}`; // Generic services page
+      return `/services?query=${encodeURIComponent(result.name)}`;
+    case "symptom": // New case for symptoms
+      return `/find-doctor?location=${currentLocation}&symptom=${encodeURIComponent(
+        result.name
+      )}`; // Route to doctor search by symptom
     default:
-      return `/search?query=${encodeURIComponent(result.name)}`; // Fallback generic search
+      return `/search?query=${encodeURIComponent(result.name)}`;
   }
 };
 
@@ -315,6 +410,14 @@ const getResultTypeText = (type) => {
       return "Medicine";
     case "service":
       return "Service";
+    case "trend_doctor_location":
+      return "Top Doctors";
+    case "trend_specialty_location":
+      return "Trending Specialty";
+    case "trend_service":
+      return "Trending Service";
+    case "symptom":
+      return "Symptom";
     default:
       return "Result";
   }

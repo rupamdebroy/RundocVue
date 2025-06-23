@@ -57,7 +57,7 @@
           >
             Why Choose Rundoc for Blood Donation?
           </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div
               class="flex flex-col items-center text-center p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-100 transition-transform duration-200"
             >
@@ -69,7 +69,7 @@
               <h3 class="font-bold text-lg text-gray-900 mb-1">
                 Verified Doners
               </h3>
-              <p class="text-gray-700 text-sm">
+              <p class="text-gray-700 text-sm hidden sm:block">
                 Access a database of verified and updated blood doners.
               </p>
             </div>
@@ -84,7 +84,7 @@
               <h3 class="font-bold text-lg text-gray-900 mb-1">
                 Location-Based Search
               </h3>
-              <p class="text-gray-700 text-sm">
+              <p class="text-gray-700 text-sm hidden sm:block">
                 Filter doners by Blood Group, State, District, and City.
               </p>
             </div>
@@ -99,7 +99,7 @@
               <h3 class="font-bold text-lg text-gray-900 mb-1">
                 100% Free Service
               </h3>
-              <p class="text-gray-700 text-sm">
+              <p class="text-gray-700 text-sm hidden sm:block">
                 No hidden charges or service fees – completely free.
               </p>
             </div>
@@ -114,7 +114,7 @@
               <h3 class="font-bold text-lg text-gray-900 mb-1">
                 Privacy-Focused
               </h3>
-              <p class="text-gray-700 text-sm">
+              <p class="text-gray-700 text-sm hidden sm:block">
                 Your data is secure and handled with confidentiality.
               </p>
             </div>
@@ -145,7 +145,7 @@
               <h3 class="font-bold text-lg text-gray-900 mb-1">
                 1. Browse Doners
               </h3>
-              <p class="text-gray-700 text-sm">
+              <p class="text-gray-700 text-sm hidden sm:block">
                 Use search filters to find doners by blood group and location.
               </p>
             </div>
@@ -159,7 +159,7 @@
                 <i class="fas fa-phone-alt"></i>
               </div>
               <h3 class="font-bold text-lg text-gray-900 mb-1">2. Connect</h3>
-              <p class="text-gray-700 text-sm">
+              <p class="text-gray-700 text-sm hidden sm:block">
                 Access doner contact details securely for urgent or scheduled
                 donations.
               </p>
@@ -176,7 +176,7 @@
               <h3 class="font-bold text-lg text-gray-900 mb-1">
                 3. Donate/Receive
               </h3>
-              <p class="text-gray-700 text-sm">
+              <p class="text-gray-700 text-sm hidden sm:block">
                 Coordinate with the doner at an approved healthcare facility.
               </p>
             </div>

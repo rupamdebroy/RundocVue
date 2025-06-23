@@ -58,7 +58,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div
             class="p-6 bg-white rounded-xl shadow-md border border-gray-200 text-center transition-transform duration-200"
           >
@@ -66,7 +66,7 @@
             <h3 class="font-bold text-lg text-gray-900 mb-2">
               24/7 Emergency Support
             </h3>
-            <p class="text-sm text-gray-700">
+            <p class="text-sm text-gray-700 hidden sm:block">
               Available around the clock for medical crises in {{ location }}.
             </p>
           </div>
@@ -77,7 +77,7 @@
             <h3 class="font-bold text-lg text-gray-900 mb-2">
               Multiple Ambulance Types
             </h3>
-            <p class="text-sm text-gray-700">
+            <p class="text-sm text-gray-700 hidden sm:block">
               Choose from basic support to ICU-equipped vehicles.
             </p>
           </div>
@@ -88,7 +88,7 @@
             <h3 class="font-bold text-lg text-gray-900 mb-2">
               Private & Secure
             </h3>
-            <p class="text-sm text-gray-700">
+            <p class="text-sm text-gray-700 hidden sm:block">
               Confidential bookings handled by our dedicated team.
             </p>
           </div>
@@ -99,7 +99,7 @@
             <h3 class="font-bold text-lg text-gray-900 mb-2">
               No Extra Charges
             </h3>
-            <p class="text-sm text-gray-700">
+            <p class="text-sm text-gray-700 hidden sm:block">
               Pay directly to providers, no booking fees from Rundoc.
             </p>
           </div>
@@ -112,7 +112,7 @@
             How Rundoc Ambulance Booking Works
           </h2>
           <div
-            class="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center"
+            class="relative grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center"
           >
             <div
               class="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-red-200 z-0 mx-20"
@@ -132,7 +132,7 @@
               <h3 class="font-bold text-lg text-gray-900 mb-1">
                 Login to Account
               </h3>
-              <p class="text-sm text-gray-700">
+              <p class="text-sm text-gray-700 hidden sm:block">
                 Log in to your Rundoc account to start booking.
               </p>
             </div>
@@ -148,7 +148,7 @@
               <h3 class="font-bold text-lg text-gray-900 mb-1">
                 Submit Request
               </h3>
-              <p class="text-sm text-gray-700">
+              <p class="text-sm text-gray-700 hidden sm:block">
                 Enter patient details, pickup, and destination addresses.
               </p>
             </div>
@@ -164,7 +164,7 @@
               <h3 class="font-bold text-lg text-gray-900 mb-1">
                 Team Coordinates
               </h3>
-              <p class="text-sm text-gray-700">
+              <p class="text-sm text-gray-700 hidden sm:block">
                 Our team contacts reliable providers in your area.
               </p>
             </div>
@@ -180,7 +180,7 @@
               <h3 class="font-bold text-lg text-gray-900 mb-1">
                 Ambulance Dispatched
               </h3>
-              <p class="text-sm text-gray-700">
+              <p class="text-sm text-gray-700 hidden sm:block">
                 The closest ambulance is dispatched to your location.
               </p>
             </div>

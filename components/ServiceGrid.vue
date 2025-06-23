@@ -1,5 +1,5 @@
 <template>
-  <div class="z-0">
+  <div class="">
     <section class="py-2 sm:py-10 px-4 bg-gray-50">
       <h2
         class="text-center text-2xl sm:text-3xl font-extrabold text-gray-900 mb-10 animate-fade-in-down"
@@ -8,7 +8,7 @@
       </h2>
 
       <div
-        class="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-7xl mx-auto animate-fade-in-up delay-200"
+        class="grid grid-cols-2 gap-2 max-w-7xl mx-auto animate-fade-in-up delay-200 sm:grid-cols-3"
       >
         <NuxtLink
           :to="`/find-doctor?location=${locationStore.currentLocation}`"
@@ -46,7 +46,7 @@
 
         <NuxtLink
           :to="`/find-clinic?location=${locationStore.currentLocation}`"
-          class="block transform hover:-translate-y-1 transition-transform duration-300"
+          class="block transform hover:-translate-y-1 transition-transform duration-300 col-span-2 sm:col-span-1"
         >
           <ServiceCard
             title="Find Clinics"
@@ -71,7 +71,7 @@
       </h2>
 
       <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-7xl mx-auto animate-fade-in-up delay-400"
+        class="grid grid-cols-3 gap-2 max-w-7xl mx-auto animate-fade-in-up delay-400 sm:grid-cols-4"
       >
         <NuxtLink
           :to="`/pharmacy?location=${locationStore.currentLocation}`"
@@ -126,7 +126,7 @@
 
         <NuxtLink
           :to="`/blood-doner`"
-          class="block transform hover:-translate-y-1 transition-transform duration-300"
+          class="block transform hover:-translate-y-1 transition-transform duration-300 col-span-3 sm:col-span-1"
         >
           <ServiceCard
             title="Blood Donor"
@@ -146,7 +146,7 @@
 </template>
 
 <script setup>
-import ServiceCard from "./ServiceCard.vue";
+import ServiceCard from "../components/ServiceCard.vue";
 import { useLocationStore } from "@/stores/location";
 
 const locationStore = useLocationStore();

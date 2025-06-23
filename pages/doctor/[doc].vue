@@ -33,13 +33,12 @@
       </div>
 
       <div v-else-if="doctor" class="max-w-7xl mx-auto space-y-8 py-2">
+        <!-- Doctor Profile Section (Unchanged) -->
         <div
           class="bg-white p-4 sm:p-8 rounded-3xl shadow-2xl border border-blue-100 animate-fade-in-up delay-100"
         >
-          <div
-            class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8"
-          >
-            <div class="relative w-28 h-28 sm:w-56 sm:h-56 flex-shrink-0">
+          <div class="flex flex-row items-center gap-4">
+            <div class="relative w-20 h-20 sm:w-56 sm:h-56 flex-shrink-0">
               <img
                 src="https://placehold.co/224x224/E0F2FE/1E40AF?text=Dr.+Avatar"
                 alt="Doctor Avatar"
@@ -53,30 +52,30 @@
               </div>
             </div>
 
-            <div class="text-center md:text-left flex-grow space-y-1">
+            <div class="flex-grow space-y-1">
               <h1
-                class="text-xl sm:text-4xl font-extrabold text-gray-900 leading-tight"
+                class="text-lg sm:text-4xl font-extrabold text-gray-900 leading-tight"
               >
                 Dr. {{ doctor.name }}
               </h1>
               <p
-                class="text-sm sm:text-xl text-gray-700 font-semibold flex items-center justify-center md:justify-start"
+                class="text-xs sm:text-xl text-gray-700 font-semibold flex items-center"
               >
                 <i
-                  class="fas fa-user-graduate mr-2 text-purple-600 text-base sm:text-xl"
+                  class="fas fa-user-graduate mr-2 text-purple-600 text-sm sm:text-xl"
                 ></i
                 >{{ doctor.degree }}
               </p>
               <p
-                class="text-sm sm:text-xl text-blue-700 font-bold tracking-wide flex items-center justify-center md:justify-start"
+                class="text-xs sm:text-xl text-blue-700 font-bold tracking-wide flex items-center"
               >
                 <i
-                  class="fas fa-stethoscope mr-2 text-red-500 text-base sm:text-xl"
+                  class="fas fa-stethoscope mr-2 text-red-500 text-sm sm:text-xl"
                 ></i
                 >{{ doctor.specilities }}
               </p>
               <div
-                class="flex items-center justify-center md:justify-start text-xs sm:text-lg text-gray-600 space-x-3 mt-2"
+                class="flex items-center text-xs sm:text-lg text-gray-600 space-x-3 mt-2"
               >
                 <span class="flex items-center"
                   ><i class="fas fa-heart text-pink-500 mr-1 text-sm"></i>98%
@@ -87,64 +86,67 @@
                   >{{ formatNumber(5300) }} Reviews</span
                 >
               </div>
+            </div>
+          </div>
 
-              <div
-                class="pt-4 md:pt-6 flex flex-col md:flex-row items-center justify-center md:justify-start gap-3 md:gap-6 animate-fade-in-up delay-200"
-              >
-                <p
-                  class="text-sm sm:text-lg font-medium text-gray-700 flex-shrink-0"
+          <div
+            class="pt-4 flex flex-col items-center justify-center gap-3 animate-fade-in-up delay-200"
+          >
+            <div
+              class="flex flex-row items-center justify-center gap-2 space-x-2"
+            >
+              <p class="text-sm sm:text-lg font-medium text-gray-700">
+                Recommend this Doctor ?
+              </p>
+              <div class="flex items-center gap-3">
+                <button
+                  v-if="authStore.isAuthenticated"
+                  @click="recommendDoctor(true)"
+                  :class="[
+                    'w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-base sm:text-2xl shadow-md transition-all duration-300 transform',
+                    userRecommendation && userRecommendation.value === true
+                      ? 'bg-green-100 text-green-600 scale-110 border-2 border-green-500 animate-recommend-bounce'
+                      : 'bg-gray-100 text-gray-500 hover:bg-green-50 hover:text-green-500 hover:scale-105',
+                  ]"
+                  aria-label="Recommend doctor with thumbs up"
                 >
-                  Recommend this Doctor:
-                </p>
-                <div class="flex items-center gap-3">
-                  <button
-                    v-if="authStore.isAuthenticated"
-                    @click="recommendDoctor(true)"
-                    :class="[
-                      'w-10 h-10 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-xl sm:text-4xl shadow-md transition-all duration-300 transform',
-                      userRecommendation && userRecommendation.value === true
-                        ? 'bg-green-100 text-green-600 scale-110 border-2 border-green-500 animate-recommend-bounce'
-                        : 'bg-gray-100 text-gray-500 hover:bg-green-50 hover:text-green-500 hover:scale-105',
-                    ]"
-                    aria-label="Recommend doctor with thumbs up"
-                  >
-                    <i class="fas fa-thumbs-up"></i>
-                  </button>
-                  <button
-                    v-if="authStore.isAuthenticated"
-                    @click="recommendDoctor(false)"
-                    :class="[
-                      'w-10 h-10 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-xl sm:text-4xl shadow-md transition-all duration-300 transform',
-                      userRecommendation && userRecommendation.value === false
-                        ? 'bg-red-100 text-red-600 scale-110 border-2 border-red-500 animate-recommend-bounce'
-                        : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500 hover:scale-105',
-                    ]"
-                    aria-label="Do not recommend doctor with thumbs down"
-                  >
-                    <i class="fas fa-thumbs-down"></i>
-                  </button>
-                </div>
-                <p
-                  v-if="!authStore.isAuthenticated"
-                  class="text-xs text-gray-600 text-center md:text-left"
+                  <i class="fas fa-thumbs-up"></i>
+                </button>
+                <button
+                  v-if="authStore.isAuthenticated"
+                  @click="recommendDoctor(false)"
+                  :class="[
+                    'w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-base sm:text-2xl shadow-md transition-all duration-300 transform',
+                    userRecommendation && userRecommendation.value === false
+                      ? 'bg-red-100 text-red-600 scale-110 border-2 border-red-500 animate-recommend-bounce'
+                      : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500 hover:scale-105',
+                  ]"
+                  aria-label="Do not recommend doctor with thumbs down"
                 >
-                  Please
-                  <NuxtLink
-                    to="/auth"
-                    class="text-blue-700 underline hover:text-blue-500"
-                    >log in</NuxtLink
-                  >
-                  to recommend.
-                </p>
-                <div
-                  v-if="recommendationPercentage > 0"
-                  class="text-xs sm:text-base text-gray-600 font-medium flex items-center justify-center md:justify-start mt-2 md:mt-0"
-                >
-                  <i class="fas fa-chart-line mr-2 text-blue-500"></i>
-                  {{ recommendationPercentage }}% of users recommend Dr.
-                  {{ doctor.name }}
-                </div>
+                  <i class="fas fa-thumbs-down"></i>
+                </button>
               </div>
+            </div>
+
+            <p
+              v-if="!authStore.isAuthenticated"
+              class="text-xs text-gray-600 text-center"
+            >
+              Please
+              <NuxtLink
+                to="/auth"
+                class="text-blue-700 underline hover:text-blue-500"
+                >log in</NuxtLink
+              >
+              to recommend.
+            </p>
+            <div
+              v-if="recommendationPercentage > 0"
+              class="text-xs sm:text-base text-gray-600 font-medium flex items-center justify-center mt-0"
+            >
+              <i class="fas fa-chart-line mr-2 text-blue-500"></i>
+              {{ formatNumber(5300) }} of users recommend Dr.
+              {{ doctor.name }}
             </div>
           </div>
 
@@ -183,7 +185,7 @@
               <p class="text-lg sm:text-2xl font-bold text-gray-900">
                 {{ formatNumber(5300) }}+
               </p>
-              <p class="text-xs text-gray-600">Positive Reviews</p>
+              <p class="text-xs text-gray-600">Recommended by</p>
             </div>
           </div>
 
@@ -217,21 +219,22 @@
           </div>
         </div>
 
+        <!-- Related Doctors Section (Unchanged) -->
         <div
           class="max-w-7xl mx-auto py-6 bg-white rounded-2xl shadow-lg border border-gray-200 animate-fade-in-up delay-500"
         >
           <h2
-            class="text-lg sm:text-3xl font-bold text-gray-900 mb-5 flex flex-col sm:flex-row items-center justify-center text-center px-4"
+            class="text-sm sm:text-3xl font-bold text-gray-900 mb-5 flex flex-row items-center justify-center text-center px-4 whitespace-nowrap overflow-hidden text-ellipsis"
           >
-            <i
-              class="fas fa-user-md mr-0 sm:mr-3 mb-2 sm:mb-0 text-blue-600"
-            ></i>
+            <!-- <i
+              class="px-2 fas fa-user-md mr-0 sm:mr-3 mb-0 sm:mb-0 text-blue-600"
+            ></i> -->
             Other
-            <span class="text-blue-600 sm:ml-2 sm:mr-1">
+            <span class="text-blue-600 flex sm:ml-2 sm:mr-1 px-1">
               {{ doctor.specilities }}</span
             >
             Doctors in
-            <span class="text-blue-600 sm:ml-1">{{
+            <span class="text-blue-600 sm:ml-1 px-1">{{
               doctorsStore.selectedLocation
             }}</span>
           </h2>
@@ -289,18 +292,19 @@
           </div>
         </div>
 
+        <!-- Available Slots Section -->
         <div
           class="bg-gradient-to-br from-blue-50 to-indigo-50 py-8 sm:py-10 rounded-3xl shadow-xl border border-blue-200 animate-fade-in-up delay-600"
         >
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2
-              class="text-xl sm:text-3xl font-bold text-gray-900 mb-8 flex flex-col sm:flex-row items-center justify-center text-center"
+              class="text-xl sm:text-3xl font-bold text-gray-900 mb-8 flex flex-row items-center justify-center text-center whitespace-nowrap overflow-hidden text-ellipsis"
             >
               <i
-                class="fas fa-calendar-alt mr-0 sm:mr-3 mb-2 sm:mb-0 text-blue-600"
+                class="fas fa-calendar-alt mr-0 sm:mr-3 text-blue-600 px-2"
               ></i>
-              Available Slots
-              <span v-if="clinic"
+              <span class="flex-shrink-0">Available Slots</span>
+              <span v-if="clinic" class="flex-shrink-0 ml-1"
                 >at <span class="text-blue-700">{{ clinic.name }}</span></span
               >
             </h2>
@@ -379,12 +383,12 @@
                 v-if="selectedDate && availableSlots.length > 0"
                 class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 mt-8 animate-fade-in-up delay-700"
               >
-                <h3
+                <h4
                   class="text-xl font-bold text-gray-800 mb-6 flex items-center justify-center text-center"
                 >
-                  <i class="fas fa-clock mr-3 text-blue-600"></i> Select a Time
-                  Slot for {{ selectedDate.fullDateFormatted }}
-                </h3>
+                  <i class="fas fa-clock mr-3 text-blue-600 hidden sm:flex"></i>
+                  Select a Time Slot for {{ selectedDate.fullDateFormatted }}
+                </h4>
                 <div
                   class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4"
                 >
@@ -416,97 +420,117 @@
                   Please select another date or check back later.
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
 
-        <div
-          v-if="selectedSlot"
-          class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl border border-green-200 max-w-4xl mx-auto animate-fade-in-up delay-800"
-        >
-          <h2
-            class="text-xl sm:text-3xl font-bold text-center text-gray-900 mb-8 flex flex-col sm:flex-row items-center justify-center text-center"
-          >
-            <i
-              class="fas fa-check-circle mr-0 sm:mr-3 mb-2 sm:mb-0 text-green-600"
-            ></i>
-            Confirm Your <span class="text-blue-600 sm:ml-2">Appointment</span>
-          </h2>
-
-          <div
-            class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-10 text-gray-700 text-base sm:text-lg"
-          >
-            <div class="flex items-center">
-              <i
-                class="fas fa-calendar-day mr-4 text-blue-500 text-xl sm:text-2xl"
-              ></i>
-              <div>
-                <p class="font-medium">Appointment Date:</p>
-                <p>
-                  {{ selectedSlot.scheduledate }} ({{ selectedSlot.Dayname }})
-                </p>
-              </div>
-            </div>
-            <div class="flex items-center">
-              <i
-                class="fas fa-clock mr-4 text-blue-500 text-xl sm:text-2xl"
-              ></i>
-              <div>
-                <p class="font-medium">Reporting Time:</p>
-                <p>{{ selectedSlot.scheduletime }}</p>
-              </div>
-            </div>
-            <div class="flex items-center">
-              <i
-                class="fas fa-hospital mr-4 text-blue-500 text-xl sm:text-2xl"
-              ></i>
-              <div>
-                <p class="font-medium">Clinic:</p>
-                <NuxtLink
-                  :to="`/find-clinic?location=${
-                    locationStore.currentLocation
-                  }&clinic=${slugify(selectedSlot.clinicname)}`"
-                  class="text-blue-600 underline hover:text-blue-500 transition"
+              <!-- Confirm Appointment Section -->
+              <div
+                v-if="selectedSlot"
+                class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl border border-green-200 max-w-4xl mx-auto mt-8 animate-fade-in-up delay-800"
+              >
+                <h2
+                  class="text-xl sm:text-3xl font-bold text-center text-gray-900 mb-8 flex flex-row items-center justify-center whitespace-nowrap overflow-hidden text-ellipsis"
                 >
-                  {{ selectedSlot.clinicname }}
-                </NuxtLink>
-              </div>
-            </div>
-            <div class="flex items-start">
-              <i
-                class="fas fa-map-marker-alt mr-4 text-blue-500 text-xl sm:text-2xl mt-1"
-              ></i>
-              <div>
-                <p class="font-medium">Address:</p>
-                <p>{{ selectedSlot.ClinicA }}</p>
-              </div>
-            </div>
-            <div class="flex items-center">
-              <i
-                class="fas fa-hand-holding-usd mr-4 text-blue-500 text-xl sm:text-2xl"
-              ></i>
-              <div>
-                <p class="font-medium">Doctor Fee:</p>
-                <p>₹{{ selectedSlot.docfee }}</p>
-              </div>
-            </div>
-            <div class="flex items-center">
-              <i
-                class="fas fa-money-bill-wave mr-4 text-blue-500 text-xl sm:text-2xl"
-              ></i>
-              <div>
-                <p class="font-medium">Platform Fee:</p>
-                <p>₹{{ selectedSlot.pfee }}</p>
+                  <!-- <i
+                    class="fas fa-check-circle mr-0 sm:mr-3 text-green-600"
+                  ></i> -->
+                  <span class="flex-shrink-0">Confirm Your</span>
+                  <span class="text-blue-600 flex-shrink-0 ml-1"
+                    >Appointment</span
+                  >
+                </h2>
+
+                <div
+                  class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-10 text-gray-700 text-base sm:text-lg"
+                >
+                  <div class="flex items-center">
+                    <i
+                      class="fas fa-calendar-day mr-4 text-blue-500 text-xl sm:text-2xl flex-shrink-0"
+                    ></i>
+                    <div>
+                      <p class="font-medium">Appointment Date:</p>
+                      <p>
+                        {{ selectedSlot.scheduledate }} ({{
+                          selectedSlot.Dayname
+                        }})
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex items-center flex-row whitespace-nowrap overflow-hidden text-ellipsis"
+                  >
+                    <i
+                      class="fas fa-clock mr-4 text-blue-500 text-xl sm:text-2xl flex-shrink-0"
+                    ></i>
+                    <div class="flex-grow overflow-hidden">
+                      <p class="font-medium inline">Reporting Time:</p>
+                      <p class="inline ml-1">{{ selectedSlot.scheduletime }}</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center">
+                    <img
+                      src="https://placehold.co/32x32/E0F2FE/1E40AF?text=Clinic"
+                      alt="Clinic Image"
+                      class="w-8 h-8 rounded-full mr-4 flex-shrink-0"
+                      onerror="this.onerror=null;this.src='https://placehold.co/32x32/E0F2FE/1E40AF?text=Clinic';"
+                    />
+                    <div>
+                      <p class="font-medium">Clinic:</p>
+                      <NuxtLink
+                        :to="`/find-clinic?location=${
+                          locationStore.currentLocation
+                        }&clinic=${slugify(selectedSlot.clinicname)}`"
+                        class="text-blue-600 underline hover:text-blue-500 transition"
+                      >
+                        {{ selectedSlot.clinicname }}
+                      </NuxtLink>
+                    </div>
+                  </div>
+
+                  <div class="flex items-start">
+                    <i
+                      class="fas fa-map-marker-alt mr-4 text-blue-500 text-xl sm:text-2xl mt-1 flex-shrink-0"
+                    ></i>
+                    <div>
+                      <p class="font-medium">Address:</p>
+                      <p>{{ selectedSlot.ClinicA }}</p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex items-center flex-row whitespace-nowrap overflow-hidden text-ellipsis"
+                  >
+                    <i
+                      class="fas fa-hand-holding-usd mr-4 text-blue-500 text-xl sm:text-2xl flex-shrink-0"
+                    ></i>
+                    <div class="flex-grow overflow-hidden">
+                      <p class="font-medium inline">Doctor Fee:</p>
+                      <p class="inline ml-1">₹{{ selectedSlot.docfee }}</p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex items-center flex-row whitespace-nowrap overflow-hidden text-ellipsis"
+                  >
+                    <i
+                      class="fas fa-money-bill-wave mr-4 text-blue-500 text-xl sm:text-2xl flex-shrink-0"
+                    ></i>
+                    <div class="flex-grow overflow-hidden">
+                      <p class="font-medium inline">Platform Fee:</p>
+                      <p class="inline ml-1">₹{{ selectedSlot.pfee }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  @click="showPaymentModal = true"
+                  class="mt-8 sm:mt-10 w-full bg-blue-600 text-white px-6 py-4 rounded-xl hover:bg-blue-700 transition-all shadow-md text-base sm:text-xl font-bold flex items-center justify-center animate-pulse-once"
+                >
+                  <i class="fas fa-wallet mr-3"></i> Proceed to Payment
+                </button>
               </div>
             </div>
           </div>
-
-          <button
-            @click="openPaymentModal"
-            class="mt-8 sm:mt-10 w-full bg-green-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-xl hover:bg-green-700 transition-all shadow-xl text-base sm:text-xl font-bold flex items-center justify-center animate-pulse-once"
-          >
-            <i class="fas fa-wallet mr-3"></i> Proceed to Payment
-          </button>
         </div>
       </div>
     </section>
@@ -558,30 +582,122 @@
       </Transition>
     </Teleport>
 
-    <!-- Payment Modal -->
+    <!-- Payment Modal (Book Appointment Form) -->
     <Teleport to="body">
       <Transition name="payment-modal-fade">
         <div
           v-if="showPaymentModal"
-          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-y-auto"
         >
           <div
             class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm"
-            @click="closePaymentModal"
+            @click="showPaymentModal = false"
           ></div>
           <div
-            class="relative bg-white rounded-2xl shadow-3xl w-full max-w-md p-6 sm:p-8 text-left transform transition-all duration-300 scale-95 opacity-0"
+            class="relative bg-white rounded-2xl shadow-3xl w-full max-w-sm sm:max-w-md lg:max-w-2xl xl:max-w-3xl p-4 sm:p-6 text-left transform transition-all duration-300 scale-95 opacity-0 my-8"
             :class="{ 'scale-100 opacity-100': showPaymentModal }"
             @click.stop
           >
             <h3
-              class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center"
+              class="text-lg sm:text-xl font-bold text-gray-800 mb-4 flex items-center"
             >
               <i class="fas fa-wallet mr-2 text-blue-600"></i> Book Appointment
             </h3>
 
-            <div class="space-y-4">
-              <!-- Patient Selection -->
+            <div
+              class="space-y-4 sm:space-y-5 max-h-[70vh] overflow-y-auto pr-2"
+            >
+              <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <h4 class="text-sm font-medium text-gray-700 mb-2">
+                  Add Family Member
+                </h4>
+                <p v-if="familyMemberError" class="text-xs text-red-600 mb-2">
+                  {{ familyMemberError }}
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div>
+                    <label
+                      for="familyName"
+                      class="block text-xs font-medium text-gray-700 mb-1"
+                    >
+                      Name
+                    </label>
+                    <input
+                      id="familyName"
+                      v-model="newFamilyMember.name"
+                      type="text"
+                      class="w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      placeholder="Enter name"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="familyRelation"
+                      class="block text-xs font-medium text-gray-700 mb-1"
+                    >
+                      Relation
+                    </label>
+                    <select
+                      id="familyRelation"
+                      v-model="newFamilyMember.relation"
+                      @change="setGenderFromRelation"
+                      class="w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    >
+                      <option value="" disabled>Select relation</option>
+                      <option value="Father">Father</option>
+                      <option value="Mother">Mother</option>
+                      <option value="Brother">Brother</option>
+                      <option value="Sister">Sister</option>
+                      <option value="Wife">Wife</option>
+                      <option value="Son">Son</option>
+                      <option value="Daughter">Daughter</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      for="familyAge"
+                      class="block text-xs font-medium text-gray-700 mb-1"
+                    >
+                      Age
+                    </label>
+                    <input
+                      id="familyAge"
+                      v-model.number="newFamilyMember.age"
+                      type="number"
+                      min="1"
+                      class="w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      placeholder="Enter age"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="familyGender"
+                      class="block text-xs font-medium text-gray-700 mb-1"
+                    >
+                      Gender
+                    </label>
+                    <input
+                      id="familyGender"
+                      v-model="newFamilyMember.gender"
+                      type="text"
+                      class="w-full px-2 py-1.5 border border-gray-300 rounded-lg bg-gray-100 text-sm"
+                      readonly
+                    />
+                  </div>
+                </div>
+                <button
+                  @click="addFamilyMember"
+                  class="mt-3 w-full px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-sm font-semibold"
+                  :disabled="
+                    !newFamilyMember.name ||
+                    !newFamilyMember.relation ||
+                    !newFamilyMember.age
+                  "
+                >
+                  <i class="fas fa-user-plus mr-2"></i> Add Family Member
+                </button>
+              </div>
+
               <div>
                 <label
                   for="patientType"
@@ -593,7 +709,7 @@
                   id="patientType"
                   v-model="patientType"
                   @change="updatePatientDetails"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  class="w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
                 >
                   <option value="self">Self</option>
                   <option
@@ -606,23 +722,7 @@
                 </select>
               </div>
 
-              <!-- Patient Details -->
-              <div>
-                <label
-                  for="patientName"
-                  class="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Name
-                </label>
-                <input
-                  id="patientName"
-                  v-model="patientDetails.name"
-                  type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
-                  readonly
-                />
-              </div>
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label
                     for="patientAge"
@@ -634,8 +734,8 @@
                     id="patientAge"
                     v-model="patientDetails.age"
                     type="number"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    :readonly="patientType !== 'self'"
+                    class="w-full px-2 py-1.5 border border-gray-300 rounded-lg bg-gray-100 text-sm"
+                    readonly
                   />
                 </div>
                 <div>
@@ -645,20 +745,17 @@
                   >
                     Gender
                   </label>
-                  <select
+                  <input
                     id="patientGender"
                     v-model="patientDetails.gender"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    :disabled="patientType !== 'self'"
-                  >
-                    <option value="M">Male</option>
-                    <option value="F">Female</option>
-                  </select>
+                    type="text"
+                    class="w-full px-2 py-1.5 border border-gray-300 rounded-lg bg-gray-100 text-sm"
+                    readonly
+                  />
                 </div>
               </div>
 
-              <!-- Fee Details -->
-              <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
                 <p class="text-sm font-medium text-gray-700 mb-2">
                   Payment Details
                 </p>
@@ -670,7 +767,7 @@
                   v-if="docfeeCollect"
                   class="flex justify-between text-sm text-gray-600 mt-1"
                 >
-                  <span>Doctor Fee</span>
+                  <span>Clinic Fee</span>
                   <span>₹{{ selectedSlot.docfee }}</span>
                 </div>
                 <div v-else class="text-xs text-red-600 mt-2 italic">
@@ -685,32 +782,42 @@
                 </div>
               </div>
 
-              <!-- Platform Fee Disclaimer -->
               <div class="text-xs text-gray-600">
                 <label class="flex items-start cursor-pointer">
                   <input
                     type="checkbox"
-                    v-model="platformFeeUnderstood"
+                    v-model="useWallet"
+                    class="mt-1 mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <span>Use ₹100 from Rundoc Wallet</span>
+                </label>
+              </div>
+
+              <div class="text-xs text-gray-600">
+                <label class="flex items-start cursor-pointer">
+                  <input
+                    type="checkbox"
+                    v-model="platformFeeDue"
                     class="mt-1 mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     checked
                   />
                   <span>
                     I understand that we charge a small platform fee of ₹50 to
                     help keep things running smoothly. This fee is usually
-                    non-refundable, but if the doctor doesn’t show up, your ₹50
+                    non-refundable, but if the doctor doesn't show up, your ₹50
                     will be credited back to your Rundoc Wallet for use in
                     future transactions. For more info, visit our
                     <NuxtLink
                       to="/refund-cancellation"
                       class="text-blue-600 underline hover:text-blue-500"
                     >
-                      Refund and Cancellation Policy </NuxtLink
-                    >.
+                      Refund and Cancellation Policy
+                    </NuxtLink>
+                    .
                   </span>
                 </label>
               </div>
 
-              <!-- Terms & Conditions -->
               <div class="text-xs text-gray-600">
                 <label class="flex items-start cursor-pointer">
                   <input
@@ -725,19 +832,19 @@
                       to="/terms-conditions"
                       class="text-blue-600 underline hover:text-blue-500"
                     >
-                      Terms & Conditions </NuxtLink
-                    >.
+                      Terms & Conditions
+                    </NuxtLink>
+                    .
                   </span>
                 </label>
               </div>
 
-              <!-- Pay Button -->
               <button
                 @click="initiatePayment"
-                :disabled="!platformFeeUnderstood || !termsAccepted"
+                :disabled="!platformFeeDue || !termsAccepted"
                 :class="[
-                  'w-full px-6 py-3 rounded-lg font-semibold transition-colors shadow-md text-sm sm:text-base',
-                  platformFeeUnderstood && termsAccepted
+                  'w-full px-4 py-2 rounded-lg font-semibold transition-colors shadow-md text-sm sm:text-base',
+                  platformFeeDue && termsAccepted
                     ? 'bg-green-600 text-white hover:bg-green-700'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed',
                 ]"
@@ -801,21 +908,32 @@ const bookingMessage = ref("");
 const showPaymentModal = ref(false);
 const patientType = ref("self");
 const patientDetails = ref({
-  name: "",
   age: "",
   gender: "",
 });
-const platformFeeUnderstood = ref(true);
+const platformFeeDue = ref(true);
 const termsAccepted = ref(true);
-const docfeeCollect = ref(true); // Determined by bookingStart API
+const docfeeCollect = ref(true);
+const useWallet = ref(false);
 
-// Family Members (Simulated, max limits as per client: Father 1, Mother 1, Brother 1, Sister 1, Wife 1, Son 2, Daughter 2)
-const familyMembers = ref([
-  // Example data; in real app, fetch from backend
-  { id: 1, name: "John Doe Sr.", relation: "Father", age: 60, gender: "M" },
-  { id: 2, name: "Jane Doe", relation: "Mother", age: 58, gender: "F" },
-  { id: 3, name: "Mike Doe", relation: "Son", age: 25, gender: "M" },
-]);
+// Family Members State
+const familyMembers = ref([]);
+const newFamilyMember = ref({
+  name: "",
+  relation: "",
+  age: null,
+  gender: "",
+});
+const familyMemberError = ref("");
+
+// Mock User Profile
+const userProfile = ref({
+  name: "Current User",
+  age: 30,
+  gender: "M",
+  phone: "9876543210",
+  pid: 209,
+});
 
 // References for smooth scrolling
 const doctorsList = ref(null);
@@ -888,7 +1006,11 @@ const totalPayable = computed(() => {
   const doctorFee = docfeeCollect.value
     ? parseInt(selectedSlot.value.docfee) || 0
     : 0;
-  return platformFee + doctorFee;
+  let total = platformFee + doctorFee;
+  if (useWallet.value) {
+    total = Math.max(total - 100, 0);
+  }
+  return total;
 });
 
 // Functions
@@ -972,7 +1094,7 @@ const fetchDoctorData = async () => {
               scheduledate: s.date,
               clinicname: foundClinic.name,
               ClinicA: foundClinic.address,
-              docfee: slot.docfee || doctor.value.docfee,
+              docfee: slot.docfee || "0",
               pfee: slot.pfee || "50",
               Dayname: new Date(s.date).toLocaleString("en-US", {
                 weekday: "long",
@@ -991,6 +1113,7 @@ const fetchDoctorData = async () => {
         schedule.value = [];
       }
     } else {
+      // This is the general schedule fetch
       try {
         const response = await axios.post(
           "https://api.rundoc.in/api/app3/doctor.php",
@@ -1019,7 +1142,7 @@ const fetchDoctorData = async () => {
                   new Date(date).toLocaleString("en-US", { weekday: "long" }),
                 clinicname: slot.clinicname || "Virtual Clinic",
                 ClinicA: slot.ClinicA || "Online Consultation",
-                docfee: slot.docfee || doctor.value.docfee || "500",
+                docfee: slot.docfee || "0",
                 pfee: slot.pfee || "50",
               })),
             })
@@ -1034,17 +1157,21 @@ const fetchDoctorData = async () => {
       }
     }
 
+    // Logic for user recommendation and patient details (moved inside the main try block)
     if (authStore.isAuthenticated) {
       userRecommendation.value = { value: Math.random() > 0.5 };
       recommendationPercentage.value = 85;
-      // Fetch user details for "Self"
       patientDetails.value = {
-        name: authStore.userInfo.name || "User Name",
-        age: authStore.userInfo.age || "",
-        gender: authStore.userInfo.gender || "M",
+        age: userProfile.value.age || "30",
+        gender: userProfile.value.gender || "M",
       };
-      // Fetch family members from backend (simulated here)
-      // familyMembers.value = await fetchFamilyMembers(authStore.userInfo.uid);
+    } else {
+      userRecommendation.value = null;
+      recommendationPercentage.value = 0;
+      patientDetails.value = {
+        age: "30",
+        gender: "M",
+      };
     }
   } catch (err) {
     error.value =
@@ -1156,6 +1283,96 @@ const formatFullDate = (dateObj) => {
   });
 };
 
+const setGenderFromRelation = () => {
+  const genderMap = {
+    Father: "M",
+    Mother: "F",
+    Brother: "M",
+    Sister: "F",
+    Wife: "F",
+    Son: "M",
+    Daughter: "F",
+  };
+  newFamilyMember.value.gender =
+    genderMap[newFamilyMember.value.relation] || "";
+};
+
+const addFamilyMember = () => {
+  familyMemberError.value = "";
+
+  if (
+    !newFamilyMember.value.name ||
+    !newFamilyMember.value.relation ||
+    !newFamilyMember.value.age
+  ) {
+    familyMemberError.value = "Please fill all fields.";
+    return;
+  }
+
+  const restrictions = {
+    Father: 1,
+    Mother: 1,
+    Brother: 1,
+    Sister: 1,
+    Wife: 1,
+    Son: 2,
+    Daughter: 2,
+  };
+
+  const relationCount = familyMembers.value.filter(
+    (m) => m.relation === newFamilyMember.value.relation
+  ).length;
+
+  if (relationCount >= restrictions[newFamilyMember.value.relation]) {
+    familyMemberError.value = `Cannot add more than ${
+      restrictions[newFamilyMember.value.relation]
+    } ${newFamilyMember.value.relation}(s).`;
+    return;
+  }
+
+  const newMember = {
+    id: familyMembers.value.length + 1,
+    name: newFamilyMember.value.name,
+    relation: newFamilyMember.value.relation,
+    age: newFamilyMember.value.age,
+    gender: newFamilyMember.value.gender,
+  };
+
+  familyMembers.value.push(newMember);
+  console.log("Mock POST: Added family member", newMember);
+  console.log("Mock GET: Updated family members", familyMembers.value);
+
+  newFamilyMember.value = { name: "", relation: "", age: null, gender: "" };
+};
+
+const updatePatientDetails = () => {
+  if (patientType.value === "self") {
+    patientDetails.value = {
+      age: userProfile.value.age || "30",
+      gender: userProfile.value.gender || "M",
+    };
+  } else {
+    const member = familyMembers.value.find((m) => m.id === patientType.value);
+    if (member) {
+      patientDetails.value = {
+        age: member.age,
+        gender: member.gender,
+      };
+    }
+  }
+};
+
+const openBookingConfirmationModal = () => {
+  showBookingConfirmationModal.value = true;
+};
+
+const closeBookingConfirmationModal = () => {
+  showBookingConfirmationModal.value = false;
+  if (bookingSuccess.value) {
+    // router.push('/my-bookings');
+  }
+};
+
 const openPaymentModal = async () => {
   if (!authStore.isAuthenticated) {
     sessionStorage.setItem(
@@ -1169,50 +1386,95 @@ const openPaymentModal = async () => {
   if (!selectedSlot.value) {
     bookingSuccess.value = false;
     bookingMessage.value = "Please select a date and time slot.";
-    showBookingConfirmationModal.value = true;
+    openBookingConfirmationModal();
     return;
   }
 
-  // Check slot availability via bookingStart API
+  // Mock bookingStart API response for testing
   try {
     const payload = {
       dt: selectedSlot.value.scheduledate,
       id: selectedSlot.value.scheduleid,
       st: selectedSlot.value.scheduletime,
-      pid: authStore.userInfo.pid || null,
+      pid: authStore.userInfo?.pid || userProfile.value.pid,
     };
 
+    console.log("Booking Start Payload:", payload); // Debug log
+
+    const mockResponse = {
+      data: {
+        docfee: selectedSlot.value.docfee || 500,
+        docfee_c: Math.random() > 0.5 ? 1 : 0,
+        pfee: selectedSlot.value.pfee || 50,
+        scheduleid: selectedSlot.value.scheduleid || 227,
+        docname: doctor.value.name,
+        scheduledate: selectedSlot.value.scheduledate,
+        scheduletime: selectedSlot.value.scheduletime,
+        reporting_time: selectedSlot.value.scheduletime,
+        booking_start_datetime: "2025-06-22 10:00:00", // Past date for testing payment flow
+        time_and_date: "2025-06-23 12:51:00", // Matches current time (12:51 PM IST, June 23, 2025)
+        status: 1,
+        nop: 20,
+        booking_open: true,
+        disclaimer: {
+          title: "Disclaimer",
+          content: [
+            "Age Requirement: Dr. Prasun Bhattacharjee's services are available to patients aged 16 years and above.",
+            "Medical Specialization: Dr. Prasun Bhattacharjee is a specialist in addressing various medical issues.",
+            "Refund Policy: No refunds will be provided under any circumstances once the booking is confirmed.",
+          ],
+        },
+      },
+    };
+
+    const response = mockResponse; // Replace with real API call when available
+    /*
     const response = await axios.post(
-      "https://api.rundoc.in/api/app3/bookingStart.php",
+      'https://api.rundoc.in/api/app3/bookingStart.php',
       JSON.stringify(payload),
       {
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            authStore.userInfo.token || "Rupam@98639999"
-          }`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authStore.userInfo?.token || 'Rupam@98639999'}`,
         },
       }
     );
+    */
+
+    // Check if booking is not open
+    const bookingStart = new Date(response.data.booking_start_datetime);
+    const currentTime = new Date(response.data.time_and_date);
+    if (bookingStart > currentTime) {
+      bookingSuccess.value = false;
+      bookingMessage.value = `Booking hasn't started yet. It will start from ${bookingStart.toLocaleString(
+        "en-US",
+        {
+          dateStyle: "medium",
+          timeStyle: "short",
+        }
+      )}`;
+      openBookingConfirmationModal();
+      return;
+    }
 
     if (response.data.message === "Ticket full") {
       bookingSuccess.value = false;
       bookingMessage.value = "This slot is no longer available.";
-      showBookingConfirmationModal.value = true;
+      openBookingConfirmationModal();
       return;
     }
 
     if (response.data.message === "You already booked this ticket") {
       bookingSuccess.value = false;
       bookingMessage.value = "You have already booked this slot.";
-      showBookingConfirmationModal.value = true;
+      openBookingConfirmationModal();
       return;
     }
 
     if (!response.data.booking_open) {
       bookingSuccess.value = false;
       bookingMessage.value = "Booking is not open for this slot.";
-      showBookingConfirmationModal.value = true;
+      openBookingConfirmationModal();
       return;
     }
 
@@ -1222,69 +1484,68 @@ const openPaymentModal = async () => {
     console.error("Booking start error:", err);
     bookingSuccess.value = false;
     bookingMessage.value = "Failed to verify slot availability.";
-    showBookingConfirmationModal.value = true;
-  }
-};
-
-const closePaymentModal = () => {
-  showPaymentModal.value = false;
-};
-
-const updatePatientDetails = () => {
-  if (patientType.value === "self") {
-    patientDetails.value = {
-      name: authStore.userInfo.name || "User Name",
-      age: authStore.userInfo.age || "",
-      gender: authStore.userInfo.gender || "M",
-    };
-  } else {
-    const member = familyMembers.value.find((m) => m.id === patientType.value);
-    if (member) {
-      patientDetails.value = {
-        name: member.name,
-        age: member.age,
-        gender: member.gender,
-      };
-    }
+    openBookingConfirmationModal();
   }
 };
 
 const initiatePayment = async () => {
-  if (!platformFeeUnderstood.value || !termsAccepted.value) return;
+  if (!platformFeeDue.value || !termsAccepted.value) return;
 
   try {
     const payload = {
-      dt: selectedSlot.value.scheduledate,
-      id: selectedSlot.value.scheduleid,
-      st: selectedSlot.value.scheduletime,
-      pid: authStore.userInfo.pid || 209, // Replace with actual patient ID
-      name: patientDetails.value.name,
-      age: patientDetails.value.age.toString(),
-      Gender: patientDetails.value.gender,
-      Phone: authStore.userInfo.phone || "9876543210",
-      total: totalPayable.value,
+      dt: selectedSlot.value?.scheduledate,
+      id: selectedSlot.value?.scheduleid,
+      st: formatTimeForAPI(selectedSlot.value?.scheduletime), // Format time to HH:MM:SS
+      pid: userProfile.value.pid || "209",
+      name:
+        patientType.value === "self"
+          ? userProfile.value.name
+          : familyMembers.value.find((m) => m.id === patientType.value)?.name ||
+            "",
+      age: patientDetails.value.age.toString() || "30",
+      Gender: patientDetails.value.gender || "M",
+      Phone: userProfile.value.phone || "9876543210",
+      total: totalPayable.value || 0,
     };
 
+    console.log("Booking Order Payload:", payload); // Debug log
+
     const response = await axios.post(
-      "https://api.rundoc.in/api/app3/bookingOrderIDvue.php",
+      "https://api.rundoc.in/api/app3/bookingOrderIDvue.php", // Correct endpoint
       JSON.stringify(payload),
       {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${
-            authStore.userInfo.token || "Rupam@98639999"
+            authStore.userInfo?.token || "Rupam@98639999"
           }`,
         },
       }
     );
 
+    console.log("Booking Order Response:", response.data); // Debug log
+
+    // Destructure response per API docs
     const { data, marchent_OI, serverid } = response.data;
+
+    // Validate response
+    if (!data || !data.key || !data.order_id) {
+      throw new Error("Invalid payment data received from server");
+    }
 
     // Load Razorpay SDK dynamically
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     script.onload = () => {
+      if (!window.Razorpay) {
+        console.error("Razorpay SDK failed to load");
+        bookingSuccess.value = false;
+        bookingMessage.value = "Failed to load payment gateway.";
+        openBookingConfirmationModal();
+        return;
+      }
+
       const options = {
         key: data.key,
         amount: data.amount,
@@ -1297,29 +1558,29 @@ const initiatePayment = async () => {
         notes: data.notes,
         theme: data.theme,
         handler: async (response) => {
-          // Verify payment on server
           try {
+            console.log("Payment Success:", response);
             // Simulate server verification
             // await axios.post('/api/verify-payment', { razorpay_payment_id: response.razorpay_payment_id, marchent_OI, serverid });
             bookingSuccess.value = true;
             bookingMessage.value =
               "Your appointment has been successfully booked! A confirmation email has been sent.";
             showPaymentModal.value = false;
-            showBookingConfirmationModal.value = true;
+            openBookingConfirmationModal();
             selectedSlot.value = null;
             selectedDate.value = null;
           } catch (err) {
             console.error("Payment verification error:", err);
             bookingSuccess.value = false;
             bookingMessage.value = "Payment verification failed.";
-            showBookingConfirmationModal.value = true;
+            openBookingConfirmationModal();
           }
         },
         modal: {
           ondismiss: () => {
             bookingSuccess.value = false;
             bookingMessage.value = "Payment cancelled.";
-            showBookingConfirmationModal.value = true;
+            openBookingConfirmationModal();
           },
         },
       };
@@ -1327,20 +1588,29 @@ const initiatePayment = async () => {
       const rzp = new window.Razorpay(options);
       rzp.open();
     };
+    script.onerror = () => {
+      console.error("Failed to load Razorpay SDK");
+      bookingSuccess.value = false;
+      bookingMessage.value = "Failed to load payment gateway.";
+      openBookingConfirmationModal();
+    };
     document.body.appendChild(script);
   } catch (err) {
     console.error("Payment initiation error:", err);
     bookingSuccess.value = false;
-    bookingMessage.value = "Failed to initiate payment.";
-    showBookingConfirmationModal.value = true;
+    bookingMessage.value = "Failed to initiate payment. Please try again.";
+    openBookingConfirmationModal();
   }
 };
 
-const closeBookingConfirmationModal = () => {
-  showBookingConfirmationModal.value = false;
-  if (bookingSuccess.value) {
-    // router.push('/my-bookings');
-  }
+// Helper function to format time to HH:MM:SS
+const formatTimeForAPI = (time) => {
+  if (!time) return "00:00:00";
+  const [hours, minutes, period] = time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  let hour = parseInt(hours, 10);
+  if (period.toUpperCase() === "PM" && hour !== 12) hour += 12;
+  if (period.toUpperCase() === "AM" && hour === 12) hour = 0;
+  return `${hour.toString().padStart(2, "0")}:${minutes.padStart(2, "0")}:00`;
 };
 
 onMounted(async () => {
@@ -1348,7 +1618,7 @@ onMounted(async () => {
 });
 
 watch(
-  [() => route.params.doc, () => route.query.clinic],
+  () => [route.params.doc, route.query.clinic],
   async ([newDocSlug, newClinicSlug]) => {
     doctorSlug.value = newDocSlug;
     clinicSlug.value = newClinicSlug || "";
@@ -1386,25 +1656,25 @@ watch(
 .animate-fade-in-up.delay-100 {
   animation-delay: 0.1s;
 }
-.animate-fade-in-up.delay-200 {
+.animate-fade-in-up.de100-200 {
   animation-delay: 0.2s;
 }
-.animate-fade-in-up.delay-300 {
-  animation-delay: 0.3s;
+.animate-fade-in-up.de100-delay200-300 {
+  animation-delay: 0.3sdelay;
 }
-.animate-fade-in-up.delay-400 {
+.animate-fade-in-up.de-delay-400 {
   animation-delay: 0.4s;
 }
 .animate-fade-in-up.delay-500 {
   animation-delay: 0.5s;
 }
-.animate-fade-in-up.delay-600 {
+.animate-delay-in-up.delay-600 {
   animation-delay: 0.6s;
 }
-.animate-fade-in-up.delay-700 {
+.animate-delay-in-up.delay-700 {
   animation-delay: 0.7s;
 }
-.animate-fade-in-up.delay-800 {
+.animate-delay-in-up.delay-800 {
   animation-delay: 0.8s;
 }
 
@@ -1457,41 +1727,29 @@ watch(
 }
 
 .confirm-modal-fade-enter-active,
-.confirm-modal-fade-leave-active {
+.payment-modal-fade-enter-active,
+.confirm-modal-modal-leave-active,
+.payment-modal-modal-leave-active {
   transition: opacity 0.3s ease;
 }
 .confirm-modal-fade-enter-from,
-.confirm-modal-fade-leave-to {
+.payment-modal-fade-enter-from,
+.confirm-modal-modal-leave-to,
+.payment-modal-modal-leave-to {
   opacity: 0;
 }
 
 .confirm-modal-fade-enter-active .relative,
-.confirm-modal-fade-leave-active .relative {
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-}
-
-.confirm-modal-fade-enter-from .relative,
-.confirm-modal-fade-leave-to .relative {
-  transform: scale(0.9);
-  opacity: 0;
-}
-
-.payment-modal-fade-enter-active,
-.payment-modal-fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.payment-modal-fade-enter-from,
-.payment-modal-fade-leave-to {
-  opacity: 0;
-}
-
 .payment-modal-fade-enter-active .relative,
-.payment-modal-fade-leave-active .relative {
+.confirm-modal-modal-leave-active .relative,
+.payment-modal-modal-leave-active .relative {
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
-.payment-modal-fade-enter-from .relative,
-.payment-modal-fade-leave-to .relative {
+.confirm-modal-modal-enter-from .relative,
+.payment-modal-modal-enter-from .relative,
+.confirm-modal-modal-leave-to .relative,
+.payment-modal-modal-leave-to .relative {
   transform: scale(0.9);
   opacity: 0;
 }

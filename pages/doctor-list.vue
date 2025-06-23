@@ -6,29 +6,46 @@
       class="container max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 min-h-screen flex flex-col"
     >
       <h2
-        class="text-center text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6 animate-fade-in-down"
+        class="text-center text-2xl sm:text-4xl font-extrabold text-blue-600 mb-6 animate-fade-in-down"
       >
-        Doctors in
-        <span class="text-blue-600 drop-shadow-sm">{{
-          location || "Your Area"
-        }}</span>
+        {{
+          selectedSpecialty
+            ? `${selectedSpecialty} in ${location || "Your Area"}`
+            : `Doctors in ${location || "Your Area"}`
+        }}
       </h2>
 
       <div
-        class="w-full max-w-5xl mx-auto bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl shadow-lg h-36 flex items-center justify-center mb-12 border border-purple-200 animate-fade-in-up delay-200"
+        class="w-full max-w-5xl mx-auto rounded-xl shadow-lg h-36 flex items-center justify-between mb-12 border border-purple-200 animate-fade-in-up delay-200 relative overflow-hidden bg-cover bg-center"
+        :style="{
+          backgroundImage:
+            'url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9ePW5NW4iX8sSYTn7zCsB4KCBX_ljfOcYPg&s)',
+        }"
       >
-        <div class="text-center p-4">
-          <h3 class="text-xl sm:text-2xl font-bold text-purple-800 mb-2">
-            Need a Second Opinion?
-          </h3>
-          <p class="text-gray-700 text-sm sm:text-base">
-            Connect with top specialists for a detailed consultation.
-          </p>
-          <button
-            class="mt-3 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300 text-sm sm:text-base shadow-md"
+        <div class="absolute inset-0 bg-black bg-opacity-40 z-0"></div>
+        <div class="p-4 text-left w-2/3 sm:w-2/3 z-10">
+          <h3
+            class="text-lg sm:text-xl font-bold text-white mb-2 leading-tight"
           >
-            Book a Second Opinion
-          </button>
+            {{
+              selectedSpecialty
+                ? `Find and consult the best ${selectedSpecialty} in ${
+                    location || "Your Area"
+                  }`
+                : `Find and consult the best doctors in ${
+                    location || "Your Area"
+                  } for your health needs.`
+            }}
+          </h3>
+        </div>
+        <div
+          class="w-16 h-16 rounded-full bg-gray-200 mr-4 sm:mr-6 flex-shrink-0 z-10"
+        >
+          <img
+            src="https://img.freepik.com/free-photo/beautiful-young-female-doctor-looking-camera-office_1301-7807.jpg?semt=ais_hybrid&w=740"
+            alt="Doctor avatar"
+            class="w-full h-full object-cover rounded-full"
+          />
         </div>
       </div>
 
@@ -50,14 +67,14 @@
           <i class="fas fa-exclamation-triangle mr-3 text-2xl"></i
           >{{ doctorsStore.error }}
         </p>
-        <p class="text-gray-700">
+        <p class="text-gray-600">
           Please try again later or adjust your search criteria.
         </p>
       </div>
 
       <div v-else>
         <div
-          class="flex flex-col sm:flex-row justify-between items-center gap-6 mb-10 p-6 bg-gray-50 rounded-xl shadow-inner border border-gray-100 animate-fade-in-up delay-300"
+          class="flex flex-col sm:flex-row justify-between items-center gap-6 mb-10 p-6 bg-gray-50 rounded-xl shadow-inner border border-gray-100 animate-fade-in-up delay-300 max-w-5xl mx-auto"
         >
           <div class="w-full sm:w-auto relative">
             <label
@@ -117,6 +134,7 @@
           v-if="filteredDoctors.length > 0"
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 animate-fade-in-up delay-400"
         >
+          <!-- Inside the v-if="filteredDoctors.length > 0" grid -->
           <div
             v-for="doctor in filteredDoctors"
             :key="doctor.id"
@@ -124,7 +142,7 @@
           >
             <div class="flex items-start space-x-6 mb-4">
               <div
-                class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 shadow-md"
+                class="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 shadow-md"
               >
                 {{ doctor.name.charAt(0).toUpperCase() }}
               </div>
@@ -134,15 +152,16 @@
                   Dr. {{ doctor.name }}
                 </h3>
                 <p class="text-sm text-gray-700 flex items-center">
-                  <i class="fas fa-tag mr-2 text-blue-500"></i> Specialty:
-                  <span class="font-semibold ml-1">{{
-                    doctor.specilities
-                  }}</span>
+                  <i class="fas fa-tag mr-2 text-blue-500"></i>
+                  <span class="truncate sm:truncate-none"
+                    >Specialty: {{ doctor.specilities }}</span
+                  >
                 </p>
                 <p class="text-sm text-gray-700 flex items-center">
                   <i class="fas fa-graduation-cap mr-2 text-green-500"></i>
-                  Degree:
-                  <span class="ml-1">{{ doctor.degree }}</span>
+                  <span class="truncate sm:truncate-none"
+                    >Degree: {{ doctor.degree }}</span
+                  >
                 </p>
                 <p class="text-sm text-gray-700 flex items-center">
                   <i class="fas fa-briefcase-medical mr-2 text-orange-500"></i>
@@ -197,11 +216,12 @@
 </template>
 
 <script setup>
+// Script remains unchanged as no logic changes are required
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDoctorsStore } from "~/stores/doctors";
 import { useLocationStore } from "@/stores/location";
-import { useAuthStore } from "@/stores/auth"; // Add auth store import
+import { useAuthStore } from "@/stores/auth";
 
 import Header from "~/components/Header.vue";
 import Footer from "~/components/Footer.vue";
@@ -212,9 +232,8 @@ const route = useRoute();
 const router = useRouter();
 const doctorsStore = useDoctorsStore();
 const locationStore = useLocationStore();
-const authStore = useAuthStore(); // Initialize auth store
+const authStore = useAuthStore();
 
-// Reactive states
 const location = ref("");
 const selectedSpecialty = ref("");
 const uniqueSpecialties = ref([]);
@@ -223,7 +242,6 @@ const loading = ref(false);
 const selectedAvailability = ref("All");
 const showSpecialtyModal = ref(false);
 
-// Computed properties
 const filteredDoctors = computed(() => {
   let doctorsToFilter = doctorsStore.doctors;
 
@@ -239,7 +257,6 @@ const filteredDoctors = computed(() => {
   return doctorsToFilter;
 });
 
-// Functions
 const fetchDoctors = async () => {
   loading.value = true;
   doctorsStore.error = null;
@@ -333,17 +350,13 @@ const resetFilters = () => {
 };
 
 const viewDoctor = (docSlug) => {
-  // Check if user is authenticated
   if (!authStore.checkAuthAndBlock()) {
-    // Store the intended redirect URL for after login
     sessionStorage.setItem("redirectAfterLogin", `/doctor/${docSlug}`);
     return;
   }
-  // Proceed if authenticated
   router.push(`/doctor/${docSlug}`);
 };
 
-// Initial data load
 onMounted(async () => {
   location.value =
     route.query.location || locationStore.currentLocation || "Your Area";
@@ -364,7 +377,6 @@ onMounted(async () => {
   }
 });
 
-// Watch for route changes
 watch(
   () => route.query,
   async (newQuery) => {
@@ -402,6 +414,22 @@ watch(
 
 <style scoped>
 /* Tooltip styles for the disabled "Today" button */
+
+/* Truncation for mobile view */
+.truncate {
+  max-width: 150px; /* Adjust this value based on your design */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.truncate-none {
+  max-width: none;
+  overflow: visible;
+  text-overflow: initial;
+  white-space: normal;
+}
+
 .tooltip-container {
   position: relative;
 }
@@ -416,7 +444,7 @@ watch(
   padding: 5px 0;
   position: absolute;
   z-index: 10;
-  bottom: 125%; /* Position above the button */
+  bottom: 125%;
   left: 50%;
   margin-left: -50px;
   opacity: 0;
@@ -430,7 +458,13 @@ watch(
   opacity: 1;
 }
 
-/* Base animations (reused from other components) */
+/* Truncation for specialty and degree on mobile */
+.truncate-none {
+  text-overflow: initial;
+  white-space: normal;
+}
+
+/* Base animations */
 @keyframes fade-in-down {
   from {
     opacity: 0;
@@ -471,5 +505,31 @@ watch(
 
 .animate-fade-in-up.delay-400 {
   animation-delay: 0.4s;
+}
+
+/* Responsive banner text */
+@media (max-width: 640px) {
+  .banner-text {
+    max-width: 80%;
+    white-space: normal;
+  }
+}
+
+@media (min-width: 640px) {
+  .truncate {
+    max-width: none; /* Remove truncation on web */
+    white-space: normal;
+  }
+}
+
+/* Adjust icon colors to match the image */
+.fas.fa-tag {
+  color: #3b82f6;
+}
+.fas.fa-graduation-cap {
+  color: #10b981;
+}
+.fas.fa-briefcase-medical {
+  color: #f97316;
 }
 </style>

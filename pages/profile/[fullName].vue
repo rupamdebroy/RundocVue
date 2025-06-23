@@ -60,6 +60,19 @@
               <strong
                 class="font-semibold text-gray-600 flex items-center mb-1 sm:mb-0 sm:mr-3 w-full sm:w-auto"
               >
+                <i class="fas fa-wallet mr-3 text-blue-500"></i>RunDoc Wallet
+                Balance:
+              </strong>
+              <span class="break-words font-semibold text-gray-800"
+                >Rs. 500</span
+              >
+            </p>
+            <p
+              class="text-gray-800 text-base flex flex-col sm:flex-row sm:items-center"
+            >
+              <strong
+                class="font-semibold text-gray-600 flex items-center mb-1 sm:mb-0 sm:mr-3 w-full sm:w-auto"
+              >
                 <i class="fas fa-fingerprint mr-3 text-blue-500"></i>Session ID
                 (PID):
               </strong>
@@ -151,5 +164,5 @@ onUnmounted(() => {
 
 /* Add padding to the bottom of the body when BottomNav is visible */
 /* This is typically handled in a global CSS file or your main layout,
-   but added here for clarity on how it connects to `isMobile` state */
+    but added here for clarity on how it connects to `isMobile` state */
 </style>

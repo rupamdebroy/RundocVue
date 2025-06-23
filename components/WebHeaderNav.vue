@@ -43,14 +43,14 @@ const services = computed(() => [
     iconClass: "fas fa-user-md",
   },
   {
-    name: "Lab Tests",
-    path: `/labtest?location=${locationStore.currentLocation}`,
-    iconClass: "fas fa-vial",
-  },
-  {
     name: "Find Clinics",
     path: `/find-clinic?location=${locationStore.currentLocation}`,
     iconClass: "fas fa-clinic-medical",
+  },
+  {
+    name: "Lab Tests",
+    path: `/labtest?location=${locationStore.currentLocation}`,
+    iconClass: "fas fa-vial",
   },
   {
     name: "Buy Medicines",

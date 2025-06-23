@@ -25,7 +25,7 @@
         <transition-group
           name="fade"
           tag="div"
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 sm:gap-6 animate-fade-in-up delay-200"
+          class="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 sm:gap-6 animate-fade-in-up delay-200"
         >
           <div
             v-for="symptom in displayedSymptoms"
@@ -41,7 +41,7 @@
               ></i>
             </div>
             <p
-              class="mt-3 text-sm font-medium text-gray-700 group-hover:text-blue-700 transition-colors duration-300"
+              class="mt-3 text-sm font-medium text-gray-700 group-hover:text-blue-700 transition-colors duration-300 overflow-hidden text-ellipsis whitespace-nowrap"
             >
               {{ symptom }}
             </p>
