@@ -22,21 +22,15 @@
 
       <div v-else>
         <div
-          v-if="labStore.labCenters.length > 0"
+          v-if="labs.length > 0"
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           <div
-            v-for="lab in labStore.labCenters"
+            v-for="lab in labs"
             :key="lab.id"
             class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
           >
             <div class="relative px-4 py-8">
-              <span
-                v-if="lab.discount"
-                class="absolute top-2 right-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full z-10"
-              >
-                Up to {{ lab.discount }}% OFF
-              </span>
               <div class="flex items-center space-x-3 mb-3">
                 <div
                   class="w-12 h-12 rounded-full flex items-center justify-center text-blue-600 text-xl font-bold bg-blue-100 shrink-0 overflow-hidden"
@@ -84,10 +78,6 @@
             location.
           </p>
         </div>
-
-        <p v-if="labStore.info" class="text-center text-gray-600 mt-4 text-sm">
-          {{ labStore.info }}
-        </p>
       </div>
     </div>
   </section>
@@ -95,68 +85,105 @@
 
 <script setup>
 import { ref, watch, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useLabStore } from "@/stores/lab";
+import { useRoute } from "vue-router";
 import { useLocationStore } from "@/stores/location";
+import axios from "axios";
 
 const route = useRoute();
-const router = useRouter();
-const labStore = useLabStore();
 const locationStore = useLocationStore();
 
 const loading = ref(false);
 const error = ref("");
+const labs = ref([]);
 
-const fetchData = async () => {
+const fetchLabs = async (city) => {
+  if (!city || city === "Select Location" || city.trim() === "") {
+    error.value = "Please select a valid location to find lab centers.";
+    labs.value = [];
+    return;
+  }
+
   loading.value = true;
   error.value = "";
 
-  // The `location` is now derived from locationStore, which should be updated globally
-  await locationStore.restoreLocation(); // Ensure location is restored from local storage/etc.
-  const currentLocation = locationStore.currentLocation;
+  try {
+    const response = await axios.post(
+      "https://api.rundoc.in/api/app3/lab/labTest.php", // Changed to HTTPS
+      { city },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer Rupam@98639999",
+        },
+      }
+    );
 
-  if (currentLocation && currentLocation !== "Select Location") {
-    // No need to setLocation again if it's already current
-    await labStore.fetchLabCenters(currentLocation);
-  } else {
-    error.value = "Please select a location to find lab centers.";
-    // Optionally redirect, but it's better for a sub-component to just display an error
-    // router.push("/");
+    if (response.data.success) {
+      labs.value = response.data.data.map((item) => ({
+        id: `${item.cid}-${item.tid}`,
+        name: item.Cilinic_name,
+        address: item.Cilinic_address,
+        dp: null,
+        homeCollection: item.description.toLowerCase().includes("home") || true,
+        testId: item.tid,
+        description: item.description,
+        amount: parseFloat(item.amount),
+        fee: parseFloat(item.fee),
+      }));
+    } else {
+      error.value =
+        response.data.message ||
+        response.data.errors?.join(", ") ||
+        "Failed to fetch lab centers.";
+      labs.value = [];
+    }
+  } catch (err) {
+    if (err.response?.status === 401) {
+      error.value = "Unauthorized access. Please check your credentials.";
+    } else if (err.response?.status >= 500) {
+      error.value = "Server error. Please try again later.";
+    } else {
+      error.value =
+        err.response?.data?.message ||
+        err.response?.data?.errors?.join(", ") ||
+        "An error occurred while fetching labcenters.";
+    }
+    labs.value = [];
+  } finally {
+    loading.value = false;
   }
-
-  loading.value = false;
 };
 
 // Initial fetch on component mount
-onMounted(() => {
-  fetchData();
+onMounted(async () => {
+  await locationStore.restoreLocation();
+  await fetchLabs(locationStore.currentLocation);
 });
 
-// Watch for changes in the location store's currentLocation
+// Watch for changes in currentLocation
 watch(
   () => locationStore.currentLocation,
-  (newLocation, oldLocation) => {
-    if (newLocation && newLocation !== oldLocation) {
-      fetchData(); // Re-fetch data if location changes
+  (newLocation) => {
+    if (newLocation) {
+      fetchLabs(newLocation);
     }
   },
-  { immediate: false } // Do not run on initial render if fetchData is already called by onMounted
+  { immediate: false }
 );
 
-// If the page is directly accessed with a query param, also watch that
+// Watch for query param changes
 watch(
   () => route.query.location,
-  (newQueryLocation, oldQueryLocation) => {
-    if (newQueryLocation && newQueryLocation !== oldQueryLocation) {
-      // If query changes, update the global location store
+  (newQueryLocation) => {
+    if (newQueryLocation && newQueryLocation !== locationStore.currentLocation) {
       locationStore.setLocation(newQueryLocation);
-      // fetchData will be triggered by the locationStore.currentLocation watch
+      // fetchLabs triggered by locationStore.currentLocation watch
     }
   }
 );
 
 const handleImageError = (event) => {
-  event.target.src = "https://via.placeholder.com/64?text=Lab"; // Placeholder image
+  event.target.src = "https://placehold.co/600x400/png";
 };
 </script>
 
@@ -165,7 +192,6 @@ const handleImageError = (event) => {
   max-width: 1200px;
 }
 
-/* Specific truncation for h3 within this component */
 h3.truncate {
   white-space: nowrap;
   overflow: hidden;

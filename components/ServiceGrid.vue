@@ -28,7 +28,7 @@
         </NuxtLink>
 
         <NuxtLink
-          :to="`/labtest?location=${locationStore.currentLocation}`"
+          :to="`/LabTests/${locationStore.currentLocation}`"
           class="block transform hover:-translate-y-1 transition-transform duration-300"
         >
           <ServiceCard

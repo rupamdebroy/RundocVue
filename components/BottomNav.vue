@@ -32,7 +32,7 @@
       </NuxtLink>
 
       <NuxtLink
-        :to="`/labtest?location=${locationStore.currentLocation}`"
+        :to="`/LabTests/${locationStore.currentLocation}`"
         :class="getNavLinkClasses('/labtest')"
         class="flex flex-col items-center gap-1 transition-all duration-150"
       >

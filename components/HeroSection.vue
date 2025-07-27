@@ -366,7 +366,7 @@ const getSearchResultLink = (result) => {
         result.name
       )}`;
     case "lab_test":
-      return `/labtest?location=${currentLocation}&query=${encodeURIComponent(
+      return `/LabTests/${currentLocation}&query=${encodeURIComponent(
         result.name
       )}`;
     case "medicine":
