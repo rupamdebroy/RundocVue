@@ -49,7 +49,7 @@ const services = computed(() => [
   },
   {
     name: "Lab Tests",
-    path: `/labtest?location=${locationStore.currentLocation}`,
+    path: `/LabTests/${locationStore.currentLocation}`,
     iconClass: "fas fa-vial",
   },
   {
